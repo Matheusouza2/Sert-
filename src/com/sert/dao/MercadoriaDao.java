@@ -117,4 +117,14 @@ public class MercadoriaDao implements IMercadoriaDao {
 		}
 		return id;
 	}
+
+	@Override
+	public void entradaNotaEstoque(float estoque, int id) throws SQLException {
+		String sql = "UPDATE cad_mercadorias SET estoque=? WHERE id=?";
+		PreparedStatement preparedStatement = con.prepareStatement(sql);
+		preparedStatement.setFloat(1, estoque);
+		preparedStatement.setInt(2, id);
+		preparedStatement.executeUpdate();
+		
+	}
 }

@@ -30,6 +30,7 @@ import javax.swing.table.DefaultTableModel;
 import com.sert.controler.ControlerEmpresa;
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.DeserializableNfe;
+import com.sert.controler.JDateField;
 import com.sert.editableFields.AutoCompleteDecoratorCombo;
 import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.editableFields.JNumberField;
@@ -153,6 +154,12 @@ public class ImportXml extends JDialog {
 		btnSalvar.setBackground(Color.GREEN);
 		btnSalvar.setBounds(10, 11, 89, 91);
 		panelBtn.add(btnSalvar);
+		btnSalvar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				confirmarCadastro();
+			}
+		});
 
 		txtCaminhoXML = new JTextField();
 		txtCaminhoXML.setBounds(688, 46, 431, 20);
@@ -307,13 +314,13 @@ public class ImportXml extends JDialog {
 		separator_1.setBackground(Color.BLUE);
 		separator_1.setBounds(529, 6, 2, 113);
 		panelForm.add(separator_1);
-		
-		lblAtenoAoCadastrar = new JLabel("<html>Atenção: 'C' indicara que a mercadoria já está cadastrada no sistema e 'N' indicara que a mercadoria não foi encontrada no sistema.</html>");
+
+		lblAtenoAoCadastrar = new JLabel(
+				"<html>Atenção: 'C' indicara que a mercadoria já está cadastrada no sistema e 'N' indicara que a mercadoria não foi encontrada no sistema.</html>");
 		lblAtenoAoCadastrar.setForeground(Color.RED);
 		lblAtenoAoCadastrar.setBounds(926, 62, 344, 57);
 		panelForm.add(lblAtenoAoCadastrar);
-		
-		
+
 		cbMercDesc = new JComboBox();
 		AutoCompleteDecoratorCombo.decorate(cbMercDesc);
 		DefaultComboBoxModel model = (DefaultComboBoxModel) cbMercDesc.getModel();
@@ -423,33 +430,35 @@ public class ImportXml extends JDialog {
 		});
 	}
 
-	public void importaNota() throws ClassNotFoundException, SQLException, IOException, NenhumaMercadoriaCadastradaException {
+	public void importaNota()
+			throws ClassNotFoundException, SQLException, IOException, NenhumaMercadoriaCadastradaException {
 		modelo.setNumRows(0);
 		mercList = new ControlerMercadoria().listarMercadorias();
 		String flag = "N";
 		long codBarrasFlag = 0;
 		String mercadoriaFlag = "";
-		
+		float descUn;
+
 		for (int i = 0; i < nfeXml.getMercadorias().size(); i++) {
-			for(int j = 0; j < mercList.size(); j++){
-				if(mercList.get(j).getCodBarras() == nfeXml.getMercadorias().get(i).getCodBarras()){
+			for (int j = 0; j < mercList.size(); j++) {
+				if (mercList.get(j).getCodBarras() == nfeXml.getMercadorias().get(i).getCodBarras()) {
 					flag = "C";
 					codBarrasFlag = mercList.get(j).getCodBarras();
 					mercadoriaFlag = mercList.get(j).getMercadoria();
 					break;
 				}
 			}
+
+			descUn = nfeXml.getMercadorias().get(i).getValDesc() / nfeXml.getMercadorias().get(i).getQuantCompra();
 			modelo.addRow(new Object[] { nfeXml.getMercadorias().get(i).getCodProd(),
 					nfeXml.getMercadorias().get(i).getMercadoria(),
-					String.format("%.4f", nfeXml.getMercadorias().get(i).getPrecoUn()),
+					String.format("%.4f", nfeXml.getMercadorias().get(i).getPrecoUn() - descUn),
 					String.format("%.2f", nfeXml.getMercadorias().get(i).getQuantCompra()),
 					String.format("%.4f", nfeXml.getMercadorias().get(i).getValDesc()),
-					String.format("%.2f", (nfeXml.getMercadorias().get(i).getPrecoTotal()
-							- nfeXml.getMercadorias().get(i).getValDesc())),
-					flag,
-					codBarrasFlag,
-					mercadoriaFlag,
-					1});
+					String.format("%.2f",
+							(nfeXml.getMercadorias().get(i).getPrecoTotal()
+									- nfeXml.getMercadorias().get(i).getValDesc())),
+					flag, codBarrasFlag, mercadoriaFlag, 1 });
 			flag = "N";
 			codBarrasFlag = 0;
 			mercadoriaFlag = "";
@@ -463,6 +472,7 @@ public class ImportXml extends JDialog {
 		txtUf.setText(nfeXml.getUfForn());
 		txtNumeroNota.setText(String.valueOf(nfeXml.getNumNota()));
 		txtChave.setText(nfeXml.getChave());
+
 	}
 
 	public void escutaComboMerc() {
@@ -510,8 +520,21 @@ public class ImportXml extends JDialog {
 			}
 		});
 	}
-	
-	public void verificaMercExite(){
-		
+
+	private void confirmarCadastro()
+			throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException {
+		mercList = new ControlerMercadoria().listarMercadorias();
+		for (int i = 0; i < nfeXml.getMercadorias().size(); i++) {
+			for (int j = 0; j < mercList.size(); j++) {
+				if (mercList.get(j).getCodBarras() == nfeXml.getMercadorias().get(i).getCodBarras()) {
+					
+					break;
+				}
+			}
+			if (nfeXml.getMercadorias().get(i).getCodProd().equals("0")) {
+				
+			}
+
+		}
 	}
 }

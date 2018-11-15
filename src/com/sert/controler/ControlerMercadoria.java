@@ -73,4 +73,8 @@ public class ControlerMercadoria {
 	public int confereId() throws SQLException {
 		return mercadoriaDao.confereId();
 	}
+	
+	public void entradaMercadoria(float estoque, int id) throws SQLException{
+		mercadoriaDao.entradaNotaEstoque(estoque, id);
+	}
 }
