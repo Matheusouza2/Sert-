@@ -36,8 +36,7 @@ public class AutoCompleteDecoratorCombo {
 		boolean strictMatching = !comboBox.isEditable();
 
 		comboBox.setEditable(true);
-		//AquaLnFPopupLocationFix.install(comboBox);
-
+		
 		JTextComponent editorComponent = (JTextComponent) comboBox.getEditor().getEditorComponent();
 		final AbstractAutoCompleteAdaptor adaptor = new ComboBoxAdaptor(comboBox);
 		final AutoCompleteDocument document = new AutoCompleteDocument(adaptor, strictMatching, stringConverter);
@@ -47,16 +46,13 @@ public class AutoCompleteDecoratorCombo {
 			@Override
 			public void keyPressed(KeyEvent keyEvent) {
 
-				// don't popup on action keys (cursor movements, etc...)
 				if (keyEvent.isActionKey())
 					return;
-				// don't popup if the combobox isn't visible anyway
 				if (comboBox.isDisplayable() && !comboBox.isPopupVisible()) {
 					int keyCode = keyEvent.getKeyCode();
-					// don't popup when the user hits shift,ctrl or alt
+
 					if (keyCode == KeyEvent.VK_SHIFT || keyCode == KeyEvent.VK_CONTROL || keyCode == KeyEvent.VK_ALT)
 						return;
-					// don't popup when the user hits escape (see issue #311)
 					if (keyCode == KeyEvent.VK_ESCAPE || keyCode == KeyEvent.VK_ENTER)
 						return;
 
@@ -106,12 +102,8 @@ public class AutoCompleteDecoratorCombo {
 
 		if (document.isStrictMatching()) {
 
-			// move the selection to the left on VK_BACK_SPACE
 			editorInputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_BACK_SPACE, 0),
 					DefaultEditorKit.selectionBackwardAction);
-
-			// ignore VK_DELETE and CTRL+VK_X and beep instead when strict
-			// matching
 
 			editorInputMap.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0), errorFeedbackAction);
 			editorInputMap.put(

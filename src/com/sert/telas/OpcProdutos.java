@@ -50,7 +50,7 @@ public class OpcProdutos extends JDialog {
 		btnCadastrarNovoCliente.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new CadMercadoria().setVisible(true);				
+				new CadMercadoria(0,0).setVisible(true);				
 			}
 		});
 		

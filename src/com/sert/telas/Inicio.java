@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.sert.controler.JDateField;
+import com.sert.controler.UsuLogado;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -60,7 +61,9 @@ public class Inicio extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
+		
+		UsuLogado.setId(1);
+		UsuLogado.setNome("Márcio");
 		panelButtons = new JPanel();
 		panelButtons.setBackground(new Color(0, 0, 153));
 		panelButtons.setBounds(10, 11, 1344, 113);
@@ -199,10 +202,10 @@ public class Inicio extends JDialog {
 			}
 		});
 
-		lblBemVindoa = new JLabel("Bem vindo (a):");
+		lblBemVindoa = new JLabel("Bem vindo (a): "+UsuLogado.getNome());
 		lblBemVindoa.setForeground(Color.WHITE);
 		lblBemVindoa.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblBemVindoa.setBounds(1066, 484, 103, 14);
+		lblBemVindoa.setBounds(1066, 484, 268, 14);
 		panelUsados.add(lblBemVindoa);
 
 		lblBanner = new JLabel("");

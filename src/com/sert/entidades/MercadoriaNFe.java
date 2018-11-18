@@ -10,7 +10,9 @@ public class MercadoriaNFe {
 	private float precoUn;
 	private float precoTotal;
 	private float valDesc;
-
+	
+	public MercadoriaNFe(){}
+	
 	public MercadoriaNFe(String codProd, long codBarras, String mercadoria, String und, float quantCompra, float precoUn,
 			float precoTotal, float valDesc) {
 		this.codProd = codProd;

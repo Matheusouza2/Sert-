@@ -67,7 +67,7 @@ public class MercadoriaDao implements IMercadoriaDao {
 		preparedStatement.setString(4, mercadoria.getUnd());
 		preparedStatement.setString(5, mercadoria.getDataAlt());
 		preparedStatement.setFloat(6, mercadoria.getPrecoCompra());
-		preparedStatement.setInt(7, mercadoria.getUsuAlt());
+		preparedStatement.setString(7, mercadoria.getUsuAlt());
 		preparedStatement.setInt(8, mercadoria.getId());
 		preparedStatement.executeUpdate();
 	}
@@ -100,7 +100,7 @@ public class MercadoriaDao implements IMercadoriaDao {
 			mercadoria.setDataAlt(resultado.getString("data_alteracao"));
 			mercadoria.setPrecoCompra(resultado.getFloat("preco_compra"));
 			mercadoria.setUsuCad(resultado.getInt("usu_cad"));
-			mercadoria.setUsuAlt(resultado.getInt("usu_edit"));
+			mercadoria.setUsuAlt(resultado.getString("usu_edit"));
 			mercadoria.setEstoque(resultado.getFloat("estoque"));
 		}
 		return mercadoria;
@@ -119,11 +119,11 @@ public class MercadoriaDao implements IMercadoriaDao {
 	}
 
 	@Override
-	public void entradaNotaEstoque(float estoque, int id) throws SQLException {
-		String sql = "UPDATE cad_mercadorias SET estoque=? WHERE id=?";
+	public void entradaNotaEstoque(float estoque, long codBarras) throws SQLException {
+		String sql = "UPDATE cad_mercadorias SET estoque=? WHERE cod_barras=?";
 		PreparedStatement preparedStatement = con.prepareStatement(sql);
 		preparedStatement.setFloat(1, estoque);
-		preparedStatement.setInt(2, id);
+		preparedStatement.setLong(2, codBarras);
 		preparedStatement.executeUpdate();
 		
 	}

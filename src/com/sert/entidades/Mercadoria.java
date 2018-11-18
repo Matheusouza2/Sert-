@@ -1,7 +1,7 @@
 package com.sert.entidades;
 
 public class Mercadoria {
-	
+
 	private int id;
 	private long codBarras;
 	private String mercadoria;
@@ -10,14 +10,16 @@ public class Mercadoria {
 	private int usuCad;
 	private String und;
 	private float precoCompra;
-	private int usuAlt;
+	private String usuAlt;
 	private String dataAlt;
 	private float estoque;
-	
-	public Mercadoria() {}
+	private int cadastrada;
+
+	public Mercadoria() {
+	}
 
 	public Mercadoria(int id, long codBarras, String mercadoria, float precoVenda, String dataCadastro, int usuCad,
-			String und, float precoCompra, int usuAlt, String dataAlt, float estoque) {
+			String und, float precoCompra, String usuAlt, String dataAlt, float estoque) {
 		super();
 		this.id = id;
 		this.codBarras = codBarras;
@@ -96,11 +98,11 @@ public class Mercadoria {
 		this.precoCompra = precoCompra;
 	}
 
-	public int getUsuAlt() {
+	public String getUsuAlt() {
 		return usuAlt;
 	}
 
-	public void setUsuAlt(int usuAlt) {
+	public void setUsuAlt(String usuAlt) {
 		this.usuAlt = usuAlt;
 	}
 
@@ -111,7 +113,7 @@ public class Mercadoria {
 	public void setDataAlt(String dataAlt) {
 		this.dataAlt = dataAlt;
 	}
-	
+
 	public float getEstoque() {
 		return estoque;
 	}
@@ -119,4 +121,13 @@ public class Mercadoria {
 	public void setEstoque(float estoque) {
 		this.estoque = estoque;
 	}
+
+	public int getCadastrada() {
+		return cadastrada;
+	}
+
+	public void setCadastrada(int cadastrada) {
+		this.cadastrada = cadastrada;
+	}
+
 }

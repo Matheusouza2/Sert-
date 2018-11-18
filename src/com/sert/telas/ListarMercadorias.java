@@ -93,7 +93,7 @@ public class ListarMercadorias extends JDialog {
 			public void actionPerformed(ActionEvent arg0) {
 				if (tabMerc.getSelectedRow() >= 0) {
 					long idEditar = (long) tabMerc.getValueAt(tabMerc.getSelectedRow(), 1);
-					new AlterarMercadoria(idEditar).setVisible(true);
+					new CadMercadoria(1, idEditar).setVisible(true);
 				} else {
 					JOptionPane.showMessageDialog(null, "Selecione uma mercadoria a ser editada", "Aviso",
 							JOptionPane.WARNING_MESSAGE);

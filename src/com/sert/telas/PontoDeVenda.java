@@ -7,6 +7,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -20,9 +22,13 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerMercadoria;
+import com.sert.controler.ControlerVenda;
+import com.sert.controler.JDateField;
+import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Mercadoria;
-import com.sert.exceptions.MercadoriaNaoEncontradaException;
+import com.sert.entidades.Venda;
+import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.SwingConstants;
 import javax.swing.JTable;
@@ -63,17 +69,16 @@ public class PontoDeVenda extends JDialog {
 	private JScrollPane spProdutos;
 	private DefaultTableModel modelo;
 
-	private int item;
+	float quantidade;
+	float precoMerc;
+	float precoTotal;
+	static float total;
 
-	public static void main(String[] args) {
-		try {
-			PontoDeVenda dialog = new PontoDeVenda();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	private ControlerVenda controlerVenda;
+	private static List<Mercadoria> listMerc;
+
+	private static int item;
+	private static int idCliente = 0;
 
 	public PontoDeVenda() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -81,6 +86,7 @@ public class PontoDeVenda extends JDialog {
 		setLocationRelativeTo(null);
 		setTitle("Checkout");
 		setUndecorated(true);
+		setModal(true);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -107,9 +113,10 @@ public class PontoDeVenda extends JDialog {
 			public void focusLost(FocusEvent arg0) {
 				txtCodBarras.requestFocusInWindow();
 			}
-			
+
 			@Override
-			public void focusGained(FocusEvent arg0) {}
+			public void focusGained(FocusEvent arg0) {
+			}
 		});
 
 		lblQuantidade = new JLabel("Quantidade:");
@@ -152,14 +159,20 @@ public class PontoDeVenda extends JDialog {
 		lblFCancelarItem = new JLabel("F9 - Cancelar Item");
 		lblFCancelarItem.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFCancelarItem.setForeground(Color.WHITE);
-		lblFCancelarItem.setBounds(636, 28, 136, 14);
+		lblFCancelarItem.setBounds(636, 50, 136, 14);
 		panelMenu.add(lblFCancelarItem);
 
 		lblFCancelarVenda = new JLabel("F11 - Cancelar Venda");
 		lblFCancelarVenda.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFCancelarVenda.setForeground(Color.WHITE);
-		lblFCancelarVenda.setBounds(636, 70, 144, 14);
+		lblFCancelarVenda.setBounds(636, 82, 144, 14);
 		panelMenu.add(lblFCancelarVenda);
+
+		JLabel lblFLiberar = new JLabel("F7 - Liberar Caixa");
+		lblFLiberar.setForeground(Color.WHITE);
+		lblFLiberar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblFLiberar.setBounds(636, 18, 136, 14);
+		panelMenu.add(lblFLiberar);
 
 		panelValue = new JPanel();
 		panelValue.setBounds(1040, 60, 280, 511);
@@ -173,13 +186,13 @@ public class PontoDeVenda extends JDialog {
 		lblTotal.setBounds(10, 456, 260, 44);
 		panelValue.add(lblTotal);
 
-		lblOperador = new JLabel("Operador:");
-		lblOperador.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblOperador = new JLabel("Operador: " + UsuLogado.getNome());
+		lblOperador.setFont(new Font("Tahoma", Font.BOLD, 17));
 		lblOperador.setBounds(10, 11, 260, 20);
 		panelValue.add(lblOperador);
 
-		lblStatus = new JLabel("Status:");
-		lblStatus.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblStatus = new JLabel("Status: Caixa Livre");
+		lblStatus.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		lblStatus.setBounds(10, 42, 260, 20);
 		panelValue.add(lblStatus);
 
@@ -189,14 +202,14 @@ public class PontoDeVenda extends JDialog {
 		panelMother.add(panelId);
 		panelId.setLayout(null);
 
-		lblCliente = new JLabel("Cliente:");
+		lblCliente = new JLabel("Cliente: Consumidor");
 		lblCliente.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblCliente.setBounds(10, 11, 59, 14);
+		lblCliente.setBounds(10, 11, 260, 14);
 		panelId.add(lblCliente);
 
 		lblCpf = new JLabel("CPF:");
 		lblCpf.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblCpf.setBounds(10, 66, 46, 14);
+		lblCpf.setBounds(10, 66, 260, 14);
 		panelId.add(lblCpf);
 
 		spProdutos = new JScrollPane();
@@ -207,16 +220,24 @@ public class PontoDeVenda extends JDialog {
 		prodVenda.setBorder(new LineBorder(new Color(41, 171, 226)));
 		spProdutos.setViewportView(prodVenda);
 		modelo = new DefaultTableModel();
+		modelo = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
+
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 		prodVenda.setModel(modelo);
 
 		modelo.addColumn("Item");
+		modelo.addColumn("Cod.");
 		modelo.addColumn("Cód. Barras");
 		modelo.addColumn("Nome");
 		modelo.addColumn("Quant.");
 		modelo.addColumn("Valor Unit.");
 		modelo.addColumn("Valor Total");
-		prodVenda.getColumnModel().getColumn(1).setPreferredWidth(200);
-		prodVenda.getColumnModel().getColumn(2).setPreferredWidth(800);
+		prodVenda.getColumnModel().getColumn(2).setPreferredWidth(200);
+		prodVenda.getColumnModel().getColumn(3).setPreferredWidth(800);
 
 		txtCodBarras.addKeyListener(new KeyAdapter() {
 			@Override
@@ -229,44 +250,161 @@ public class PontoDeVenda extends JDialog {
 					// Pesquisar a mercadoria
 					break;
 				case (KeyEvent.VK_F4):
-					new PontoDeVendaFecharVenda((float) 150.10).setVisible(true);
+					fecharVenda();
+					break;
+				case (KeyEvent.VK_F7):
+					liberarCaixa();
 					break;
 				case (KeyEvent.VK_F9):
-					// Cancelar item
+					cancelarItem();
 					break;
 				case (KeyEvent.VK_F11):
-					dispose();
+					cancelarVenda();
 					break;
 				case (KeyEvent.VK_MULTIPLY):
 					txtQuant.setText(txtCodBarras.getText());
 					txtCodBarras.setText("");
 					break;
 				case (KeyEvent.VK_ENTER):
-					try {
-						Mercadoria merc = new ControlerMercadoria().consultaMercadoria(Long.parseLong(txtCodBarras.getText()));
-						modelo.addRow(new Object[] { ++item, merc.getCodBarras(), merc.getMercadoria(),
-								txtQuant.getText(), merc.getPrecoVenda() });
-						txtCodBarras.setText(null);
-					} catch (ClassNotFoundException e1) {
-						JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
-								JOptionPane.ERROR_MESSAGE);
-						txtCodBarras.setText(null);
-					} catch (SQLException e1) {
-						JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
-								JOptionPane.ERROR_MESSAGE);
-						txtCodBarras.setText(null);
-					} catch (IOException e1) {
-						JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro SQL",
-								JOptionPane.ERROR_MESSAGE);
-						txtCodBarras.setText(null);
-					} catch (MercadoriaNaoEncontradaException e) {
-						JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO",
-								JOptionPane.WARNING_MESSAGE);
-						txtCodBarras.setText(null);
-					}
+					adicionarItem();
 					break;
 				}
 			}
 		});
+
+		try {
+			listMerc = new ControlerMercadoria().listarMercadorias();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NenhumaMercadoriaCadastradaException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void cancelarVenda() {
+		int resposta = JOptionPane.showConfirmDialog(null, "Deseja cancelar esta venda ?", "CANCELAMENTO",
+				JOptionPane.YES_NO_OPTION);
+
+		if (resposta == JOptionPane.YES_OPTION) {
+			total = 0;
+			item = 0;
+			dispose();
+		}
+	}
+
+	public void cancelarItem() {
+		if (prodVenda.getSelectedRow() >= 0) {
+			for (int i = prodVenda.getSelectedRow(); i < prodVenda.getRowCount(); i++) {
+				item = Integer.parseInt(prodVenda.getValueAt(i, 0).toString()) - 1;
+				prodVenda.setValueAt(item, i, 0);
+			}
+			total = total - Float.parseFloat(prodVenda.getValueAt(prodVenda.getSelectedRow(), 5).toString());
+			lblTotal.setText("TOTAL: " + total);
+			modelo.removeRow(prodVenda.getSelectedRow());
+			item = prodVenda.getRowCount();
+			prodVenda.setModel(modelo);
+
+			if (prodVenda.getRowCount() <= 0) {
+				lblStatus.setText("Status: Caixa Livre");
+			}
+		} else {
+			JOptionPane.showMessageDialog(null, "Selecione um item a ser cancelado", "Aviso",
+					JOptionPane.WARNING_MESSAGE);
+		}
+	}
+
+	public void adicionarItem() {
+		int cod = 0;
+		long codBarras = 0;
+		String mercadoria = null;
+		float precoVenda = 0;
+		float quant = 0;
+		int pos = 0;
+		for (int i = 0; i < listMerc.size(); i++) {
+			if (listMerc.get(i).getCodBarras() == Long.parseLong(txtCodBarras.getText())) {
+				cod = listMerc.get(i).getId();
+				codBarras = listMerc.get(i).getCodBarras();
+				mercadoria = listMerc.get(i).getMercadoria();
+				precoVenda = listMerc.get(i).getPrecoVenda();
+				quant = listMerc.get(i).getEstoque();
+				pos = i;
+			}
+		}
+
+		quantidade = Float.parseFloat(txtQuant.getText());
+		precoTotal = Float.parseFloat(txtQuant.getText()) * precoVenda;
+		precoMerc = precoVenda;
+		if (precoMerc <= 0) {
+			JOptionPane.showMessageDialog(null, "Mercadoria com preço de venda zerado não pode ser vendida");
+		} else if (quant < quantidade) {
+			JOptionPane.showMessageDialog(null, "A quantidade a ser vendida está maior do que o estoque");
+			txtCodBarras.setText(null);
+			txtQuant.setText("1");
+		} else {
+			modelo.addRow(new Object[] { ++item, cod, codBarras, mercadoria, quantidade, precoMerc, precoTotal });
+			txtCodBarras.setText(null);
+			txtQuant.setText("1");
+			lblStatus.setText("Status: Venda em andamento");
+			total += precoTotal;
+			lblTotal.setText("TOTAL: " + total);
+			listMerc.get(pos).setEstoque(listMerc.get(pos).getEstoque() - quantidade);
+		}
+	}
+
+	public void liberarCaixa() {
+		if (prodVenda.getRowCount() > 0) {
+			while (prodVenda.getRowCount() > 0) {
+				modelo.removeRow(0);
+			}
+			prodVenda.setModel(modelo);
+			lblTotal.setText("TOTAL:");
+			lblStatus.setText("Status: Caixa Livre");
+			item = 0;
+			total = 0;
+			JOptionPane.showMessageDialog(null, "Caixa liberado com sucesso", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			JOptionPane.showMessageDialog(null, "O caixa já está livre", "Aviso", JOptionPane.WARNING_MESSAGE);
+		}
+
+	}
+
+	public void fecharVenda() {
+		if (prodVenda.getRowCount() == 0) {
+			JOptionPane.showMessageDialog(null, "Vendas sem mercadoria não podem ser fechadas", "VENDA ZERADA",
+					JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			try {
+				controlerVenda = new ControlerVenda();
+				Mercadoria merc;
+				List<Mercadoria> mercFech = new ArrayList<>();
+
+				for (int i = 0; i < prodVenda.getRowCount(); i++) {
+					merc = new Mercadoria();
+					merc.setId(Integer.parseInt(prodVenda.getValueAt(i, 1).toString()));
+					merc.setCodBarras(Long.parseLong(prodVenda.getValueAt(i, 2).toString()));
+					merc.setMercadoria(prodVenda.getValueAt(i, 3).toString());
+					merc.setEstoque(Float.parseFloat(prodVenda.getValueAt(i, 4).toString()));
+					merc.setPrecoVenda(Float.parseFloat(prodVenda.getValueAt(i, 5).toString()));
+					mercFech.add(merc);
+				}
+				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), "", idCliente, "",
+						JDateField.getDateHora(), mercFech, total, 0, 0, 0, 0);
+				new PontoDeVendaFecharVenda(venda).setVisible(true);
+			} catch (ClassNotFoundException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			} catch (SQLException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			} catch (IOException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
+		}
 	}
 }

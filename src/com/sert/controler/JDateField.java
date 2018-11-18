@@ -5,22 +5,15 @@ import java.util.Date;
 
 public class JDateField {
 	
-	private Date data = new Date();
-	private SimpleDateFormat formatadorDate = new SimpleDateFormat("dd/MM/yyyy");
-	private SimpleDateFormat formatadorDateHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	private String date;
-	private String dateHora;
+	private static Date data = new Date();
+	private static SimpleDateFormat formatadorDate = new SimpleDateFormat("dd/MM/yyyy");
+	private static SimpleDateFormat formatadorDateHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 	
-	public JDateField() {
-		this.date = formatadorDate.format(data);
-		this.dateHora = formatadorDateHora.format(data);
+	public static String getDate(){
+		return formatadorDate.format(data);
 	}
 	
-	public String getDate(){
-		return this.date;
-	}
-	
-	public String getDateHora(){
-		return dateHora;
+	public static String getDateHora(){
+		return formatadorDateHora.format(data);
 	}
 }
