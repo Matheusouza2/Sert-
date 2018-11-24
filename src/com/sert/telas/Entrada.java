@@ -4,6 +4,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.sert.controler.ControlerUsuario;
+import com.sert.controler.Seguranca;
+import com.sert.exceptions.UsuarioNaoCadastradoException;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -11,6 +16,8 @@ import javax.swing.JButton;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.JSeparator;
 import javax.swing.JPasswordField;
@@ -102,7 +109,17 @@ public class Entrada extends JFrame {
 		btnEntrar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				entrada();				
+				try {
+					entrada();
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (UsuarioNaoCadastradoException e1) {
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}				
 			}
 		});
 		separator = new JSeparator();
@@ -141,14 +158,14 @@ public class Entrada extends JFrame {
 		panelLogin.add(lblVersao);
 	}
 	
-	private void entrada(){
+	private void entrada() throws ClassNotFoundException, UsuarioNaoCadastradoException, SQLException, IOException{
 		String login = txtUser.getText();
-		String senha = pwdUsu.getPassword().toString();
+		String senha = Seguranca.criptografar(pwdUsu.getPassword().toString());
 		
 		if(senha.equals("s3rtc0nfig")) {
 			new ConfigEmpresa().setVisible(true);
 		}else {
-			
+			new ControlerUsuario().login(login, senha);
 		}
 	}
 }

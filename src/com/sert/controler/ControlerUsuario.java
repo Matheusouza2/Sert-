@@ -8,35 +8,42 @@ import com.sert.dao.IUsuDao;
 import com.sert.dao.UsuDao;
 import com.sert.entidades.Usuario;
 import com.sert.exceptions.NenhumUsuCadException;
+import com.sert.exceptions.UsuarioNaoCadastradoException;
 
 public class ControlerUsuario {
 	private IUsuDao usuDao;
-	
+
 	public ControlerUsuario() throws ClassNotFoundException, SQLException, IOException {
 		usuDao = new UsuDao();
 	}
-	
-	public void cadastrarUsuario(Usuario usu) throws SQLException{
+
+	public void cadastrarUsuario(Usuario usu) throws SQLException {
 		usuDao.cadastrar(usu);
 	}
-	
-	public List<Usuario> listarUsuario() throws SQLException, NenhumUsuCadException{
-		if(usuDao.listar().isEmpty()){
+
+	public List<Usuario> listarUsuario() throws SQLException, NenhumUsuCadException {
+		if (usuDao.listar().isEmpty()) {
 			throw new NenhumUsuCadException();
-		}else{
+		} else {
 			return usuDao.listar();
 		}
 	}
-	
-	public void atualizarUsuario(Usuario usu) throws SQLException{
+
+	public void atualizarUsuario(Usuario usu) throws SQLException {
 		usuDao.atualizar(usu);
 	}
-	
-	public void excluirUsuario(int id) throws SQLException{
+
+	public void excluirUsuario(int id) throws SQLException {
 		usuDao.excluir(id);
 	}
-	
-	public int confereId() throws SQLException{
+
+	public int confereId() throws SQLException {
 		return usuDao.confereId();
+	}
+
+	public Usuario login(String login, String senha) throws UsuarioNaoCadastradoException, SQLException {
+		if(usuDao.consulta(login, senha) == null) throw new UsuarioNaoCadastradoException();
+		
+		return usuDao.consulta(login, senha);
 	}
 }

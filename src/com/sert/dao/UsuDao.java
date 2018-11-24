@@ -9,22 +9,24 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import com.sert.entidades.Usuario;
+
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
+ * 
  * @author Matheus Souza
  * @version 1.0.0
  * 
- * */
+ */
 public class UsuDao implements IUsuDao {
 
 	private Connection con;
 	private Usuario usu;
 	private List<Usuario> listUsu;
-	
+
 	public UsuDao() throws ClassNotFoundException, SQLException, IOException {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
-	
+
 	@Override
 	public void cadastrar(Usuario usu) throws SQLException {
 		String sql = "INSERT INTO usuario(nome, senha) VALUES (?,?)";
@@ -34,15 +36,15 @@ public class UsuDao implements IUsuDao {
 		preparador.execute();
 		preparador.close();
 	}
-	
+
 	@Override
 	public List<Usuario> listar() throws SQLException {
 		String sql = "SELECT * FROM usuario";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		ResultSet result = preparador.executeQuery();
-		
+
 		listUsu = new ArrayList<>();
-		
+
 		while (result.next()) {
 			usu = new Usuario();
 			usu.setNome(result.getString("nome"));
@@ -84,6 +86,14 @@ public class UsuDao implements IUsuDao {
 		}
 		return id;
 	}
-	
-	
+
+	@Override
+	public Usuario consulta(String login, String senha) throws SQLException {
+		String sql = "SELECT * FROM funcionario WHERE login=? AND senha=?";
+		PreparedStatement preparador = con.prepareStatement(sql);
+		ResultSet result = preparador.executeQuery();
+		Usuario usuario = new Usuario(result.getInt("id"), result.getString("nome"), result.getString("senha"));
+
+		return usuario;
+	}
 }

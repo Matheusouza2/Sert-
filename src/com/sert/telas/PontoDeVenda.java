@@ -21,18 +21,23 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.Venda;
+import com.sert.exceptions.MercadoriaSemEstoqueException;
+import com.sert.exceptions.MercadoriaSemPrecoException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
+import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
+import javax.swing.JProgressBar;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -74,32 +79,34 @@ public class PontoDeVenda extends JDialog {
 	float precoTotal;
 	static float total;
 
-	private ControlerVenda controlerVenda;
-	private static List<Mercadoria> listMerc;
+	private static ControlerVenda controlerVenda;
 
 	private static int item;
 	private static int idCliente = 0;
+	private JLabel lblNewLabel;
 
 	public PontoDeVenda() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1350, 730);
 		setLocationRelativeTo(null);
 		setTitle("Checkout");
-		setUndecorated(true);
 		setModal(true);
+		setUndecorated(true);
+
 		contentPane = new JPanel();
-		contentPane.setBackground(Color.WHITE);
+		contentPane.setBackground(new Color(255, 255, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		panelMother = new JPanel();
-		panelMother.setBackground(new Color(255, 255, 0));
+		panelMother.setBackground(new Color(0, 0, 128));
 		panelMother.setBounds(10, 11, 1330, 707);
 		contentPane.add(panelMother);
 		panelMother.setLayout(null);
 
 		lblCodDeBarras = new JLabel("Cod. de barras:");
+		lblCodDeBarras.setForeground(new Color(255, 255, 0));
 		lblCodDeBarras.setBounds(58, 24, 109, 14);
 		lblCodDeBarras.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		panelMother.add(lblCodDeBarras);
@@ -120,56 +127,59 @@ public class PontoDeVenda extends JDialog {
 		});
 
 		lblQuantidade = new JLabel("Quantidade:");
-		lblQuantidade.setBounds(379, 24, 86, 14);
+		lblQuantidade.setForeground(new Color(255, 255, 0));
+		lblQuantidade.setBounds(379, 24, 86, 25);
 		lblQuantidade.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		panelMother.add(lblQuantidade);
 
 		txtQuant = new JTextField();
-		txtQuant.setBounds(475, 21, 86, 20);
+		txtQuant.setBounds(475, 26, 86, 20);
 		txtQuant.setEditable(false);
 		txtQuant.setText(String.valueOf(1));
 		panelMother.add(txtQuant);
 		txtQuant.setColumns(10);
 
 		panelMenu = new JPanel();
+		panelMenu.setForeground(new Color(255, 255, 0));
 		panelMenu.setBounds(10, 582, 1020, 114);
 		panelMenu.setBackground(new Color(0, 0, 128));
-		panelMenu.setBorder(new LineBorder(new Color(0, 0, 0)));
+		panelMenu.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Legenda do caixa",
+				TitledBorder.CENTER, TitledBorder.TOP, null, new Color(255, 255, 0)));
 		panelMother.add(panelMenu);
 		panelMenu.setLayout(null);
 
 		lblFSelecionarCliente = new JLabel("F1 - Selecionar Cliente");
-		lblFSelecionarCliente.setForeground(Color.WHITE);
+		lblFSelecionarCliente.setForeground(new Color(255, 255, 0));
 		lblFSelecionarCliente.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFSelecionarCliente.setBounds(246, 18, 144, 14);
 		panelMenu.add(lblFSelecionarCliente);
 
 		lblFPesquisar = new JLabel("F2 - Pesquisar mercadoria");
-		lblFPesquisar.setForeground(Color.WHITE);
+		lblFPesquisar.setForeground(new Color(255, 255, 0));
 		lblFPesquisar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFPesquisar.setBounds(246, 50, 174, 14);
 		panelMenu.add(lblFPesquisar);
 
 		lblFFechar = new JLabel("F4 - Fechar venda");
 		lblFFechar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFFechar.setForeground(Color.WHITE);
+		lblFFechar.setForeground(new Color(255, 255, 0));
 		lblFFechar.setBounds(246, 82, 123, 14);
 		panelMenu.add(lblFFechar);
 
 		lblFCancelarItem = new JLabel("F9 - Cancelar Item");
 		lblFCancelarItem.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFCancelarItem.setForeground(Color.WHITE);
+		lblFCancelarItem.setForeground(new Color(255, 255, 0));
 		lblFCancelarItem.setBounds(636, 50, 136, 14);
 		panelMenu.add(lblFCancelarItem);
 
 		lblFCancelarVenda = new JLabel("F11 - Cancelar Venda");
 		lblFCancelarVenda.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFCancelarVenda.setForeground(Color.WHITE);
+		lblFCancelarVenda.setForeground(new Color(255, 255, 0));
 		lblFCancelarVenda.setBounds(636, 82, 144, 14);
 		panelMenu.add(lblFCancelarVenda);
 
 		JLabel lblFLiberar = new JLabel("F7 - Liberar Caixa");
-		lblFLiberar.setForeground(Color.WHITE);
+		lblFLiberar.setForeground(new Color(255, 255, 0));
 		lblFLiberar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFLiberar.setBounds(636, 18, 136, 14);
 		panelMenu.add(lblFLiberar);
@@ -229,6 +239,12 @@ public class PontoDeVenda extends JDialog {
 		};
 		prodVenda.setModel(modelo);
 
+		lblNewLabel = new JLabel("F6 - Fechar caixa");
+		lblNewLabel.setForeground(new Color(255, 0, 0));
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblNewLabel.setBounds(1200, 0, 130, 14);
+		panelMother.add(lblNewLabel);
+
 		modelo.addColumn("Item");
 		modelo.addColumn("Cod.");
 		modelo.addColumn("Cód. Barras");
@@ -238,6 +254,52 @@ public class PontoDeVenda extends JDialog {
 		modelo.addColumn("Valor Total");
 		prodVenda.getColumnModel().getColumn(2).setPreferredWidth(200);
 		prodVenda.getColumnModel().getColumn(3).setPreferredWidth(800);
+
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setForeground(new Color(255, 255, 0));
+		progressBar.setBounds(593, 17, 218, 35);
+		panelMother.add(progressBar);
+		progressBar.setStringPainted(true);
+		progressBar.isIndeterminate();
+		progressBar.setString("Aguarde...");
+		Thread t2 = new Thread();
+		Thread t1 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					
+					controlerVenda = new ControlerVenda();
+				} catch (ClassNotFoundException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (NenhumaMercadoriaCadastradaException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+		
+
+		t2 = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+
+					Aguarde aguarde = new Aguarde();
+					aguarde.setVisible(true);
+					
+					aguarde.setVisible(false);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		t1.start();
+		t2.start();
 
 		txtCodBarras.addKeyListener(new KeyAdapter() {
 			@Override
@@ -271,22 +333,6 @@ public class PontoDeVenda extends JDialog {
 				}
 			}
 		});
-
-		try {
-			listMerc = new ControlerMercadoria().listarMercadorias();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NenhumaMercadoriaCadastradaException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	public void cancelarVenda() {
@@ -294,6 +340,7 @@ public class PontoDeVenda extends JDialog {
 				JOptionPane.YES_NO_OPTION);
 
 		if (resposta == JOptionPane.YES_OPTION) {
+			repor();
 			total = 0;
 			item = 0;
 			dispose();
@@ -308,6 +355,7 @@ public class PontoDeVenda extends JDialog {
 			}
 			total = total - Float.parseFloat(prodVenda.getValueAt(prodVenda.getSelectedRow(), 5).toString());
 			lblTotal.setText("TOTAL: " + total);
+			repor();
 			modelo.removeRow(prodVenda.getSelectedRow());
 			item = prodVenda.getRowCount();
 			prodVenda.setModel(modelo);
@@ -322,40 +370,42 @@ public class PontoDeVenda extends JDialog {
 	}
 
 	public void adicionarItem() {
-		int cod = 0;
-		long codBarras = 0;
-		String mercadoria = null;
-		float precoVenda = 0;
-		float quant = 0;
-		int pos = 0;
-		for (int i = 0; i < listMerc.size(); i++) {
-			if (listMerc.get(i).getCodBarras() == Long.parseLong(txtCodBarras.getText())) {
-				cod = listMerc.get(i).getId();
-				codBarras = listMerc.get(i).getCodBarras();
-				mercadoria = listMerc.get(i).getMercadoria();
-				precoVenda = listMerc.get(i).getPrecoVenda();
-				quant = listMerc.get(i).getEstoque();
-				pos = i;
-			}
-		}
+		try {
+			quantidade = Float.parseFloat(txtQuant.getText());
+			Mercadoria merc = new ControlerVenda().consultaMercVenda(Long.parseLong(txtCodBarras.getText()),
+					quantidade);
+			precoMerc = merc.getPrecoVenda();
+			precoTotal = Float.parseFloat(txtQuant.getText()) * precoMerc;
 
-		quantidade = Float.parseFloat(txtQuant.getText());
-		precoTotal = Float.parseFloat(txtQuant.getText()) * precoVenda;
-		precoMerc = precoVenda;
-		if (precoMerc <= 0) {
-			JOptionPane.showMessageDialog(null, "Mercadoria com preço de venda zerado não pode ser vendida");
-		} else if (quant < quantidade) {
-			JOptionPane.showMessageDialog(null, "A quantidade a ser vendida está maior do que o estoque");
-			txtCodBarras.setText(null);
-			txtQuant.setText("1");
-		} else {
-			modelo.addRow(new Object[] { ++item, cod, codBarras, mercadoria, quantidade, precoMerc, precoTotal });
+			modelo.addRow(new Object[] { ++item, merc.getId(), merc.getCodBarras(), merc.getMercadoria(), quantidade,
+					precoMerc, precoTotal });
 			txtCodBarras.setText(null);
 			txtQuant.setText("1");
 			lblStatus.setText("Status: Venda em andamento");
 			total += precoTotal;
 			lblTotal.setText("TOTAL: " + total);
-			listMerc.get(pos).setEstoque(listMerc.get(pos).getEstoque() - quantidade);
+
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MercadoriaSemEstoqueException e) {
+			JOptionPane.showMessageDialog(null, "A quantidade a ser vendida está maior do que o estoque", "AVISO",
+					JOptionPane.INFORMATION_MESSAGE);
+			txtCodBarras.setText(null);
+			txtQuant.setText("1");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NenhumaMercadoriaCadastradaException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
+		} catch (MercadoriaSemPrecoException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
@@ -364,6 +414,7 @@ public class PontoDeVenda extends JDialog {
 			while (prodVenda.getRowCount() > 0) {
 				modelo.removeRow(0);
 			}
+			repor();
 			prodVenda.setModel(modelo);
 			lblTotal.setText("TOTAL:");
 			lblStatus.setText("Status: Caixa Livre");
@@ -396,7 +447,7 @@ public class PontoDeVenda extends JDialog {
 					mercFech.add(merc);
 				}
 				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), "", idCliente, "",
-						JDateField.getDateHora(), mercFech, total, 0, 0, 0, 0);
+						JDateField.getDateHoraStatic(), mercFech, total, 0, 0, 0, 0);
 				new PontoDeVendaFecharVenda(venda).setVisible(true);
 			} catch (ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());
@@ -404,7 +455,38 @@ public class PontoDeVenda extends JDialog {
 				JOptionPane.showMessageDialog(null, e.getMessage());
 			} catch (IOException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());
+			} catch (NenhumaMercadoriaCadastradaException e) {
+				JOptionPane.showMessageDialog(null, e.getMessage());
 			}
+		}
+	}
+
+	public void repor() {
+		List<Mercadoria> tableMercRepor = new ArrayList<>();
+		Mercadoria mercadoria;
+		if (prodVenda.getSelectedRow() > 0) {
+			mercadoria = new Mercadoria();
+			mercadoria.setId(Integer.parseInt(prodVenda.getValueAt(prodVenda.getSelectedRow(), 1).toString()));
+			mercadoria.setEstoque(Float.parseFloat(prodVenda.getValueAt(prodVenda.getSelectedRow(), 4).toString()));
+			tableMercRepor.add(mercadoria);
+		} else {
+			for (int i = 0; i < prodVenda.getRowCount(); i++) {
+				mercadoria = new Mercadoria();
+				mercadoria.setId(Integer.parseInt(prodVenda.getValueAt(i, 1).toString()));
+				mercadoria.setEstoque(Float.parseFloat(prodVenda.getValueAt(i, 4).toString()));
+				tableMercRepor.add(mercadoria);
+			}
+		}
+		try {
+			new ControlerVenda().cancelVenda(tableMercRepor);
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (NenhumaMercadoriaCadastradaException e) {
+			e.printStackTrace();
 		}
 	}
 }

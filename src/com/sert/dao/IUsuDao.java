@@ -11,7 +11,7 @@ public interface IUsuDao {
 	public List<Usuario> listar() throws SQLException;
 	public void atualizar(Usuario usu) throws SQLException;
 	public void excluir(int id) throws SQLException;
-	//public Usuario consulta() throws SQLException;
+	public Usuario consulta(String login, String senha) throws SQLException;
 	public int confereId()throws SQLException;
 	
 }

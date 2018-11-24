@@ -144,6 +144,7 @@ public class Banner extends JFrame {
 					}
 				}
 			};
+			conThread.start();
 		case 1:
 			conThread = new Thread() {
 				@Override

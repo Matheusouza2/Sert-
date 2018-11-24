@@ -1,8 +1,8 @@
 package com.sert.controler;
 
 public class UsuLogado {
-	public static int id;
-	public static String nome;
+	private static int id;
+	private static String nome;
 	
 	public static int getId() {
 		return id;

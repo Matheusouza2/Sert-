@@ -4,6 +4,6 @@ public class MercadoriaSemPrecoException extends Exception {
 	private static final long serialVersionUID = 1L;
 	
 	public MercadoriaSemPrecoException() {
-		super("A mercadoria n„o tem preÁo de venda");
+		super("A mercadoria n√£o tem pre√ßo de venda");
 	}
 }
