@@ -385,6 +385,9 @@ public class PontoDeVendaFecharVenda extends JDialog {
 			}
 			try {
 				new ControlerVenda().finalizarVenda(vendaFinal);
+				JOptionPane.showMessageDialog(null, "Venda realizada com sucesso!", "VENDA FINALIZADA", JOptionPane.WARNING_MESSAGE);
+				this.dispose();
+				PontoDeVenda.liberarCaixaVenda();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {

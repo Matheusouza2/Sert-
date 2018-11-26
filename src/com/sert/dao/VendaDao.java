@@ -46,7 +46,7 @@ public class VendaDao implements IVendasDao {
 
 	@Override
 	public List<Venda> listarVendas() throws SQLException {
-		String sql = "SELECT v.id, f.nome as func_nome, cl.nome as client_nome, v.data_venda, merc.id as merc_id, merc.cod_barras, merc.nome_mercadoria, v.quantidade, v.valor_un, v.dinheiro, v.val_dinheiro, v.cartao, v.val_cartao FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id INNER JOIN clientes cl ON v.cliente = cl.id INNER JOIN cad_mercadorias merc ON v.idMerc = merc.id ORDER BY v.id ASC";
+		String sql = "SELECT v.id, f.nome as func_nome, cl.nome as cliente_nome, v.data_venda, merc.id as merc_id, merc.cod_barras, merc.nome_mercadoria, v.quantidade, v.valor_un, v.dinheiro, v.val_dinheiro, v.cartao, v.val_cartao FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id INNER JOIN clientes cl ON v.cliente = cl.id INNER JOIN cad_mercadorias merc ON v.idMerc = merc.id ORDER BY v.id ASC";
 		listVenda = new ArrayList<>();
 		listMercVenda = new ArrayList<>();
 		PreparedStatement statement = con.prepareStatement(sql);
@@ -57,16 +57,17 @@ public class VendaDao implements IVendasDao {
 			venda.setId(resultSet.getInt("id"));
 			venda.setVendedor(resultSet.getString("func_nome"));
 			venda.setCliente(resultSet.getString("cliente_nome"));
-			venda.setDataVenda(resultSet.getString("dataVenda"));
+			venda.setDataVenda(resultSet.getString("data_venda"));
 			venda.setDinheiro(resultSet.getInt("dinheiro"));
-			venda.setValDInheiro(resultSet.getFloat("valDinheiro"));
+			venda.setValDInheiro(resultSet.getFloat("val_dinheiro"));
 			venda.setCartao(resultSet.getInt("cartao"));
-			venda.setValCartao(resultSet.getFloat("valCartao"));
+			venda.setValCartao(resultSet.getFloat("val_cartao"));
+			venda.setValTotal(venda.getValCartao()+venda.getValDInheiro());
 			mercadoria.setId(resultSet.getInt("merc_id"));
 			mercadoria.setCodBarras(resultSet.getLong("cod_barras"));
 			mercadoria.setMercadoria(resultSet.getString("nome_mercadoria"));
 			mercadoria.setEstoque(resultSet.getFloat("quantidade"));
-			mercadoria.setPrecoVenda(resultSet.getFloat("valorUn"));
+			mercadoria.setPrecoVenda(resultSet.getFloat("valor_un"));
 			listMercVenda.add(mercadoria);
 			venda.setMercadorias(listMercVenda);
 			listVenda.add(venda);

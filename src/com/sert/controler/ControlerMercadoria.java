@@ -22,7 +22,7 @@ public class ControlerMercadoria {
 	}
 
 	public void cadastrarMercadoria(Mercadoria mercadoria) throws SQLException, CodBarrasJaCadastradoException, MercadoriaNaoEncontradaException {
-		if (consultaMercadoriaCad(mercadoria.getCodBarras()) == null) {
+		if (consultaMercadoriaCad(mercadoria.getCodBarras()).getCodBarras() == 0) {
 			mercadoriaDao.cadastro(mercadoria);
 		} else {
 			throw new CodBarrasJaCadastradoException();
@@ -82,6 +82,13 @@ public class ControlerMercadoria {
 	public void entradaMercadoria(float estoque, long codBarras) throws SQLException, MercadoriaNaoEncontradaException{
 		Mercadoria merc = consultaMercadoria(codBarras);
 		estoque += merc.getEstoque();
+		mercadoriaDao.entradaNotaEstoque(estoque, codBarras);
+	}
+	
+	public void cadastrarMercadoriaNf(Mercadoria mercadoria) throws SQLException{
+		mercadoriaDao.cadastro(mercadoria);
+	}
+	public void saidaMercadoria(float estoque, long codBarras) throws SQLException{
 		mercadoriaDao.entradaNotaEstoque(estoque, codBarras);
 	}
 }

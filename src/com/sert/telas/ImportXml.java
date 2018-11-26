@@ -166,41 +166,42 @@ public class ImportXml extends JDialog {
 		btnSalvar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Aguarde aguarde = new Aguarde();
-				// aguarde.setVisible(true);
-				// new SwingWorker() {
-				// @Override
-				// public Object doInBackground() throws Exception {
-				try {
-					recuperaNota();
-					confirmarCadastro();
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NenhumaMercadoriaCadastradaException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (CodBarrasJaCadastradoException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (MercadoriaNaoEncontradaException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				// return null;
-				// }
-				//
-				// @Override
-				// protected void done() {
-				// aguarde.dispose();
-				// }
-				// }.execute();
+				Aguarde aguarde = new Aguarde();
+
+				new SwingWorker() {
+					@Override
+					public Object doInBackground() throws Exception {
+						aguarde.setVisible(true);
+						try {
+							recuperaNota();
+							confirmarCadastro();
+						} catch (ClassNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (NenhumaMercadoriaCadastradaException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (CodBarrasJaCadastradoException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (MercadoriaNaoEncontradaException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						return null;
+					}
+
+					@Override
+					protected void done() {
+						aguarde.setVisible(false);
+					}
+				}.execute();
 			}
 
 		});
@@ -577,15 +578,14 @@ public class ImportXml extends JDialog {
 				mercadoriaImport = new Mercadoria();
 				mercadoriaImport.setMercadoria(table.getValueAt(i, 1).toString());
 				mercadoriaImport.setCodBarras(nfeXml.getMercadorias().get(i).getCodBarras());
-				mercadoriaImport.setDataCadastro(new JDateField().getDate());
+				mercadoriaImport.setDataCadastro(JDateField.getDate());
 				mercadoriaImport.setUnd(nfeXml.getMercadorias().get(i).getUnd());
 				mercadoriaImport.setPrecoCompra(Float.parseFloat(table.getValueAt(i, 2).toString().replace(",", ".")));
 				mercadoriaImport.setUsuCad(UsuLogado.getId());
 				mercadoriaImport.setEstoque(Float.parseFloat(table.getValueAt(i, 3).toString().replace(",", "."))
 						* Float.parseFloat(table.getValueAt(i, 9).toString().replace(",", ".")));
-				if (table.getValueAt(i, 6).toString().equals("C")) {
-					mercadoriaImport.setCadastrada(1);
-				}
+				mercadoriaImport.setCadastrada(table.getValueAt(i, 6).toString());
+
 				mercadoriaGravar.add(mercadoriaImport);
 			}
 		}
@@ -595,13 +595,13 @@ public class ImportXml extends JDialog {
 			IOException, CodBarrasJaCadastradoException, MercadoriaNaoEncontradaException {
 		controlerMercadoria = new ControlerMercadoria();
 		for (int i = 0; i < mercadoriaGravar.size(); i++) {
-			if (mercadoriaGravar.get(i).getCadastrada() == 0) {
+			if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
 				Mercadoria mercadoria = new Mercadoria(0, mercadoriaGravar.get(i).getCodBarras(),
 						mercadoriaGravar.get(i).getMercadoria(), 0, mercadoriaGravar.get(i).getDataCadastro(),
 						mercadoriaGravar.get(i).getUsuCad(), mercadoriaGravar.get(i).getUnd(),
 						mercadoriaGravar.get(i).getPrecoCompra(), UsuLogado.getNome(), "",
 						mercadoriaGravar.get(i).getEstoque());
-				controlerMercadoria.cadastrarMercadoria(mercadoria);
+				controlerMercadoria.cadastrarMercadoriaNf(mercadoria);
 			} else {
 				controlerMercadoria.entradaMercadoria(mercadoriaGravar.get(i).getEstoque(),
 						mercadoriaGravar.get(i).getCodBarras());

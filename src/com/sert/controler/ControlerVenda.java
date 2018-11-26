@@ -2,6 +2,7 @@ package com.sert.controler;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.sert.dao.IVendasDao;
@@ -23,7 +24,7 @@ public class ControlerVenda {
 	public ControlerVenda()
 			throws ClassNotFoundException, SQLException, IOException, NenhumaMercadoriaCadastradaException {
 		vendaDao = new VendaDao();
-		if (!mercadorias.isEmpty()) {
+		if (mercadorias == null || mercadorias.isEmpty()) {
 			mercadorias = new ControlerMercadoria().listarMercadorias();
 		}
 	}
@@ -36,7 +37,7 @@ public class ControlerVenda {
 			for (int j = 0; j < venda.getMercadorias().size(); j++) {
 				if (baixaEstoque.get(i).getCodBarras() == venda.getMercadorias().get(j).getCodBarras()) {
 					float estoque = baixaEstoque.get(i).getEstoque() - venda.getMercadorias().get(j).getEstoque();
-					new ControlerMercadoria().entradaMercadoria(estoque, venda.getMercadorias().get(j).getCodBarras());
+					new ControlerMercadoria().saidaMercadoria(estoque, venda.getMercadorias().get(j).getCodBarras());
 				}
 			}
 		}
@@ -54,17 +55,18 @@ public class ControlerVenda {
 		return vendaDao.getIdVenda();
 	}
 
-	public Mercadoria consultaMercVenda(long codBarras, float quant) throws MercadoriaSemEstoqueException, MercadoriaSemPrecoException {
-
+	public Mercadoria consultaMercVenda(long codBarras, float quant) throws MercadoriaSemEstoqueException, MercadoriaSemPrecoException{
+		Mercadoria mercadoria = null;
 		for (int i = 0; i < mercadorias.size(); i++) {
-			Mercadoria mercadoria = new Mercadoria();
-			mercadoria.setId(mercadorias.get(i).getId());
-			mercadoria.setCodBarras(mercadorias.get(i).getCodBarras());
-			mercadoria.setMercadoria(mercadorias.get(i).getMercadoria());
-			mercadoria.setPrecoVenda(mercadorias.get(i).getPrecoVenda());
+			System.out.println(mercadorias.get(i).getMercadoria());
 			if (codBarras == mercadorias.get(i).getCodBarras()) {
-				if(mercadorias.get(i).getPrecoVenda() != 0) {
+				if(mercadorias.get(i).getPrecoVenda() > 0) {
 					if (mercadorias.get(i).getEstoque() >= quant) {
+						mercadoria = new Mercadoria();
+						mercadoria.setId(mercadorias.get(i).getId());
+						mercadoria.setCodBarras(mercadorias.get(i).getCodBarras());
+						mercadoria.setMercadoria(mercadorias.get(i).getMercadoria());
+						mercadoria.setPrecoVenda(mercadorias.get(i).getPrecoVenda());
 						mercadorias.get(i).setEstoque(mercadorias.get(i).getEstoque() - quant);
 						return mercadoria;
 					} else {
@@ -76,7 +78,7 @@ public class ControlerVenda {
 				
 			}
 		}
-		return null;
+		return mercadoria;
 	}
 
 	public void cancelVenda(List<Mercadoria> merc) {
@@ -87,5 +89,9 @@ public class ControlerVenda {
 				}
 			}
 		}
+	}
+	
+	public void atualizarCadastros() throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException{
+		mercadorias = new ControlerMercadoria().listarMercadorias();
 	}
 }

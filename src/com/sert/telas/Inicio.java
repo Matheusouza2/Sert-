@@ -3,8 +3,12 @@ package com.sert.telas;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import com.sert.controler.ControlerFuncCaixa;
+import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
+import com.sert.entidades.Caixa;
+import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -18,6 +22,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -47,7 +53,7 @@ public class Inicio extends JDialog {
 	private JLabel lblBanner;
 	private JLabel lblDataHora;
 	private JLabel lblLegenda;
-	
+
 	public Inicio() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo(null);
@@ -61,9 +67,7 @@ public class Inicio extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
-		UsuLogado.setId(1);
-		UsuLogado.setNome("Márcio");
+
 		panelButtons = new JPanel();
 		panelButtons.setBackground(new Color(0, 0, 153));
 		panelButtons.setBounds(10, 11, 1344, 113);
@@ -110,7 +114,29 @@ public class Inicio extends JDialog {
 		btnVendas = new JButton();
 		btnVendas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new PontoDeVenda().setVisible(true);
+
+				try {
+					Caixa caixa = new ControlerFuncCaixa().confereCaixa();
+
+//					if (caixa.getDataCaixaAbertura() == null) {
+//						new FuncCaixa(0).setVisible(true);
+//					} else {
+						new ControlerVenda().atualizarCadastros();
+						new PontoDeVenda().setVisible(true);
+					//}
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NenhumaMercadoriaCadastradaException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnVendas.setBackground(new Color(255, 102, 0));
@@ -123,6 +149,7 @@ public class Inicio extends JDialog {
 		btnDashboard.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new OpcDashBoard().setVisible(true);
+
 			}
 		});
 		btnDashboard.setBackground(new Color(51, 255, 0));
@@ -202,7 +229,7 @@ public class Inicio extends JDialog {
 			}
 		});
 
-		lblBemVindoa = new JLabel("Bem vindo (a): "+UsuLogado.getNome());
+		lblBemVindoa = new JLabel("Bem vindo (a): " + UsuLogado.getNome());
 		lblBemVindoa.setForeground(Color.WHITE);
 		lblBemVindoa.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblBemVindoa.setBounds(1066, 484, 268, 14);
@@ -213,7 +240,7 @@ public class Inicio extends JDialog {
 		lblBanner.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/BannerInicio.png")));
 		lblBanner.setBounds(0, 0, 1344, 590);
 		panelUsados.add(lblBanner);
-		
+
 		lblLegenda = new JLabel("F2 - Pesquisa preço");
 		lblLegenda.setBounds(10, 11, 258, 14);
 		panelUsados.add(lblLegenda);

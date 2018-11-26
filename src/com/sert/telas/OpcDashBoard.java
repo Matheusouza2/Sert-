@@ -67,6 +67,15 @@ public class OpcDashBoard extends JDialog {
 		btnListaDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
 		btnListaDeClientes.setBounds(10, 92, 248, 21);
 		getContentPane().add(btnListaDeClientes);
+		btnListaDeClientes.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new RelatorioVendas().setVisible(true);
+				
+			}
+			
+		});
 		
 		JButton btnListaDeFornecedores = new JButton("auditoria");
 		btnListaDeFornecedores.setBackground(new Color(255, 255, 0));

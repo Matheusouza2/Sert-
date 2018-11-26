@@ -27,6 +27,7 @@ import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.Venda;
+import com.sert.exceptions.MercadoriaNaoEncontradaException;
 import com.sert.exceptions.MercadoriaSemEstoqueException;
 import com.sert.exceptions.MercadoriaSemPrecoException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
@@ -56,7 +57,7 @@ public class PontoDeVenda extends JDialog {
 
 	private JNumberField txtCodBarras;
 	private JTextField txtQuant;
-	private JTable prodVenda;
+	private static JTable prodVenda;
 
 	private JLabel lblCodDeBarras;
 	private JLabel lblQuantidade;
@@ -65,14 +66,14 @@ public class PontoDeVenda extends JDialog {
 	private JLabel lblFFechar;
 	private JLabel lblFCancelarItem;
 	private JLabel lblFCancelarVenda;
-	private JLabel lblTotal;
+	private static JLabel lblTotal;
 	private JLabel lblOperador;
-	private JLabel lblStatus;
+	private static JLabel lblStatus;
 	private JLabel lblCliente;
 	private JLabel lblCpf;
 
 	private JScrollPane spProdutos;
-	private DefaultTableModel modelo;
+	private static DefaultTableModel modelo;
 
 	float quantidade;
 	float precoMerc;
@@ -255,51 +256,38 @@ public class PontoDeVenda extends JDialog {
 		prodVenda.getColumnModel().getColumn(2).setPreferredWidth(200);
 		prodVenda.getColumnModel().getColumn(3).setPreferredWidth(800);
 
-		JProgressBar progressBar = new JProgressBar();
-		progressBar.setForeground(new Color(255, 255, 0));
-		progressBar.setBounds(593, 17, 218, 35);
-		panelMother.add(progressBar);
-		progressBar.setStringPainted(true);
-		progressBar.isIndeterminate();
-		progressBar.setString("Aguarde...");
-		Thread t2 = new Thread();
-		Thread t1 = new Thread(new Runnable() {
+		Aguarde aguarde = new Aguarde();
+		new SwingWorker() {
 			@Override
-			public void run() {
+			protected Object doInBackground() throws Exception {
+				panelMother.add(aguarde);
+				aguarde.setVisible(true);
+
 				try {
-					
 					controlerVenda = new ControlerVenda();
-				} catch (ClassNotFoundException e) {
-					e.printStackTrace();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (NenhumaMercadoriaCadastradaException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
-		
-
-		t2 = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-
-					Aguarde aguarde = new Aguarde();
-					aguarde.setVisible(true);
-					
-					aguarde.setVisible(false);
-				} catch (InterruptedException e) {
+				} catch (ClassNotFoundException e1) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NenhumaMercadoriaCadastradaException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
+
+				return null;
 			}
-		});
-		t1.start();
-		t2.start();
+
+			@Override
+			protected void done() {
+				aguarde.setVisible(false);
+				super.done();
+			}
+		}.execute();
 
 		txtCodBarras.addKeyListener(new KeyAdapter() {
 			@Override
@@ -374,17 +362,24 @@ public class PontoDeVenda extends JDialog {
 			quantidade = Float.parseFloat(txtQuant.getText());
 			Mercadoria merc = new ControlerVenda().consultaMercVenda(Long.parseLong(txtCodBarras.getText()),
 					quantidade);
-			precoMerc = merc.getPrecoVenda();
-			precoTotal = Float.parseFloat(txtQuant.getText()) * precoMerc;
+			if (merc == null) {
+				txtCodBarras.setText(null);
+				txtQuant.setText("1");
+				JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
+						JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				precoMerc = merc.getPrecoVenda();
+				precoTotal = Float.parseFloat(txtQuant.getText()) * precoMerc;
 
-			modelo.addRow(new Object[] { ++item, merc.getId(), merc.getCodBarras(), merc.getMercadoria(), quantidade,
-					precoMerc, precoTotal });
-			txtCodBarras.setText(null);
-			txtQuant.setText("1");
-			lblStatus.setText("Status: Venda em andamento");
-			total += precoTotal;
-			lblTotal.setText("TOTAL: " + total);
+				modelo.addRow(new Object[] { ++item, merc.getId(), merc.getCodBarras(), merc.getMercadoria(),
+						quantidade, String.format("%.2f",precoMerc), String.format("%.2f",precoTotal) });
+				txtCodBarras.setText(null);
+				txtQuant.setText("1");
+				lblStatus.setText("Status: Venda em andamento");
+				total += precoTotal;
+				lblTotal.setText("TOTAL: " + String.format("%.2f",total));
 
+			}
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -397,14 +392,16 @@ public class PontoDeVenda extends JDialog {
 			txtCodBarras.setText(null);
 			txtQuant.setText("1");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
 		} catch (NenhumaMercadoriaCadastradaException e) {
+			txtCodBarras.setText(null);
+			txtQuant.setText("1");
 			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
 		} catch (MercadoriaSemPrecoException e) {
+			txtCodBarras.setText(null);
+			txtQuant.setText("1");
 			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
@@ -443,11 +440,11 @@ public class PontoDeVenda extends JDialog {
 					merc.setCodBarras(Long.parseLong(prodVenda.getValueAt(i, 2).toString()));
 					merc.setMercadoria(prodVenda.getValueAt(i, 3).toString());
 					merc.setEstoque(Float.parseFloat(prodVenda.getValueAt(i, 4).toString()));
-					merc.setPrecoVenda(Float.parseFloat(prodVenda.getValueAt(i, 5).toString()));
+					merc.setPrecoVenda(Float.parseFloat(prodVenda.getValueAt(i, 5).toString().replace(",", ".")));
 					mercFech.add(merc);
 				}
 				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), "", idCliente, "",
-						JDateField.getDateHoraStatic(), mercFech, total, 0, 0, 0, 0);
+						JDateField.getDateHoraStatic(), mercFech, Float.parseFloat(String.format("%.2f",total).replace(",", ".")), 0, 0, 0, 0);
 				new PontoDeVendaFecharVenda(venda).setVisible(true);
 			} catch (ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());
@@ -487,6 +484,19 @@ public class PontoDeVenda extends JDialog {
 			e.printStackTrace();
 		} catch (NenhumaMercadoriaCadastradaException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public static void liberarCaixaVenda() {
+		if (prodVenda.getRowCount() > 0) {
+			while (prodVenda.getRowCount() > 0) {
+				modelo.removeRow(0);
+			}
+			prodVenda.setModel(modelo);
+			lblTotal.setText("TOTAL:");
+			lblStatus.setText("Status: Caixa Livre");
+			item = 0;
+			total = 0;
 		}
 	}
 }

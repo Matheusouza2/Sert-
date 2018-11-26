@@ -13,7 +13,7 @@ public class Mercadoria {
 	private String usuAlt;
 	private String dataAlt;
 	private float estoque;
-	private int cadastrada;
+	private String cadastrada;
 
 	public Mercadoria() {
 	}
@@ -122,11 +122,11 @@ public class Mercadoria {
 		this.estoque = estoque;
 	}
 
-	public int getCadastrada() {
+	public String getCadastrada() {
 		return cadastrada;
 	}
 
-	public void setCadastrada(int cadastrada) {
+	public void setCadastrada(String cadastrada) {
 		this.cadastrada = cadastrada;
 	}
 

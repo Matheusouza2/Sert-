@@ -9,13 +9,21 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 import javax.swing.border.TitledBorder;
 
+import com.sert.controler.ControlerFuncCaixa;
+import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JNumberFormatField;
+import com.sert.entidades.Caixa;
+import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.UIManager;
 import javax.swing.SwingConstants;
@@ -44,22 +52,6 @@ public class FuncCaixa extends JDialog {
 	private JNumberFormatField txtIncosistencia;
 	private JNumberFormatField txtAbertCaixa;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			FuncCaixa dialog = new FuncCaixa(1);
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Create the dialog.
-	 */
 	public FuncCaixa(int opcao) {
 		setBounds(100, 100, 497, 388);
 		getContentPane().setLayout(new BorderLayout());
@@ -114,6 +106,34 @@ public class FuncCaixa extends JDialog {
 		btnAbrirCaixa.setBackground(new Color(0, 255, 0));
 		btnAbrirCaixa.setBounds(149, 206, 102, 23);
 		btnAbrirCaixa.setBorderPainted(false);
+		btnAbrirCaixa.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Caixa caixa = new Caixa();
+					caixa.setDataCaixaAbertura(JDateField.getDateHoraStatic());
+					caixa.setValorAbertura(Float.parseFloat(txtDinheiroSis.getText().toString().replace(",", ".")));
+					caixa.setUsuAbertura(UsuLogado.getId());
+					caixa.setSituacao(1);
+					new ControlerFuncCaixa().abrirCaixa(caixa);
+					new ControlerVenda().atualizarCadastros();
+					new PontoDeVenda().setVisible(true);
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NenhumaMercadoriaCadastradaException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+
+		});
 		panel.add(btnAbrirCaixa);
 	}
 
@@ -205,5 +225,5 @@ public class FuncCaixa extends JDialog {
 		btnAbrirCaixa.setBounds(179, 270, 102, 23);
 		btnAbrirCaixa.setBorderPainted(false);
 		panel.add(btnAbrirCaixa);
-		}
+	}
 }

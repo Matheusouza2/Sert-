@@ -14,7 +14,7 @@ public class MercadoriaDao implements IMercadoriaDao {
 
 	private Connection con;
 	private List<Mercadoria> listaMercadoria;
-	private Mercadoria mercadoria;
+	private Mercadoria mercadoria = null;
 
 	public MercadoriaDao() throws ClassNotFoundException, SQLException, IOException {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
@@ -22,7 +22,7 @@ public class MercadoriaDao implements IMercadoriaDao {
 
 	@Override
 	public void cadastro(Mercadoria mercadoria) throws SQLException {
-		String sql = "INSERT INTO cad_mercadorias(nome_mercadoria, cod_barras, preco_venda, data_cadastro, unidade, preco_compra, usu_cad) VALUES (?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO cad_mercadorias(nome_mercadoria, cod_barras, preco_venda, data_cadastro, unidade, preco_compra, usu_cad, estoque) VALUES (?,?,?,?,?,?,?,?)";
 		PreparedStatement prepare = con.prepareStatement(sql);
 		prepare.setString(1, mercadoria.getMercadoria());
 		prepare.setLong(2, mercadoria.getCodBarras());
@@ -31,6 +31,7 @@ public class MercadoriaDao implements IMercadoriaDao {
 		prepare.setString(5, mercadoria.getUnd());
 		prepare.setFloat(6, mercadoria.getPrecoCompra());
 		prepare.setInt(7, mercadoria.getUsuCad());
+		prepare.setFloat(8, mercadoria.getEstoque());
 		prepare.execute();
 		prepare.close();
 
@@ -46,10 +47,10 @@ public class MercadoriaDao implements IMercadoriaDao {
 		while (resultado.next()) {
 			mercadoria = new Mercadoria();
 			mercadoria.setId(resultado.getInt("id"));
-			mercadoria.setMercadoria(resultado.getString("nome_mercadoria"));
+			mercadoria.setMercadoria(resultado.getString("nome_mercadoria").trim());
 			mercadoria.setCodBarras(resultado.getLong("cod_barras"));
 			mercadoria.setPrecoVenda(resultado.getFloat("preco_venda"));
-			mercadoria.setDataCadastro(resultado.getString("data_cadastro"));
+			mercadoria.setDataCadastro(resultado.getString("data_cadastro").trim());
 			mercadoria.setUnd(resultado.getString("unidade"));
 			mercadoria.setEstoque(resultado.getFloat("estoque"));
 			listaMercadoria.add(mercadoria);
@@ -88,14 +89,14 @@ public class MercadoriaDao implements IMercadoriaDao {
 		PreparedStatement prepare = con.prepareStatement(sql);
 		prepare.setLong(1, codBarras);
 		ResultSet resultado = prepare.executeQuery();
-
-		while (resultado.next()) {
+		mercadoria = new Mercadoria();
+		if (resultado.next()) {
 			mercadoria = new Mercadoria();
 			mercadoria.setId(resultado.getInt("id"));
-			mercadoria.setMercadoria(resultado.getString("nome_mercadoria"));
+			mercadoria.setMercadoria(resultado.getString("nome_mercadoria").trim());
 			mercadoria.setCodBarras(resultado.getLong("cod_barras"));
 			mercadoria.setPrecoVenda(resultado.getFloat("preco_venda"));
-			mercadoria.setDataCadastro(resultado.getString("data_cadastro"));
+			mercadoria.setDataCadastro(resultado.getString("data_cadastro").trim());
 			mercadoria.setUnd(resultado.getString("unidade"));
 			mercadoria.setDataAlt(resultado.getString("data_alteracao"));
 			mercadoria.setPrecoCompra(resultado.getFloat("preco_compra"));
@@ -103,6 +104,7 @@ public class MercadoriaDao implements IMercadoriaDao {
 			mercadoria.setUsuAlt(resultado.getString("usu_edit"));
 			mercadoria.setEstoque(resultado.getFloat("estoque"));
 		}
+		resultado.close();
 		return mercadoria;
 	}
 
@@ -125,6 +127,6 @@ public class MercadoriaDao implements IMercadoriaDao {
 		preparedStatement.setFloat(1, estoque);
 		preparedStatement.setLong(2, codBarras);
 		preparedStatement.executeUpdate();
-		
+
 	}
 }

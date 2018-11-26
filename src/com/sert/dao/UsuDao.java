@@ -47,8 +47,8 @@ public class UsuDao implements IUsuDao {
 
 		while (result.next()) {
 			usu = new Usuario();
-			usu.setNome(result.getString("nome"));
-			usu.setSenha(result.getString("senha"));
+			usu.setNome(result.getString("nome").trim());
+			usu.setSenha(result.getString("senha").trim());
 			listUsu.add(usu);
 		}
 		return listUsu;
@@ -89,11 +89,20 @@ public class UsuDao implements IUsuDao {
 
 	@Override
 	public Usuario consulta(String login, String senha) throws SQLException {
-		String sql = "SELECT * FROM funcionario WHERE login=? AND senha=?";
+		String sql = "SELECT * FROM funcionario WHERE nome=? AND senha=?";
 		PreparedStatement preparador = con.prepareStatement(sql);
+		preparador.setString(1, login);
+		preparador.setString(2, senha);
 		ResultSet result = preparador.executeQuery();
-		Usuario usuario = new Usuario(result.getInt("id"), result.getString("nome"), result.getString("senha"));
-
+		
+		Usuario usuario = new Usuario();
+		
+		if(result.next()){
+			usuario.setId(result.getInt("id"));
+			usuario.setNome(result.getString("nome").trim());
+			usuario.setSenha(result.getString("senha").trim());
+		}
+		
 		return usuario;
 	}
 }
