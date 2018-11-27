@@ -8,19 +8,23 @@ import javax.swing.border.EmptyBorder;
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.Seguranca;
 import com.sert.controler.UsuLogado;
+import com.sert.editableFields.AutoCompletion;
 import com.sert.entidades.Usuario;
+import com.sert.exceptions.NenhumUsuCadException;
 import com.sert.exceptions.UsuarioNaoCadastradoException;
 
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.JSeparator;
 import javax.swing.JPasswordField;
@@ -43,7 +47,7 @@ public class Entrada extends JFrame {
 	private JLabel lblSenha;
 	private JLabel lblVersao;
 
-	private JTextField txtUser;
+	private JComboBox<String> txtUser;
 	private JPasswordField pwdUsu;
 
 	private JButton btnEntrar;
@@ -90,10 +94,33 @@ public class Entrada extends JFrame {
 		contentPane.add(panelLogin);
 		panelLogin.setLayout(null);
 
-		txtUser = new JTextField();
+		txtUser = new JComboBox<String>();
+		txtUser.setEditable(true);
+		txtUser.setVisible(true);
 		txtUser.setBounds(107, 160, 146, 28);
 		panelLogin.add(txtUser);
-		txtUser.setColumns(10);
+		
+		List<Usuario> usuList;
+		try {
+			usuList = new ControlerUsuario().listarUsuario();
+			for(int i = 0; i < usuList.size(); i++) {
+		    	   txtUser.addItem(usuList.get(i).getNome());
+		    	   txtUser.setSelectedItem(null);
+		       }
+		       AutoCompletion.enable(txtUser);
+		} catch (ClassNotFoundException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (SQLException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (NenhumUsuCadException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		lblUsuario = new JLabel("Usuario");
 		lblUsuario.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -163,7 +190,7 @@ public class Entrada extends JFrame {
 	}
 
 	private void entrada() throws ClassNotFoundException, UsuarioNaoCadastradoException, SQLException, IOException {
-		String login = txtUser.getText();
+		String login = txtUser.getSelectedItem().toString();
 		String senha = new String(pwdUsu.getPassword());
 
 		if (senha.equals("s3rtc0nfig")) {

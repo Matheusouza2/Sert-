@@ -22,19 +22,16 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerMercadoria;
-import com.sert.editableFields.AutoCompleteDecoratorCombo;
+import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Mercadoria;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -82,8 +79,8 @@ public class CadNotas extends JDialog {
 	private List<Mercadoria> mercList;
 
 	private JComboBox cbFornecedor;
-	private JComboBox cbMercDesc;
-	private JComboBox cbMercRef;
+	private JComboBox<String> cbMercDesc;
+	private JComboBox<String> cbMercRef;
 
 	private JButton btnRemoveRow;
 	private JButton btnAddRow;
@@ -166,47 +163,41 @@ public class CadNotas extends JDialog {
 		panelForm.setLayout(null);
 
 		cbFornecedor = new JComboBox();
-		cbFornecedor.setBounds(93, 8, 414, 20);
-		AutoCompleteDecoratorCombo.decorate(cbFornecedor);
-		DefaultComboBoxModel modelForn = (DefaultComboBoxModel) cbFornecedor.getModel();
-		modelForn.removeAllElements();
-		cbFornecedor.addItem("");
-		// for (int i = 0; i < mercList.size(); i++) {
-		// FOR PARA LISTAR OS FORNECEDORES NO COMBOBOX
-		// }
-		// cbMercDesc.setModel(modelForn);
+//		try {
+//			mercList = new ControlerMercadoria().listarMercadorias();
+//			for (int i = 0; i < mercList.size(); i++) {
+//				cbFornecedor.addItem(mercList.get(i).getMercadoria());
+//			}
+//			AutoCompletion.enable(cbMercDesc);
+//		} catch (ClassNotFoundException | NenhumaMercadoriaCadastradaException | SQLException | IOException e1) {
+//			e1.printStackTrace();
+//		}
 		panelForm.add(cbFornecedor);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 120, 1260, 460);
 		panelForm.add(scrollPane);
 
-		cbMercDesc = new JComboBox();
-		AutoCompleteDecoratorCombo.decorate(cbMercDesc);
-		DefaultComboBoxModel model = (DefaultComboBoxModel) cbMercDesc.getModel();
-		model.removeAllElements();
+		cbMercDesc = new JComboBox<String>();
 		cbMercDesc.addItem("");
 		try {
 			mercList = new ControlerMercadoria().listarMercadorias();
 			for (int i = 0; i < mercList.size(); i++) {
-				model.addElement(mercList.get(i).getMercadoria());
+				cbMercDesc.addItem(mercList.get(i).getMercadoria());
 			}
-			cbMercDesc.setModel(model);
+			AutoCompletion.enable(cbMercDesc);
 		} catch (ClassNotFoundException | NenhumaMercadoriaCadastradaException | SQLException | IOException e1) {
 			e1.printStackTrace();
 		}
-
-		cbMercRef = new JComboBox();
-		AutoCompleteDecoratorCombo.decorate(cbMercRef);
-		DefaultComboBoxModel model1 = (DefaultComboBoxModel) cbMercRef.getModel();
-		model1.removeAllElements();
+		
+		cbMercRef = new JComboBox<String>();
 		cbMercRef.addItem("");
 		try {
 			mercList = new ControlerMercadoria().listarMercadorias();
 			for (int i = 0; i < mercList.size(); i++) {
-				model1.addElement(mercList.get(i).getCodBarras());
+				cbMercRef.addItem(String.valueOf(mercList.get(i).getCodBarras()));
 			}
-			cbMercRef.setModel(model1);
+			AutoCompletion.enable(cbMercDesc);
 		} catch (ClassNotFoundException | NenhumaMercadoriaCadastradaException | SQLException | IOException e1) {
 			e1.printStackTrace();
 		}

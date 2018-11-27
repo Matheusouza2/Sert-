@@ -39,7 +39,7 @@ public class UsuDao implements IUsuDao {
 
 	@Override
 	public List<Usuario> listar() throws SQLException {
-		String sql = "SELECT * FROM usuario";
+		String sql = "SELECT * FROM funcionario";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		ResultSet result = preparador.executeQuery();
 
