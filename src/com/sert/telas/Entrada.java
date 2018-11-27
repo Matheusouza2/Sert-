@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.sert.controler.ControlerUsuario;
-import com.sert.controler.Seguranca;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.AutoCompletion;
 import com.sert.entidades.Usuario;
@@ -99,15 +98,15 @@ public class Entrada extends JFrame {
 		txtUser.setVisible(true);
 		txtUser.setBounds(107, 160, 146, 28);
 		panelLogin.add(txtUser);
-		
+
 		List<Usuario> usuList;
 		try {
 			usuList = new ControlerUsuario().listarUsuario();
-			for(int i = 0; i < usuList.size(); i++) {
-		    	   txtUser.addItem(usuList.get(i).getNome());
-		    	   txtUser.setSelectedItem(null);
-		       }
-		       AutoCompletion.enable(txtUser);
+			for (int i = 0; i < usuList.size(); i++) {
+				txtUser.addItem(usuList.get(i).getNome());
+				txtUser.setSelectedItem(null);
+			}
+			AutoCompletion.enable(txtUser);
 		} catch (ClassNotFoundException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
