@@ -28,6 +28,7 @@ import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Venda;
 import com.sert.exceptions.MercadoriaNaoEncontradaException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
+import com.sert.impressao.PrintableVenda;
 
 import javax.swing.SwingConstants;
 import javax.swing.JRadioButton;
@@ -373,8 +374,8 @@ public class PontoDeVendaFecharVenda extends JDialog {
 	}
 
 	private void finalizarVenda() {
-		System.out.println(valorFinal);
-		if ((Float.parseFloat(txtDinheiro.getText().replace(",", "."))+ Float.parseFloat(txtCartao.getText().replace(",", "."))) >= valorFinal) {
+		if ((Float.parseFloat(txtDinheiro.getText().replace(",", "."))
+				+ Float.parseFloat(txtCartao.getText().replace(",", "."))) >= valorFinal) {
 			if (Float.parseFloat(txtDinheiro.getText().replace(",", ".")) > 0) {
 				vendaFinal.setDinheiro(1);
 				vendaFinal.setValDInheiro(Float.parseFloat(txtDinheiro.getText().replace(",", ".")));
@@ -384,8 +385,14 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				vendaFinal.setValCartao(Float.parseFloat(txtCartao.getText().replace(",", ".")));
 			}
 			try {
+				int opcao = JOptionPane.showConfirmDialog(null, "Deseja imprimir a venda? ", "Impressão",
+						JOptionPane.YES_NO_OPTION);
+				if (opcao == JOptionPane.YES_NO_OPTION) {
+					new PrintableVenda(vendaFinal);
+				}
 				new ControlerVenda().finalizarVenda(vendaFinal);
-				JOptionPane.showMessageDialog(null, "Venda realizada com sucesso!", "VENDA FINALIZADA", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Venda realizada com sucesso!", "VENDA FINALIZADA",
+						JOptionPane.WARNING_MESSAGE);
 				this.dispose();
 				PontoDeVenda.liberarCaixaVenda();
 			} catch (ClassNotFoundException e) {

@@ -25,23 +25,31 @@ public class VendaDao implements IVendasDao {
 
 	@Override
 	public void cadastrarVenda(Venda venda) throws SQLException {
-		String sql = "INSERT INTO public.vendas(id_venda, vendedor, cliente, data_venda, idmerc, quantidade, valor_un, dinheiro, val_dinheiro, cartao, val_cartao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
-		PreparedStatement statement = con.prepareStatement(sql);
-		for(int i = 0; i < venda.getMercadorias().size(); i++){
-			statement.setInt(1, venda.getId());
-			statement.setInt(2, venda.getVendedorCad());
-			statement.setInt(3, venda.getClienteCad());
-			statement.setString(4, venda.getDataVenda());
-			statement.setInt(5, venda.getMercadorias().get(i).getId());
-			statement.setFloat(6, venda.getMercadorias().get(i).getEstoque());
-			statement.setFloat(7, venda.getMercadorias().get(i).getPrecoVenda());
-			statement.setInt(8, venda.getDinheiro());
-			statement.setFloat(9, venda.getValDInheiro());
-			statement.setInt(10, venda.getCartao());
-			statement.setFloat(11, venda.getValCartao());
-			statement.execute();
-		}
+		String sql = "INSERT INTO venda_merc(id, id_merc, quantidade, valor_un) VALUES (?, ?, ?, ?);";
+		String sql2 = "INSERT INTO vendas(id, vendedor, cliente, data_venda, val_total, dinheiro, val_dinheiro, cartao, val_cartao)	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		
+		PreparedStatement statement = con.prepareStatement(sql2);
+		statement.setInt(1, venda.getId());
+		statement.setInt(2, venda.getVendedorCad());
+		statement.setInt(3, venda.getClienteCad());
+		statement.setString(4, venda.getDataVenda());
+		statement.setFloat(5, venda.getValTotal());
+		statement.setInt(6, venda.getDinheiro());
+		statement.setFloat(7, venda.getValDInheiro());
+		statement.setInt(8, venda.getCartao());
+		statement.setFloat(9, venda.getValCartao());
+		statement.execute();
 		statement.close();
+		
+		PreparedStatement statement2 = con.prepareStatement(sql);
+		for (int i = 0; i < venda.getMercadorias().size(); i++) {
+			statement2.setInt(1, venda.getId());
+			statement2.setInt(2, venda.getMercadorias().get(i).getId());
+			statement2.setFloat(3, venda.getMercadorias().get(i).getEstoque());
+			statement2.setFloat(4, venda.getMercadorias().get(i).getPrecoVenda());
+			statement2.execute();
+		}
+		statement2.close();
 	}
 
 	@Override
@@ -62,7 +70,7 @@ public class VendaDao implements IVendasDao {
 			venda.setValDInheiro(resultSet.getFloat("val_dinheiro"));
 			venda.setCartao(resultSet.getInt("cartao"));
 			venda.setValCartao(resultSet.getFloat("val_cartao"));
-			venda.setValTotal(venda.getValCartao()+venda.getValDInheiro());
+			venda.setValTotal(venda.getValCartao() + venda.getValDInheiro());
 			mercadoria.setId(resultSet.getInt("merc_id"));
 			mercadoria.setCodBarras(resultSet.getLong("cod_barras"));
 			mercadoria.setMercadoria(resultSet.getString("nome_mercadoria"));
@@ -96,7 +104,7 @@ public class VendaDao implements IVendasDao {
 	@Override
 	public int getIdVenda() throws SQLException {
 		int id = 0;
-		String sql = "SELECT last_value+1 as id_venda FROM vendas_id_seq";
+		String sql = "SELECT last_value+1 as id_venda FROM vendas_gera_id_seq";
 
 		PreparedStatement prepare = con.prepareStatement(sql);
 		ResultSet resultado = prepare.executeQuery();

@@ -1,5 +1,6 @@
 package com.sert.telas;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,16 +18,22 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.JPasswordField;
+import javax.swing.JRootPane;
 import javax.swing.SwingConstants;
 
 /**
@@ -68,6 +75,9 @@ public class Entrada extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		setIconImage(getIconImage());
+
+		listen();
 
 		panelBanner = new JPanel();
 		panelBanner.setBackground(new Color(0, 0, 128));
@@ -92,6 +102,7 @@ public class Entrada extends JFrame {
 		panelLogin.setBounds(210, 0, 340, 400);
 		contentPane.add(panelLogin);
 		panelLogin.setLayout(null);
+		
 
 		txtUser = new JComboBox<String>();
 		txtUser.setEditable(true);
@@ -122,19 +133,20 @@ public class Entrada extends JFrame {
 		}
 
 		lblUsuario = new JLabel("Usuario");
-		lblUsuario.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblUsuario.setBounds(157, 135, 46, 14);
+		lblUsuario.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblUsuario.setBounds(149, 135, 62, 14);
 		panelLogin.add(lblUsuario);
 
 		lblSenha = new JLabel("Senha");
-		lblSenha.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		lblSenha.setBounds(157, 225, 46, 14);
+		lblSenha.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblSenha.setBounds(153, 225, 54, 14);
 		panelLogin.add(lblSenha);
 
 		btnEntrar = new JButton("Entrar");
 		btnEntrar.setForeground(new Color(0, 0, 0));
 		btnEntrar.setBackground(Color.WHITE);
 		btnEntrar.setBounds(136, 325, 89, 23);
+		btnEntrar.setRequestFocusEnabled(true);
 		panelLogin.add(btnEntrar);
 		btnEntrar.addActionListener(new ActionListener() {
 			@Override
@@ -188,6 +200,23 @@ public class Entrada extends JFrame {
 		panelLogin.add(lblVersao);
 	}
 
+	private void listen() {
+
+		JRootPane escback = getRootPane();
+		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+				"ENTER");
+		escback.getRootPane().getActionMap().put("ENTER", new AbstractAction("ENTER") {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					entrada();
+				} catch (ClassNotFoundException | UsuarioNaoCadastradoException | SQLException | IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+
+	}
+
 	private void entrada() throws ClassNotFoundException, UsuarioNaoCadastradoException, SQLException, IOException {
 		String login = txtUser.getSelectedItem().toString();
 		String senha = new String(pwdUsu.getPassword());
@@ -206,5 +235,10 @@ public class Entrada extends JFrame {
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
+	}
+	
+	public final Image getIconImage(){
+		Image icone = Toolkit.getDefaultToolkit().getImage(Entrada.class.getResource("/com/sert/img/logo2.png"));
+		return icone;
 	}
 }

@@ -266,16 +266,12 @@ public class PontoDeVenda extends JDialog {
 				try {
 					controlerVenda = new ControlerVenda();
 				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				} catch (NenhumaMercadoriaCadastradaException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 

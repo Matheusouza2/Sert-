@@ -119,7 +119,7 @@ public class CadMercadoria extends JDialog {
 		contentPanel.add(panelBtn);
 		panelBtn.setLayout(null);
 
-		dataPrincipal = new JDateField().getDate();
+		dataPrincipal = JDateField.getDate();
 
 		btnSalvar = new JButton();
 		btnSalvar.setBackground(new Color(0, 255, 0));
@@ -160,7 +160,9 @@ public class CadMercadoria extends JDialog {
 							controlerMercadoria.alterarMercadoria(mercadoria);
 							JOptionPane.showMessageDialog(null, "Mercadoria alterada com sucesso", "Sucesso!",
 									JOptionPane.INFORMATION_MESSAGE);
+							ListarMercadorias.repagina();
 							dispose();
+							
 						}
 					}
 
@@ -331,7 +333,7 @@ public class CadMercadoria extends JDialog {
 				txtCodBarras.setText(String.valueOf(mercadoria.getCodBarras()));
 				txtDescricaoMerc.setText(mercadoria.getMercadoria().trim());
 				txtPrecoVenda.setText(String.format("%.2f", mercadoria.getPrecoVenda()));
-				cbUnd.setSelectedItem(mercadoria.getUnd());
+				cbUnd.setSelectedItem(mercadoria.getUnd().trim());
 				lblDataDeInclusao.setText("data de cadastro: " + mercadoria.getDataCadastro());
 				txtPrecoCompra.setText(String.format("%.2f", mercadoria.getPrecoCompra()));
 				lblEstoque.setText("Estoque: "+String.format("%.2f", mercadoria.getEstoque()));

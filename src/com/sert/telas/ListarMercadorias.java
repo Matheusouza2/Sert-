@@ -19,6 +19,14 @@ import javax.swing.table.DefaultTableModel;
 import com.sert.controler.ControlerMercadoria;
 import com.sert.entidades.Mercadoria;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
+import com.sert.tables.TableModelMerc;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.matchers.MatcherEditor;
+import ca.odell.glazedlists.swing.AdvancedTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
@@ -28,12 +36,15 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
+import javax.swing.JSeparator;
+
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
+ * 
  * @author Matheus Souza
  * @version 1.0.0
  * 
- * */
+ */
 public class ListarMercadorias extends JDialog {
 
 	private static final long serialVersionUID = 1L;
@@ -45,14 +56,19 @@ public class ListarMercadorias extends JDialog {
 	private JButton btnX;
 	private JButton btnExcluir;
 	private JButton btnEditar;
-	private JTable tabMerc;
+	private static JTable tabMerc;
 
-	private ControlerMercadoria controlerMercadoria;
+	private static ControlerMercadoria controlerMercadoria;
 
 	private DefaultTableModel modelo;
 	private JLabel lblListaDeMercadorias;
 	private JTextField textField;
-	
+	private JSeparator separator;
+	private JLabel lblProcurar;
+	private FilterList<Mercadoria> textFilteredIssues;
+	private static BasicEventList<Mercadoria> mercadorias;
+	private static List<Mercadoria> preencheTable;
+
 	public ListarMercadorias() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 834, 590);
@@ -107,13 +123,22 @@ public class ListarMercadorias extends JDialog {
 		btnExcluir.setBackground(new Color(255, 0, 0));
 		btnExcluir.setBorderPainted(false);
 		panelBtn.add(btnExcluir);
-		
-		JLabel lblProcurar = new JLabel("Procurar:");
-		lblProcurar.setBounds(475, 88, 59, 14);
+
+		separator = new JSeparator();
+		separator.setToolTipText("");
+		separator.setOrientation(SwingConstants.VERTICAL);
+		separator.setForeground(Color.WHITE);
+		separator.setBackground(Color.BLUE);
+		separator.setBounds(526, 4, 2, 105);
+		panelBtn.add(separator);
+
+		lblProcurar = new JLabel("Procurar:");
+		lblProcurar.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblProcurar.setBounds(538, 85, 59, 14);
 		panelBtn.add(lblProcurar);
-		
+
 		textField = new JTextField();
-		textField.setBounds(544, 82, 197, 20);
+		textField.setBounds(607, 82, 197, 20);
 		panelBtn.add(textField);
 		textField.setColumns(10);
 		btnExcluir.addActionListener(new ActionListener() {
@@ -149,6 +174,8 @@ public class ListarMercadorias extends JDialog {
 			}
 		});
 
+		mercadorias = new BasicEventList<Mercadoria>();
+
 		spListaMerc = new JScrollPane();
 		spListaMerc.setBounds(10, 158, 814, 421);
 		spListaMerc.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
@@ -157,14 +184,6 @@ public class ListarMercadorias extends JDialog {
 		tabMerc.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		tabMerc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		spListaMerc.setViewportView(tabMerc);
-		modelo = new DefaultTableModel() {
-			private static final long serialVersionUID = 1L;
-
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-		tabMerc.setModel(modelo);
 
 		lblListaDeMercadorias = new JLabel("lista de mercadorias");
 		lblListaDeMercadorias.setForeground(new Color(255, 255, 255));
@@ -173,24 +192,11 @@ public class ListarMercadorias extends JDialog {
 		lblListaDeMercadorias.setBounds(280, 0, 273, 35);
 		contentPanel.add(lblListaDeMercadorias);
 
-		modelo.addColumn("Código");
-		modelo.addColumn("Cod. barras");
-		modelo.addColumn("Descrição");
-		modelo.addColumn("Preço venda");
-		modelo.addColumn("Estoque");
-		tabMerc.getColumnModel().getColumn(0).setPreferredWidth(55);
-		tabMerc.getColumnModel().getColumn(1).setPreferredWidth(130);
-		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(790);
-		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(100);
-		tabMerc.getColumnModel().getColumn(4).setPreferredWidth(70);
 		try {
 			controlerMercadoria = new ControlerMercadoria();
-			List<Mercadoria> preencheTable = controlerMercadoria.listarMercadorias();
-			for (int i = 0; i < preencheTable.size(); i++) {
-				tabMerc.isCellEditable(i, 1);
-				modelo.addRow(new Object[] { preencheTable.get(i).getId(), preencheTable.get(i).getCodBarras(),
-						preencheTable.get(i).getMercadoria(),
-						"R$ " + String.format("%.2f", preencheTable.get(i).getPrecoVenda()).replace(".", ","), preencheTable.get(i).getEstoque()});
+			preencheTable = controlerMercadoria.listarMercadorias();
+			for (Mercadoria merc : preencheTable) {
+				mercadorias.add(merc);
 			}
 
 		} catch (ClassNotFoundException e1) {
@@ -205,5 +211,41 @@ public class ListarMercadorias extends JDialog {
 		} catch (NenhumaMercadoriaCadastradaException e1) {
 			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 		}
+
+		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(textField,
+				new Mercadoria());
+
+		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
+		AdvancedTableModel<Mercadoria> mercTableModel = GlazedListsSwing
+				.eventTableModelWithThreadProxyList(textFilteredIssues, new TableModelMerc());
+		tabMerc.setModel(mercTableModel);
+
+		tabMerc.getColumnModel().getColumn(0).setPreferredWidth(58);
+		tabMerc.getColumnModel().getColumn(1).setPreferredWidth(140);
+		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(790);
+		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(100);
+	}
+
+	public static void repagina() {
+		try {
+			controlerMercadoria = new ControlerMercadoria();
+			preencheTable = controlerMercadoria.listarMercadorias();
+			for (Mercadoria merc : preencheTable) {
+				mercadorias.add(merc);
+			}
+		} catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro LOG",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (NenhumaMercadoriaCadastradaException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+		}
+		
+		tabMerc.revalidate();
 	}
 }

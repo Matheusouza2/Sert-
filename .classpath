@@ -8,5 +8,6 @@
 	<classpathentry kind="lib" path="lib/swingx-2.5.20110919.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-autocomplete-1.6.5-1.jar"/>
 	<classpathentry kind="lib" path="lib/swingx-common-1.6.5-1.jar"/>
+	<classpathentry kind="lib" path="lib/glazedlists_java15-1.9.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

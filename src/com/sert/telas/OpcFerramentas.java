@@ -25,6 +25,7 @@ public class OpcFerramentas extends JDialog {
 	private JButton btnMovCaixa;
 	private JButton btnContaCedula;
 	private JButton btnX;
+	private JButton btnBackup;
 	
 	public OpcFerramentas() {
 		setFocusableWindowState(true);
@@ -36,6 +37,7 @@ public class OpcFerramentas extends JDialog {
 		setLocationRelativeTo(null);
 		setModal(true);
 		contentPane = new JPanel();
+		contentPane.setForeground(Color.YELLOW);
 		contentPane.setBackground(new Color(0, 0, 128));
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		setContentPane(contentPane);
@@ -89,5 +91,19 @@ public class OpcFerramentas extends JDialog {
 				dispose();
 			}
 		});
+		
+		btnBackup = new JButton("fazer backup");
+		btnBackup.setForeground(Color.BLACK);
+		btnBackup.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnBackup.setBackground(Color.YELLOW);
+		btnBackup.setBounds(10, 203, 248, 21);
+		btnBackup.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new BackupSistema().setVisible(true);
+			}
+		});
+		contentPane.add(btnBackup);
+		
 	}
 }

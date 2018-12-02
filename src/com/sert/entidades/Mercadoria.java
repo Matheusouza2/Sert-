@@ -1,6 +1,10 @@
 package com.sert.entidades;
 
-public class Mercadoria {
+import java.util.List;
+
+import ca.odell.glazedlists.TextFilterator;
+
+public class Mercadoria implements TextFilterator<Mercadoria> {
 
 	private int id;
 	private long codBarras;
@@ -130,4 +134,12 @@ public class Mercadoria {
 		this.cadastrada = cadastrada;
 	}
 
+	@Override
+	public void getFilterStrings(List<String> baseList, Mercadoria mercList) {
+		baseList.add(String.valueOf(mercList.getId()));
+		baseList.add(String.valueOf(mercList.getCodBarras()));
+		baseList.add(mercList.getMercadoria());
+		baseList.add(String.valueOf(mercList.getPrecoVenda()));
+		baseList.add(String.valueOf(mercList.getEstoque()));
+	}
 }
