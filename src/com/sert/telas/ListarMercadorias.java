@@ -192,25 +192,25 @@ public class ListarMercadorias extends JDialog {
 		lblListaDeMercadorias.setBounds(280, 0, 273, 35);
 		contentPanel.add(lblListaDeMercadorias);
 
-		try {
-			controlerMercadoria = new ControlerMercadoria();
-			preencheTable = controlerMercadoria.listarMercadorias();
+//		try {
+//			controlerMercadoria = new ControlerMercadoria();
+//			preencheTable = controlerMercadoria.listarMercadorias();
 			for (Mercadoria merc : preencheTable) {
 				mercadorias.add(merc);
 			}
 
-		} catch (ClassNotFoundException e1) {
-			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (SQLException e1) {
-			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro LOG",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (NenhumaMercadoriaCadastradaException e1) {
-			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-		}
+//		} catch (ClassNotFoundException e1) {
+//			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
+//					JOptionPane.ERROR_MESSAGE);
+//		} catch (SQLException e1) {
+//			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
+//					JOptionPane.ERROR_MESSAGE);
+//		} catch (IOException e1) {
+//			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro LOG",
+//					JOptionPane.ERROR_MESSAGE);
+//		} catch (NenhumaMercadoriaCadastradaException e1) {
+//			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+//		}
 
 		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(textField,
 				new Mercadoria());
@@ -230,6 +230,7 @@ public class ListarMercadorias extends JDialog {
 		try {
 			controlerMercadoria = new ControlerMercadoria();
 			preencheTable = controlerMercadoria.listarMercadorias();
+			mercadorias.clear();
 			for (Mercadoria merc : preencheTable) {
 				mercadorias.add(merc);
 			}
@@ -247,5 +248,9 @@ public class ListarMercadorias extends JDialog {
 		}
 		
 		tabMerc.revalidate();
+	}
+	
+	public static void setPreencheTable(List<Mercadoria> preencheTable1){
+		preencheTable = preencheTable1;
 	}
 }

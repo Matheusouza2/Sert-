@@ -2,7 +2,6 @@ package com.sert.controler;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.sert.dao.IVendasDao;
@@ -55,12 +54,13 @@ public class ControlerVenda {
 		return vendaDao.getIdVenda();
 	}
 
-	public Mercadoria consultaMercVenda(long codBarras, float quant) throws MercadoriaSemEstoqueException, MercadoriaSemPrecoException{
+	public Mercadoria consultaMercVenda(long codBarras, float quant)
+			throws MercadoriaSemEstoqueException, MercadoriaSemPrecoException {
 		Mercadoria mercadoria = null;
 		for (int i = 0; i < mercadorias.size(); i++) {
 			System.out.println(mercadorias.get(i).getMercadoria());
 			if (codBarras == mercadorias.get(i).getCodBarras()) {
-				if(mercadorias.get(i).getPrecoVenda() > 0) {
+				if (mercadorias.get(i).getPrecoVenda() > 0) {
 					if (mercadorias.get(i).getEstoque() >= quant) {
 						mercadoria = new Mercadoria();
 						mercadoria.setId(mercadorias.get(i).getId());
@@ -72,10 +72,10 @@ public class ControlerVenda {
 					} else {
 						throw new MercadoriaSemEstoqueException();
 					}
-				}else {
+				} else {
 					throw new MercadoriaSemPrecoException();
 				}
-				
+
 			}
 		}
 		return mercadoria;
@@ -90,8 +90,13 @@ public class ControlerVenda {
 			}
 		}
 	}
-	
-	public void atualizarCadastros() throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException{
+
+	public void atualizarCadastros()
+			throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException {
 		mercadorias = new ControlerMercadoria().listarMercadorias();
+	}
+	
+	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal) throws SQLException{
+		return vendaDao.pesquisarVenda(dtInicial, dtFinal);
 	}
 }

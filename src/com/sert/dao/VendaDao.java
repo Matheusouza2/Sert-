@@ -96,9 +96,21 @@ public class VendaDao implements IVendasDao {
 	}
 
 	@Override
-	public Venda pesquisarVenda(int id, String nomeCliente) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal) throws SQLException {
+		String sql = "SELECT v.id, f.nome as func_nome, v.data_venda, v.val_dinheiro, v.val_cartao FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id WHERE data_venda BETWEEN '"+dtInicial+" 00:00:00' AND '"+dtFinal+" 00:00:00' ORDER BY data_venda ASC;";
+		PreparedStatement prepare = con.prepareStatement(sql);
+		listVenda = new ArrayList<>();
+		ResultSet resultado = prepare.executeQuery();
+		while(resultado.next()){
+			venda = new Venda();
+			venda.setId(resultado.getInt("id"));
+			venda.setVendedor(resultado.getString("func_nome"));
+			venda.setDataVenda(resultado.getString("data_venda"));
+			venda.setValCartao(resultado.getFloat("val_cartao"));
+			venda.setValDInheiro(resultado.getFloat("val_dinheiro"));
+			listVenda.add(venda);
+		}
+		return listVenda;
 	}
 
 	@Override

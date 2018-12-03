@@ -256,35 +256,6 @@ public class PontoDeVenda extends JDialog {
 		prodVenda.getColumnModel().getColumn(2).setPreferredWidth(200);
 		prodVenda.getColumnModel().getColumn(3).setPreferredWidth(800);
 
-		Aguarde aguarde = new Aguarde();
-		new SwingWorker() {
-			@Override
-			protected Object doInBackground() throws Exception {
-				panelMother.add(aguarde);
-				aguarde.setVisible(true);
-
-				try {
-					controlerVenda = new ControlerVenda();
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				} catch (NenhumaMercadoriaCadastradaException e1) {
-					e1.printStackTrace();
-				}
-
-				return null;
-			}
-
-			@Override
-			protected void done() {
-				aguarde.setVisible(false);
-				super.done();
-			}
-		}.execute();
-
 		txtCodBarras.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
@@ -368,12 +339,12 @@ public class PontoDeVenda extends JDialog {
 				precoTotal = Float.parseFloat(txtQuant.getText()) * precoMerc;
 
 				modelo.addRow(new Object[] { ++item, merc.getId(), merc.getCodBarras(), merc.getMercadoria(),
-						quantidade, String.format("%.2f",precoMerc), String.format("%.2f",precoTotal) });
+						quantidade, String.format("%.2f", precoMerc), String.format("%.2f", precoTotal) });
 				txtCodBarras.setText(null);
 				txtQuant.setText("1");
 				lblStatus.setText("Status: Venda em andamento");
 				total += precoTotal;
-				lblTotal.setText("TOTAL: " + String.format("%.2f",total));
+				lblTotal.setText("TOTAL: " + String.format("%.2f", total));
 
 			}
 		} catch (NumberFormatException e) {
@@ -440,7 +411,8 @@ public class PontoDeVenda extends JDialog {
 					mercFech.add(merc);
 				}
 				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), "", idCliente, "",
-						JDateField.getDateHoraStatic(), mercFech, Float.parseFloat(String.format("%.2f",total).replace(",", ".")), 0, 0, 0, 0);
+						JDateField.getDateHoraStatic(), mercFech,
+						Float.parseFloat(String.format("%.2f", total).replace(",", ".")), 0, 0, 0, 0);
 				new PontoDeVendaFecharVenda(venda).setVisible(true);
 			} catch (ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());

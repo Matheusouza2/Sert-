@@ -45,4 +45,16 @@ public class JDocumentFormatedField {
 		}		
 		return tfcnpj;
 	}
+	
+	public JTextField getData(){
+		JTextField tfData = null;
+		MaskFormatter format_textField3;
+		try {
+			format_textField3 = new MaskFormatter("##/##/####");
+			tfData = new JFormattedTextField(format_textField3);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}		
+		return tfData;
+	}
 }

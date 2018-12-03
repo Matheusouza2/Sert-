@@ -15,7 +15,7 @@ public class ConexaoDao {
 
 		if (con == null) {
 			Class.forName("org.postgresql.Driver");
-			con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sertbdtest?autoReconnect=true&useSSL=false", "postgres", "s3rt+");
+			con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/sertbd?autoReconnect=true&useSSL=false", "postgres", "s3rt+");
 			new Log().gravaLog("Conectado ao banco de dados com Sucesso");
 		}
 		return con;
@@ -34,12 +34,10 @@ public class ConexaoDao {
 		boolean teste = false;
 		getInstacia();
 		if(getInstacia() != null) {
-			self.getConector();
 			teste = true;
 		}else {
 			teste = false;
 		}
-		
 		return teste;
 	}
 

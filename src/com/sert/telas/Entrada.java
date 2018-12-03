@@ -194,7 +194,7 @@ public class Entrada extends JFrame {
 			}
 		});
 
-		lblVersao = new JLabel("Versão 1.0.0");
+		lblVersao = new JLabel("Versão 1.0.1");
 		lblVersao.setFont(new Font("Tahoma", Font.PLAIN, 9));
 		lblVersao.setBounds(268, 375, 62, 14);
 		panelLogin.add(lblVersao);
@@ -228,7 +228,7 @@ public class Entrada extends JFrame {
 			if (usu.getId() != 0) {
 				UsuLogado.setId(usu.getId());
 				UsuLogado.setNome(usu.getNome());
-				new Inicio().setVisible(true);
+				new Banner().setVisible(true);
 				dispose();
 			} else {
 				JOptionPane.showMessageDialog(null, "Usuario ou senha invalido", "Erro de login",
@@ -237,8 +237,8 @@ public class Entrada extends JFrame {
 		}
 	}
 	
-	public final Image getIconImage(){
-		Image icone = Toolkit.getDefaultToolkit().getImage(Entrada.class.getResource("/com/sert/img/logo2.png"));
-		return icone;
-	}
+//	public final Image getIconImage(){
+//		Image icone = Toolkit.getDefaultToolkit().getImage(Entrada.class.getResource("/com/sert/img/logo2.png"));
+//		return icone;
+//	}
 }

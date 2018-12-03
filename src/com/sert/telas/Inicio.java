@@ -115,28 +115,28 @@ public class Inicio extends JDialog {
 		btnVendas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				try {
-					Caixa caixa = new ControlerFuncCaixa().confereCaixa();
+				//try {
+//					Caixa caixa = new ControlerFuncCaixa().confereCaixa();
 
 //					if (caixa.getDataCaixaAbertura() == null) {
 //						new FuncCaixa(0).setVisible(true);
 //					} else {
-						new ControlerVenda().atualizarCadastros();
+						//new ControlerVenda().atualizarCadastros();
 						new PontoDeVenda().setVisible(true);
 					//}
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NenhumaMercadoriaCadastradaException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+//				} catch (ClassNotFoundException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				} catch (NenhumaMercadoriaCadastradaException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				} catch (SQLException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
 			}
 		});
 		btnVendas.setBackground(new Color(255, 102, 0));

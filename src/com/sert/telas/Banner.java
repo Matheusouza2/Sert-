@@ -2,6 +2,7 @@ package com.sert.telas;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -14,6 +15,7 @@ import javax.swing.border.EmptyBorder;
  * 
  * */
 import com.sert.controler.ControlerMercadoria;
+import com.sert.controler.ControlerVenda;
 import com.sert.controler.Log;
 import com.sert.dao.ConexaoDao;
 import com.sert.entidades.Mercadoria;
@@ -23,8 +25,10 @@ import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import javax.swing.JProgressBar;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -58,6 +62,7 @@ public class Banner extends JFrame {
 		setUndecorated(true);
 		setBounds(100, 100, 670, 330);
 		contentPane = new JPanel();
+		setLocationRelativeTo(null);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -73,99 +78,25 @@ public class Banner extends JFrame {
 		label.setIcon(new ImageIcon(Banner.class.getResource("/com/sert/img/SertSoftBanner.png")));
 		label.setBounds(0, 0, 681, 297);
 		contentPane.add(label);
-		new Thread() {
+		
+		progressBar.setIndeterminate(true);
+		
+		new SwingWorker(){
 			@Override
-			public void run() {
-				try {
-					String[] frases = {"", "Aguarde...Conectando ao banco de dados", "Carregando Modulos do sistema",
-							"Verificando conexões externas", "Abrindo Sistema", "Abrindo Sistema"};
-					int con;
-					while (true) {
-						con = conexoes();
-						progressBar.setValue(progressBar.getValue() + 25);
-						if(!Banner.this.conThread.isAlive()){
-							++opcao;
-						}
-						progressBar.setString(frases[con].toString());
-						sleep(1000);
-						
-						if(progressBar.getValue() == 100){
-							dispose();
-							new Inicio().setVisible(true);
-							break;
-						}
-					}
-				} catch (InterruptedException e) {
+			protected Object doInBackground() throws Exception {
+				progressBar.setString("Testando conexão do banco de dados");
+				//new ConexaoDao().testeConexao();
+				progressBar.setString("Carregando modulos do sistema");
+				ListarMercadorias.setPreencheTable(new ControlerMercadoria().listarMercadorias());
+				new ControlerVenda().atualizarCadastros();
 
-					e.printStackTrace();
-				} catch (ClassNotFoundException e) {
-					progressBar.setString("Driver do banco não encontrado no projeto");
-				} catch (SQLException e) {
-					progressBar.setString("Erro ao conectar com banco de dados, verifique o log");
-					try {
-						new Log().gravaLog(e.getMessage());
-					} catch (IOException e1) {
-						progressBar.setString("Verifique o caminho do log do sistema");
-					}
-				} catch (IOException e) {
-					progressBar.setString("Verifique o caminho do log do sistema");
-				} catch (NenhumaMercadoriaCadastradaException e) {
-					try {
-						new Log().gravaLog(e.getMessage());
-					} catch (IOException e1) {
-						progressBar.setString("Verifique o caminho do log do sistema");
-					}
-				} catch (CodBarrasJaCadastradoException e) {
-					try {
-						new Log().gravaLog(e.getMessage());
-					} catch (IOException e1) {
-						progressBar.setString("Verifique o caminho do log do sistema");
-					}
-				}
+				return null;
 			}
-
-		}.start();
-	}
-
-	public int conexoes()throws ClassNotFoundException, SQLException, IOException, NenhumaMercadoriaCadastradaException, CodBarrasJaCadastradoException {
-		switch (opcao) {
-		case 0:
-			conThread = new Thread() {
-				@Override
-				public void run() {
-					try {
-						new ConexaoDao().testeConexao();
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-			};
-			conThread.start();
-		case 1:
-			conThread = new Thread() {
-				@Override
-				public void run() {
-					try {
-						new ControlerMercadoria().listarMercadorias();
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (NenhumaMercadoriaCadastradaException e) {
-						e.printStackTrace();
-					}
-				}
-			};
-		case 2:
-			++opcao;
-			break;
-		}
-		return opcao;
+			
+			protected void done() {
+				new Inicio().setVisible(true);
+				dispose();
+			}
+		}.execute();
 	}
 }
