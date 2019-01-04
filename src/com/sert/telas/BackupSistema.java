@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 
 import com.sert.controler.JDateField;
@@ -43,18 +44,18 @@ public class BackupSistema extends JDialog {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		setLocationRelativeTo(null);
-		
+
 		panel = new JPanel();
 		panel.setForeground(Color.BLUE);
 		panel.setBorder(new TitledBorder(null, "Backup", TitledBorder.CENTER, TitledBorder.TOP, null, null));
 		panel.setBounds(10, 11, 631, 378);
 		contentPanel.add(panel);
 		panel.setLayout(null);
-		
+
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 11, 611, 356);
 		panel.add(scrollPane);
-		
+
 		textArea = new JTextArea();
 		textArea.setEditable(false);
 		scrollPane.setViewportView(textArea);
@@ -62,11 +63,11 @@ public class BackupSistema extends JDialog {
 		progressBar = new JProgressBar();
 		progressBar.setBounds(10, 400, 631, 30);
 		contentPanel.add(progressBar);
-		
-		progressBar.isIndeterminate();
+
 		progressBar.setStringPainted(true);
 		progressBar.setString("Aguarde...");
-		new SwingWorker() {
+		progressBar.setIndeterminate(true);
+		new SwingWorker<Object, Object>() {
 			@Override
 			protected Object doInBackground() throws Exception {
 				final List<String> comandos = new ArrayList<String>();
@@ -98,14 +99,16 @@ public class BackupSistema extends JDialog {
 					final BufferedReader r = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 					String line = r.readLine();
 					while (line != null) {
-						((JTextArea) textArea).append(line+"\n");
+						((JTextArea) textArea).append(line + "\n");
+						textArea.setCaretPosition(textArea.getDocument().getLength());
+						Thread.sleep(50);
 						line = r.readLine();
 					}
 					r.close();
 
 					process.waitFor();
 					process.destroy();
-					JOptionPane.showMessageDialog(null, "backup realizado com sucesso.");
+					JOptionPane.showMessageDialog(null, "backup realizado com sucesso na pasta " + dir);
 
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -120,6 +123,7 @@ public class BackupSistema extends JDialog {
 				dispose();
 				super.done();
 			}
-		}.execute();;
+		}.execute();
+		;
 	}
 }

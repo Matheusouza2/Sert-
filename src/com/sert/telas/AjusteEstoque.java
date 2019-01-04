@@ -7,8 +7,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
@@ -16,6 +14,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -25,14 +24,19 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.TabExpander;
 
+import com.sert.controler.ControlerAjusteEstoque;
 import com.sert.controler.ControlerMercadoria;
+import com.sert.controler.ControlerUsuario;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.AutoCompleteDecoratorCombo;
+import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Mercadoria;
+import com.sert.entidades.Usuario;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.JScrollPane;
@@ -79,9 +83,9 @@ public class AjusteEstoque extends JDialog {
 	private ButtonGroup bg = new ButtonGroup();
 
 	private DefaultTableModel modelo;
-	private JComboBox cbMercDesc;
+	private JComboBox<String> cbMercDesc;
 	private List<Mercadoria> mercList;
-	private JComboBox cbMercRef;
+	private JComboBox<String> cbMercRef;
 	private JLabel lblCadastroDeMercadoria;
 
 	public AjusteEstoque() {
@@ -132,7 +136,15 @@ public class AjusteEstoque extends JDialog {
 		btnSalvar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				movEstoque();
+				try {
+					movEstoque();
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -152,6 +164,7 @@ public class AjusteEstoque extends JDialog {
 
 		rdbtnEntrada = new JRadioButton("Entrada");
 		rdbtnEntrada.setBounds(74, 10, 109, 23);
+		rdbtnEntrada.setSelected(true);
 		panelForm.add(rdbtnEntrada);
 
 		bg.add(rdbtnEntrada);
@@ -234,38 +247,41 @@ public class AjusteEstoque extends JDialog {
 		lblUsuario = new JLabel("Usuario: " + UsuLogado.getNome());
 		lblUsuario.setBounds(605, 406, 174, 14);
 
-		cbMercDesc = new JComboBox();
-		AutoCompleteDecoratorCombo.decorate(cbMercDesc);
-		DefaultComboBoxModel model = (DefaultComboBoxModel) cbMercDesc.getModel();
-		model.removeAllElements();
-		cbMercDesc.addItem("");
-		try {
-			mercList = new ControlerMercadoria().listarMercadorias();
-			for (int i = 0; i < mercList.size(); i++) {
-				model.addElement(mercList.get(i).getMercadoria());
-			}
-			cbMercDesc.setModel(model);
-		} catch (ClassNotFoundException | NenhumaMercadoriaCadastradaException | SQLException | IOException e1) {
-			e1.printStackTrace();
-		}
+		cbMercDesc = new JComboBox<String>();
+		cbMercDesc.setEditable(true);
+		cbMercDesc.setVisible(true);
+		cbMercDesc.setBounds(107, 160, 146, 28);
+		panelForm.add(cbMercDesc);
 
-		cbMercRef = new JComboBox();
-		AutoCompleteDecoratorCombo.decorate(cbMercRef);
-		DefaultComboBoxModel model1 = (DefaultComboBoxModel) cbMercRef.getModel();
-		model1.removeAllElements();
-		cbMercRef.addItem("");
+		cbMercRef = new JComboBox<String>();
+		cbMercRef.setEditable(true);
+		cbMercRef.setVisible(true);
+		cbMercRef.setBounds(107, 160, 146, 28);
+		panelForm.add(cbMercRef);
+
 		try {
 			mercList = new ControlerMercadoria().listarMercadorias();
 			for (int i = 0; i < mercList.size(); i++) {
-				model1.addElement(mercList.get(i).getCodBarras());
+				cbMercDesc.addItem(mercList.get(i).getMercadoria());
+				cbMercDesc.setSelectedItem(null);
+
+				cbMercRef.addItem(String.valueOf(mercList.get(i).getCodBarras()));
+				cbMercRef.setSelectedItem(null);
 			}
-			cbMercRef.setModel(model1);
-		} catch (ClassNotFoundException | NenhumaMercadoriaCadastradaException | SQLException | IOException e1) {
-			e1.printStackTrace();
+			AutoCompletion.enable(cbMercDesc);
+			AutoCompletion.enable(cbMercRef);
+		} catch (ClassNotFoundException e2) {
+			e2.printStackTrace();
+		} catch (NenhumaMercadoriaCadastradaException e2) {
+			e2.printStackTrace();
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
 		}
 
 		escutaComboMerc();
-		
+
 		panelForm.add(lblUsuario);
 		modelo.addColumn("Cod. barras");
 		modelo.addColumn("Descrição");
@@ -293,7 +309,7 @@ public class AjusteEstoque extends JDialog {
 
 					if (cbMercRef.getSelectedItem() != null) {
 						for (Mercadoria merc : mercList) {
-							if (cbMercRef.getSelectedItem().equals(merc.getCodBarras())) {
+							if (cbMercRef.getSelectedItem().equals(String.valueOf(merc.getCodBarras()))) {
 								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 1);
 								table.setModel(modelo);
 							}
@@ -331,11 +347,22 @@ public class AjusteEstoque extends JDialog {
 		});
 	}
 
-	private void movEstoque() {
-		if (rdbtnEntrada.isSelected()) {
-
-		} else if (rdbtnSaida.isSelected()) {
-
+	private void movEstoque() throws ClassNotFoundException, SQLException, IOException {
+		List<Mercadoria> mercList = new ArrayList<Mercadoria>();
+		int operacao = 0;
+		Mercadoria merc;
+		if (rdbtnSaida.isSelected()) {
+			operacao = 1;
 		}
+		for (int i = 0; i < table.getRowCount(); i++) {
+			merc = new Mercadoria();
+			merc.setCodBarras(Long.parseLong(table.getValueAt(i, 0).toString()));
+			merc.setMercadoria(table.getValueAt(i, 1).toString());
+			merc.setPrecoVenda(Float.parseFloat(table.getValueAt(i, 2).toString().replace(",", ".")));
+			merc.setEstoque(Float.parseFloat(table.getValueAt(i, 3).toString()));
+			mercList.add(merc);
+		}
+
+		new ControlerAjusteEstoque().movEstoque(mercList, operacao);
 	}
 }

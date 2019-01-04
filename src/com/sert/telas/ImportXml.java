@@ -361,7 +361,7 @@ public class ImportXml extends JDialog {
 		panelForm.add(separator_1);
 
 		lblAtenoAoCadastrar = new JLabel(
-				"<html>Atenção: 'C' indicara que a mercadoria já está cadastrada no sistema e 'N' indicara que a mercadoria não foi encontrada no sistema.</html>");
+				"<html>Atenção: 'C' indicará que a mercadoria já está cadastrada no sistema e 'N' indicará que a mercadoria não foi encontrada no sistema.</html>");
 		lblAtenoAoCadastrar.setForeground(Color.RED);
 		lblAtenoAoCadastrar.setBounds(926, 62, 344, 57);
 		panelForm.add(lblAtenoAoCadastrar);
@@ -513,6 +513,7 @@ public class ImportXml extends JDialog {
 		}
 		txtFornecedor.setText(nfeXml.getNomeFant());
 		txtCnpj.setText(String.valueOf(nfeXml.getCnpjForn()));
+		System.out.println(nfeXml.getCnpjForn());
 		txtIe.setText(String.valueOf(nfeXml.getIeForn()));
 		txtRua.setText(nfeXml.getLograForn());
 		txtNumero.setText(String.valueOf(nfeXml.getNumrEndForn()));

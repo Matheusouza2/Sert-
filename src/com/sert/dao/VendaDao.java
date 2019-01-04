@@ -97,7 +97,7 @@ public class VendaDao implements IVendasDao {
 
 	@Override
 	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal) throws SQLException {
-		String sql = "SELECT v.id, f.nome as func_nome, v.data_venda, v.val_dinheiro, v.val_cartao FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id WHERE data_venda BETWEEN '"+dtInicial+" 00:00:00' AND '"+dtFinal+" 00:00:00' ORDER BY data_venda ASC;";
+		String sql = "SELECT v.id, f.nome as func_nome, v.data_venda, v.val_dinheiro, v.val_cartao FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id WHERE data_venda BETWEEN '"+dtInicial+" 00:00:00' AND '"+dtFinal+" 23:59:59' ORDER BY data_venda ASC;";
 		PreparedStatement prepare = con.prepareStatement(sql);
 		listVenda = new ArrayList<>();
 		ResultSet resultado = prepare.executeQuery();

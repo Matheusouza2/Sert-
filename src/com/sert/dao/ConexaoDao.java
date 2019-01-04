@@ -32,11 +32,8 @@ public class ConexaoDao {
 	
 	public boolean testeConexao() throws ClassNotFoundException, SQLException, IOException {
 		boolean teste = false;
-		getInstacia();
 		if(getInstacia() != null) {
 			teste = true;
-		}else {
-			teste = false;
 		}
 		return teste;
 	}

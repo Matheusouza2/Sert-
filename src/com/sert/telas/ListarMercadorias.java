@@ -60,7 +60,6 @@ public class ListarMercadorias extends JDialog {
 
 	private static ControlerMercadoria controlerMercadoria;
 
-	private DefaultTableModel modelo;
 	private JLabel lblListaDeMercadorias;
 	private JTextField textField;
 	private JSeparator separator;
@@ -152,9 +151,9 @@ public class ListarMercadorias extends JDialog {
 
 						if (resposta == JOptionPane.YES_OPTION) {
 							int idExcluir = (int) tabMerc.getValueAt(tabMerc.getSelectedRow(), 0);
-							modelo.removeRow(tabMerc.getSelectedRow());
-							tabMerc.setModel(modelo);
+							mercadorias.remove(tabMerc.getSelectedRow());
 							new ControlerMercadoria().excluirMercadoria(idExcluir);
+							repagina();
 						}
 					} else {
 						JOptionPane.showMessageDialog(null, "Selecione uma mercadoria a ser excluida", "Aviso",
@@ -192,25 +191,9 @@ public class ListarMercadorias extends JDialog {
 		lblListaDeMercadorias.setBounds(280, 0, 273, 35);
 		contentPanel.add(lblListaDeMercadorias);
 
-//		try {
-//			controlerMercadoria = new ControlerMercadoria();
-//			preencheTable = controlerMercadoria.listarMercadorias();
 			for (Mercadoria merc : preencheTable) {
 				mercadorias.add(merc);
 			}
-
-//		} catch (ClassNotFoundException e1) {
-//			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
-//					JOptionPane.ERROR_MESSAGE);
-//		} catch (SQLException e1) {
-//			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
-//					JOptionPane.ERROR_MESSAGE);
-//		} catch (IOException e1) {
-//			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro LOG",
-//					JOptionPane.ERROR_MESSAGE);
-//		} catch (NenhumaMercadoriaCadastradaException e1) {
-//			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-//		}
 
 		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(textField,
 				new Mercadoria());
@@ -224,6 +207,8 @@ public class ListarMercadorias extends JDialog {
 		tabMerc.getColumnModel().getColumn(1).setPreferredWidth(140);
 		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(790);
 		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(100);
+		
+		repagina();
 	}
 
 	public static void repagina() {

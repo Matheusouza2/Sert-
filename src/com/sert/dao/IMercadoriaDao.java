@@ -14,4 +14,5 @@ public interface IMercadoriaDao {
 	public Mercadoria procurarMerc(long codBarras) throws SQLException;
 	public int confereId() throws SQLException;
 	public void entradaNotaEstoque(float estoque, long codBarras) throws SQLException;
+	public void movEstoque(float precoVenda, float estoque, long codBarras) throws SQLException;
 }

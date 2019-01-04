@@ -305,6 +305,8 @@ public class PontoDeVendaFecharVenda extends JDialog {
 		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				"ESCAPE");
 		escback.getRootPane().getActionMap().put("ESCAPE", new AbstractAction("ESCAPE") {
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
@@ -313,6 +315,8 @@ public class PontoDeVendaFecharVenda extends JDialog {
 		JRootPane f2closesale = getRootPane();
 		f2closesale.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "F2");
 		f2closesale.getRootPane().getActionMap().put("F2", new AbstractAction("F2") {
+			private static final long serialVersionUID = 4394565308739162374L;
+
 			public void actionPerformed(ActionEvent e) {
 				finalizarVenda();
 			}

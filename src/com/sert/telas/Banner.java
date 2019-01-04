@@ -1,31 +1,17 @@
 package com.sert.telas;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-/**
- * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
- * @author Matheus Souza
- * @version 1.0.0
- * 
- * */
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
-import com.sert.controler.Log;
 import com.sert.dao.ConexaoDao;
-import com.sert.entidades.Mercadoria;
-import com.sert.exceptions.CodBarrasJaCadastradoException;
-import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.JProgressBar;
 import java.awt.Color;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -41,20 +27,6 @@ public class Banner extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private int opcao = 0;
-	private Thread conThread;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			Banner frame = new Banner();
-			frame.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	public Banner() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -81,13 +53,14 @@ public class Banner extends JFrame {
 		
 		progressBar.setIndeterminate(true);
 		
-		new SwingWorker(){
+		new SwingWorker<Object, Object>(){
 			@Override
 			protected Object doInBackground() throws Exception {
 				progressBar.setString("Testando conexão do banco de dados");
-				//new ConexaoDao().testeConexao();
+//				new ConexaoDao().testeConexao();
 				progressBar.setString("Carregando modulos do sistema");
 				ListarMercadorias.setPreencheTable(new ControlerMercadoria().listarMercadorias());
+				PesqMercVenda.setPreencheTable(new ControlerMercadoria().listarMercadorias());
 				new ControlerVenda().atualizarCadastros();
 
 				return null;

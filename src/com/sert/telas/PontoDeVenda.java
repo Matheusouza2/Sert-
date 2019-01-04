@@ -1,6 +1,7 @@
 package com.sert.telas;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
@@ -12,11 +13,12 @@ import java.util.List;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import java.awt.Font;
+import java.awt.Toolkit;
+
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -27,18 +29,15 @@ import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.Venda;
-import com.sert.exceptions.MercadoriaNaoEncontradaException;
 import com.sert.exceptions.MercadoriaSemEstoqueException;
 import com.sert.exceptions.MercadoriaSemPrecoException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
+import javax.swing.UIManager;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
-import javax.swing.UIManager;
-import javax.swing.JProgressBar;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -55,8 +54,8 @@ public class PontoDeVenda extends JDialog {
 	private JPanel panelId;
 	private JPanel panelValue;
 
-	private JNumberField txtCodBarras;
-	private JTextField txtQuant;
+	private static JNumberField txtCodBarras;
+	private static JTextField txtQuant;
 	private static JTable prodVenda;
 
 	private JLabel lblCodDeBarras;
@@ -75,9 +74,9 @@ public class PontoDeVenda extends JDialog {
 	private JScrollPane spProdutos;
 	private static DefaultTableModel modelo;
 
-	float quantidade;
-	float precoMerc;
-	float precoTotal;
+	static float quantidade;
+	static float precoMerc;
+	static float precoTotal;
 	static float total;
 
 	private static ControlerVenda controlerVenda;
@@ -88,19 +87,22 @@ public class PontoDeVenda extends JDialog {
 
 	public PontoDeVenda() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1350, 730);
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screenSize = toolkit.getScreenSize();
+		setBounds(0, 0, screenSize.width, screenSize.height);
 		setLocationRelativeTo(null);
-		setTitle("Checkout");
 		setModal(true);
 		setUndecorated(true);
 
 		contentPane = new JPanel();
+		setBounds(0, 0, screenSize.width-10, screenSize.height-40);
 		contentPane.setBackground(new Color(255, 255, 0));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setBorder(new LineBorder(new Color(0, 0, 128), 1, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		panelMother = new JPanel();
+		panelMother.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
 		panelMother.setBackground(new Color(0, 0, 128));
 		panelMother.setBounds(10, 11, 1330, 707);
 		contentPane.add(panelMother);
@@ -187,7 +189,7 @@ public class PontoDeVenda extends JDialog {
 
 		panelValue = new JPanel();
 		panelValue.setBounds(1040, 60, 280, 511);
-		panelValue.setBorder(new LineBorder(new Color(41, 171, 226)));
+		panelValue.setBorder(new LineBorder(new Color(255, 255, 0), 1, true));
 		panelMother.add(panelValue);
 		panelValue.setLayout(null);
 
@@ -209,7 +211,7 @@ public class PontoDeVenda extends JDialog {
 
 		panelId = new JPanel();
 		panelId.setBounds(1040, 579, 280, 117);
-		panelId.setBorder(new LineBorder(new Color(41, 171, 226)));
+		panelId.setBorder(new LineBorder(new Color(255, 255, 0), 1, true));
 		panelMother.add(panelId);
 		panelId.setLayout(null);
 
@@ -264,7 +266,7 @@ public class PontoDeVenda extends JDialog {
 					// Selecionar o cliente
 					break;
 				case (KeyEvent.VK_F2):
-					// Pesquisar a mercadoria
+					new PesqMercVenda().setVisible(true);
 					break;
 				case (KeyEvent.VK_F4):
 					fecharVenda();
@@ -324,7 +326,7 @@ public class PontoDeVenda extends JDialog {
 		}
 	}
 
-	public void adicionarItem() {
+	public static void adicionarItem() {
 		try {
 			quantidade = Float.parseFloat(txtQuant.getText());
 			Mercadoria merc = new ControlerVenda().consultaMercVenda(Long.parseLong(txtCodBarras.getText()),
@@ -466,5 +468,10 @@ public class PontoDeVenda extends JDialog {
 			item = 0;
 			total = 0;
 		}
+	}
+	
+	public static void addMercPesq(long codBarras){
+		txtCodBarras.setText(String.valueOf(codBarras));
+		adicionarItem();
 	}
 }

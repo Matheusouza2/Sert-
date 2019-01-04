@@ -191,6 +191,7 @@ public class Inicio extends JDialog {
 		panelButtons.add(lblDataHora);
 
 		btnFerramentas = new JButton();
+		btnFerramentas.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFerramentas.png")));
 		btnFerramentas.setBorderPainted(false);
 		btnFerramentas.setBackground(new Color(175, 238, 238));
 		btnFerramentas.setBounds(505, 11, 89, 91);
