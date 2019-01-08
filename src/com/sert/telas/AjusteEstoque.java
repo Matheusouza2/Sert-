@@ -24,26 +24,21 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.TabExpander;
 
 import com.sert.controler.ControlerAjusteEstoque;
 import com.sert.controler.ControlerMercadoria;
-import com.sert.controler.ControlerUsuario;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
-import com.sert.editableFields.AutoCompleteDecoratorCombo;
 import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Mercadoria;
-import com.sert.entidades.Usuario;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
@@ -138,6 +133,7 @@ public class AjusteEstoque extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					movEstoque();
+					JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
 				} catch (ClassNotFoundException e1) {
 					e1.printStackTrace();
 				} catch (SQLException e1) {
@@ -311,6 +307,7 @@ public class AjusteEstoque extends JDialog {
 						for (Mercadoria merc : mercList) {
 							if (cbMercRef.getSelectedItem().equals(String.valueOf(merc.getCodBarras()))) {
 								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 1);
+								modelo.setValueAt(merc.getPrecoVenda(), table.getSelectedRow(), 2);
 								table.setModel(modelo);
 							}
 						}
@@ -333,6 +330,7 @@ public class AjusteEstoque extends JDialog {
 						for (Mercadoria merc : mercList) {
 							if (cbMercDesc.getSelectedItem().equals(merc.getMercadoria())) {
 								modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 0);
+								modelo.setValueAt(merc.getPrecoVenda(), table.getSelectedRow(), 2);
 								table.setModel(modelo);
 							}
 						}

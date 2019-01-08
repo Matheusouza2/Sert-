@@ -17,16 +17,16 @@ public class ControlerAjusteEstoque {
 	}
 
 	public void movEstoque(List<Mercadoria> mercList, int operacao) throws SQLException {
+		float novoEstoque = 0;
+		float quant;
 		for (Mercadoria merc : mercList) {
+			quant = mercadoriaDao.procurarMerc(merc.getCodBarras()).getEstoque();
 			if (operacao == 0) {
-				float quant = mercadoriaDao.procurarMerc(merc.getCodBarras()).getEstoque();
-				float novoEstoque = merc.getEstoque() + quant;
-				mercadoriaDao.entradaNotaEstoque(novoEstoque, merc.getCodBarras());
+				novoEstoque = merc.getEstoque() + quant;
 			} else if (operacao == 1) {
-				float quant = mercadoriaDao.procurarMerc(merc.getCodBarras()).getEstoque();
-				float novoEstoque = merc.getEstoque() - quant;
-				mercadoriaDao.entradaNotaEstoque(novoEstoque, merc.getCodBarras());
+				novoEstoque = quant - merc.getEstoque();
 			}
+			mercadoriaDao.movEstoque(merc.getPrecoVenda(), novoEstoque, merc.getCodBarras());
 		}
 	}
 }
