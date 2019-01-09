@@ -1,6 +1,7 @@
 package com.sert.telas;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -54,6 +55,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.LookAndFeel;
 import javax.swing.JSeparator;
+import javax.swing.JProgressBar;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -120,6 +122,8 @@ public class ImportXml extends JDialog {
 	private Mercadoria mercadoriaImport;
 	private ControlerMercadoria controlerMercadoria;
 
+	private JProgressBar progressBar;
+
 	public ImportXml() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1300, 760);
@@ -157,6 +161,15 @@ public class ImportXml extends JDialog {
 		contentPanel.add(panelBtn);
 		panelBtn.setLayout(null);
 
+		progressBar = new JProgressBar();
+		progressBar.setForeground(new Color(0, 0, 255));
+		progressBar.setBounds(127, 31, 392, 44);
+		progressBar.setStringPainted(true);
+		progressBar.setString("Aguarde...");
+		progressBar.setIndeterminate(true);
+		progressBar.setVisible(false);
+		panelBtn.add(progressBar);
+
 		btnSalvar = new JButton();
 		btnSalvar.setIcon(new ImageIcon(CadNotas.class.getResource("/com/sert/img/BtnSalvar.png")));
 		btnSalvar.setBorderPainted(false);
@@ -166,12 +179,11 @@ public class ImportXml extends JDialog {
 		btnSalvar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Aguarde aguarde = new Aguarde();
-
+				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				progressBar.setVisible(true);
 				new SwingWorker() {
 					@Override
 					public Object doInBackground() throws Exception {
-						aguarde.setVisible(true);
 						try {
 							recuperaNota();
 							confirmarCadastro();
@@ -199,7 +211,9 @@ public class ImportXml extends JDialog {
 
 					@Override
 					protected void done() {
-						aguarde.setVisible(false);
+						progressBar.setVisible(false);
+						contentPanel.setCursor(Cursor.getDefaultCursor());
+						JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso!");
 					}
 				}.execute();
 			}
@@ -420,62 +434,80 @@ public class ImportXml extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				try {
-					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					escolherXml = new JFileChooser();
-					escolherXml.setFileFilter(new FileFilter() {
-
-						public boolean accept(File f) {
-							return (f.getName().endsWith(".xml")) || f.isDirectory();
-						}
-
-						public String getDescription() {
-							return "*.ret";
-						}
-					});
-					escolherXml.showOpenDialog(rootPane);
-					UIManager.setLookAndFeel(lfAnterior);
-					File caminho = escolherXml.getSelectedFile();
-					if (caminho != null) {
-						txtCaminhoXML.setText(String.valueOf(caminho));
-						nfeXml = new DeserializableNfe().lerXml(String.valueOf(caminho));
-						Empresa empresa = new ControlerEmpresa().consultarEmpresa(nfeXml.getCnpjDest());
-						if (empresa == null) {
-							int resposta = JOptionPane.showConfirmDialog(null,
-									"O destinatario desta nota possui um CNPJ diferente do seu, deseja continuar mesmo assim ?",
-									"CNPJ divergente", JOptionPane.YES_NO_OPTION);
-							if (resposta == JOptionPane.YES_OPTION) {
-								importaNota();
-							}
-						} else {
-							importaNota();
-						}
-					} else {
-						JOptionPane.showMessageDialog(null, "Nenhum arquivo selecionado", "AVISO",
-								JOptionPane.WARNING_MESSAGE);
+				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				progressBar.setVisible(true);
+				new SwingWorker() {
+					@Override
+					public Object doInBackground() throws Exception {
+						buscarXml(lfAnterior);
+						return null;
 					}
-				} catch (UnsupportedLookAndFeelException e1) {
-				} catch (ClassNotFoundException e1) {
 
-					e1.printStackTrace();
-				} catch (InstantiationException e1) {
-
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-
-					e1.printStackTrace();
-				} catch (SQLException e1) {
-
-					e1.printStackTrace();
-				} catch (IOException e1) {
-
-					e1.printStackTrace();
-				} catch (NenhumaMercadoriaCadastradaException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+					@Override
+					protected void done() {
+						progressBar.setVisible(false);
+						contentPanel.setCursor(Cursor.getDefaultCursor());
+					}
+				}.execute();
 			}
 		});
+	}
+
+	public void buscarXml(LookAndFeel lfAnterior) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			escolherXml = new JFileChooser();
+			escolherXml.setFileFilter(new FileFilter() {
+
+				public boolean accept(File f) {
+					return (f.getName().endsWith(".xml")) || f.isDirectory();
+				}
+
+				public String getDescription() {
+					return "*.ret";
+				}
+			});
+			escolherXml.showOpenDialog(rootPane);
+			UIManager.setLookAndFeel(lfAnterior);
+			File caminho = escolherXml.getSelectedFile();
+			if (caminho != null) {
+				txtCaminhoXML.setText(String.valueOf(caminho));
+				nfeXml = new DeserializableNfe().lerXml(String.valueOf(caminho));
+				Empresa empresa = new ControlerEmpresa().consultarEmpresa(nfeXml.getCnpjDest());
+				if (empresa == null) {
+					int resposta = JOptionPane.showConfirmDialog(null,
+							"O destinatario desta nota possui um CNPJ diferente do seu, deseja continuar mesmo assim ?",
+							"CNPJ divergente", JOptionPane.YES_NO_OPTION);
+					if (resposta == JOptionPane.NO_OPTION) {
+						return;
+					}
+				} else {
+					importaNota();
+
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Nenhum arquivo selecionado", "AVISO", JOptionPane.WARNING_MESSAGE);
+			}
+		} catch (UnsupportedLookAndFeelException e1) {
+		} catch (ClassNotFoundException e1) {
+
+			e1.printStackTrace();
+		} catch (InstantiationException e1) {
+
+			e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+
+			e1.printStackTrace();
+		} catch (IOException e1) {
+
+			e1.printStackTrace();
+		} catch (NenhumaMercadoriaCadastradaException e1) {
+
+			e1.printStackTrace();
+		}
 	}
 
 	public void importaNota()
@@ -513,7 +545,6 @@ public class ImportXml extends JDialog {
 		}
 		txtFornecedor.setText(nfeXml.getNomeFant());
 		txtCnpj.setText(String.valueOf(nfeXml.getCnpjForn()));
-		System.out.println(nfeXml.getCnpjForn());
 		txtIe.setText(String.valueOf(nfeXml.getIeForn()));
 		txtRua.setText(nfeXml.getLograForn());
 		txtNumero.setText(String.valueOf(nfeXml.getNumrEndForn()));

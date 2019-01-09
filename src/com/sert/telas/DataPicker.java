@@ -42,7 +42,7 @@ public class DataPicker extends JDialog {
 
 		contentPanel.setForeground(Color.YELLOW);
 		contentPanel.setBackground(new Color(0, 0, 128));
-		contentPanel.setBorder(new LineBorder(new Color(255, 255, 0), 2));
+		contentPanel.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
 
