@@ -20,10 +20,15 @@ import javax.swing.border.LineBorder;
 
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.JDateField;
+import com.sert.controler.UsuLogado;
+import com.sert.editableFields.JDocumentFormatedField;
 
 import javax.swing.SwingConstants;
 import java.awt.Font;
+
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JRadioButton;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -72,6 +77,10 @@ public class CadCliente extends JDialog {
 
 	private JButton btnX;
 	private JButton btnSalvar;
+	private JRadioButton rdbtnCpf;
+	private JRadioButton rdbtnCnpj;
+
+	private ButtonGroup bg = new ButtonGroup();
 
 	public CadCliente() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -81,11 +90,11 @@ public class CadCliente extends JDialog {
 		setModal(true);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(0, 0, 128));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		String dataPrincipal = new JDateField().getDate();
+		String dataPrincipal = JDateField.getDate();
 
 		panelBtn = new JPanel();
 		panelBtn.setBackground(new Color(255, 255, 0));
@@ -136,20 +145,20 @@ public class CadCliente extends JDialog {
 		}
 
 		lblCpf = new JLabel("CPF:");
-		lblCpf.setBounds(185, 17, 46, 14);
+		lblCpf.setBounds(369, 17, 46, 14);
 		panelForm.add(lblCpf);
 
 		txtCpf = new JTextField();
-		txtCpf.setBounds(222, 14, 115, 20);
-		panelForm.add(txtCpf);
+		txtCpf.setBounds(406, 14, 115, 20);
 		txtCpf.setColumns(10);
+		panelForm.add(txtCpf);
 
 		lblRg = new JLabel("RG:");
-		lblRg.setBounds(389, 17, 38, 14);
+		lblRg.setBounds(573, 17, 38, 14);
 		panelForm.add(lblRg);
 
 		txtRg = new JTextField();
-		txtRg.setBounds(416, 14, 104, 20);
+		txtRg.setBounds(600, 14, 104, 20);
 		panelForm.add(txtRg);
 		txtRg.setColumns(10);
 
@@ -234,8 +243,8 @@ public class CadCliente extends JDialog {
 		panelForm.add(txtContato);
 		txtContato.setColumns(10);
 
-		lblUsuario = new JLabel("Usuario:");
-		lblUsuario.setBounds(322, 297, 58, 14);
+		lblUsuario = new JLabel("Usuario:" + UsuLogado.getNome());
+		lblUsuario.setBounds(322, 297, 198, 14);
 		panelForm.add(lblUsuario);
 
 		lblDataDeInclusao = new JLabel("Data de inclusão: " + dataPrincipal);
@@ -249,6 +258,41 @@ public class CadCliente extends JDialog {
 		textArea = new JTextArea();
 		textArea.setBounds(10, 322, 794, 88);
 		panelForm.add(textArea);
+
+		rdbtnCpf = new JRadioButton("CPF");
+		rdbtnCpf.setBounds(209, 11, 58, 23);
+		rdbtnCpf.setSelected(true);
+		panelForm.add(rdbtnCpf);
+
+		rdbtnCnpj = new JRadioButton("CNPJ");
+		rdbtnCnpj.setBounds(269, 11, 58, 23);
+		panelForm.add(rdbtnCnpj);
+
+		bg.add(rdbtnCnpj);
+		bg.add(rdbtnCpf);
+
+		rdbtnCnpj.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panelForm.remove(txtCpf);
+				lblCpf.setText("CNPJ: ");
+				txtCpf = new JDocumentFormatedField().getCnpj();
+				panelForm.add(txtCpf);
+				txtCpf.revalidate();
+				lblRg.setText("IE: ");
+			}
+		});
+		
+		rdbtnCpf.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panelForm.remove(txtCpf);
+				lblCpf.setText("CPF: ");
+				txtCpf = new JDocumentFormatedField().getCpf();
+				panelForm.add(txtCpf);
+				lblRg.setText("RG: ");
+			}
+		});
 
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);

@@ -40,7 +40,6 @@ import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Empresa;
 import com.sert.entidades.Mercadoria;
-import com.sert.entidades.MercadoriaNFe;
 import com.sert.entidades.NFeEntrada;
 import com.sert.exceptions.CodBarrasJaCadastradoException;
 import com.sert.exceptions.MercadoriaNaoEncontradaException;
@@ -214,6 +213,23 @@ public class ImportXml extends JDialog {
 						progressBar.setVisible(false);
 						contentPanel.setCursor(Cursor.getDefaultCursor());
 						JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso!");
+
+						for (int i = 0; i <= modelo.getRowCount(); i++) {
+							modelo.removeRow(i);
+						}
+						txtCaminhoXML.setText(null);
+						txtCnpj.setText(null);
+						txtChave.setText(null);
+						txtCidade.setText(null);
+						txtFornecedor.setText(null);
+						txtIe.setText(null);
+						txtValorNota.setText(null);
+						txtUf.setText(null);
+						txtRua.setText(null);
+						txtNumero.setText(null);
+						txtNumeroNota.setText(null);
+						table.setModel(modelo);
+						table.revalidate();
 					}
 				}.execute();
 			}

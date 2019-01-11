@@ -134,6 +134,11 @@ public class AjusteEstoque extends JDialog {
 				try {
 					movEstoque();
 					JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
+					for(int i = 0; i<table.getRowCount();i++) {
+						modelo.removeRow(i);
+					}
+					table.setModel(modelo);
+					table.revalidate();
 				} catch (ClassNotFoundException e1) {
 					e1.printStackTrace();
 				} catch (SQLException e1) {
