@@ -13,6 +13,7 @@ import com.sert.exceptions.MercadoriaSemEstoqueException;
 import com.sert.exceptions.MercadoriaSemPrecoException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.exceptions.NenhumaVendaRalizadaException;
+import com.sert.telas.PesqMercVenda;
 
 public class ControlerVenda {
 
@@ -58,7 +59,6 @@ public class ControlerVenda {
 			throws MercadoriaSemEstoqueException, MercadoriaSemPrecoException {
 		Mercadoria mercadoria = null;
 		for (int i = 0; i < mercadorias.size(); i++) {
-			System.out.println(mercadorias.get(i).getMercadoria());
 			if (codBarras == mercadorias.get(i).getCodBarras()) {
 				if (mercadorias.get(i).getPrecoVenda() > 0) {
 					if (mercadorias.get(i).getEstoque() >= quant) {
@@ -94,9 +94,14 @@ public class ControlerVenda {
 	public void atualizarCadastros()
 			throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException {
 		mercadorias = new ControlerMercadoria().listarMercadorias();
+		PesqMercVenda.setPreencheTable(mercadorias);
 	}
 	
 	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal) throws SQLException{
 		return vendaDao.pesquisarVenda(dtInicial, dtFinal);
+	}
+	
+	public Venda imprimirVenda(int id) throws SQLException {
+		return vendaDao.imprimirVenda(id);
 	}
 }

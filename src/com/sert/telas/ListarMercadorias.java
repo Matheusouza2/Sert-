@@ -14,7 +14,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerMercadoria;
 import com.sert.entidades.Mercadoria;
@@ -128,16 +127,16 @@ public class ListarMercadorias extends JDialog {
 		separator.setOrientation(SwingConstants.VERTICAL);
 		separator.setForeground(Color.WHITE);
 		separator.setBackground(Color.BLUE);
-		separator.setBounds(526, 4, 2, 105);
+		separator.setBounds(474, -1, 2, 116);
 		panelBtn.add(separator);
 
-		lblProcurar = new JLabel("Procurar:");
-		lblProcurar.setFont(new Font("Tahoma", Font.BOLD, 11));
-		lblProcurar.setBounds(538, 85, 59, 14);
+		lblProcurar = new JLabel("procurar");
+		lblProcurar.setFont(new Font("Gtek Technology", Font.BOLD, 11));
+		lblProcurar.setBounds(499, 48, 98, 14);
 		panelBtn.add(lblProcurar);
 
 		textField = new JTextField();
-		textField.setBounds(607, 82, 197, 20);
+		textField.setBounds(607, 45, 197, 20);
 		panelBtn.add(textField);
 		textField.setColumns(10);
 		btnExcluir.addActionListener(new ActionListener() {

@@ -221,6 +221,7 @@ public class CadMercadoria extends JDialog {
 
 		txtCodBarras = new JNumberField();
 		txtCodBarras.setBounds(361, 11, 156, 20);
+		txtCodBarras.setFocusable(true);
 		panelForm.add(txtCodBarras);
 		txtCodBarras.setColumns(10);
 		if (operacao == 1) {

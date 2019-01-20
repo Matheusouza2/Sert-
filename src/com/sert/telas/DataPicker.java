@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 
@@ -42,7 +43,7 @@ public class DataPicker extends JDialog {
 
 		contentPanel.setForeground(Color.YELLOW);
 		contentPanel.setBackground(new Color(0, 0, 128));
-		contentPanel.setBorder(new LineBorder(new Color(255, 255, 0), 2));
+		contentPanel.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
 
@@ -82,7 +83,13 @@ public class DataPicker extends JDialog {
 		btnOk.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new RelatorioCaixa(txtDtInicial.getText(), txtDtFinal.getText()).setVisible(true);
+				int data1 = Integer.parseInt(txtDtInicial.getText().replace("/", ""));
+				int data2 = Integer.parseInt(txtDtFinal.getText().replace("/", ""));
+				if(data1 > data2) {
+					JOptionPane.showMessageDialog(null, "A data inicial não pode ser maior que a data final");
+				}else {
+					new RelatorioCaixa(txtDtInicial.getText(), txtDtFinal.getText()).setVisible(true);
+				}
 			}
 		});
 

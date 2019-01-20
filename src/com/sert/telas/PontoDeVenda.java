@@ -222,7 +222,7 @@ public class PontoDeVenda extends JDialog {
 
 		lblCpf = new JLabel("CPF:");
 		lblCpf.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblCpf.setBounds(10, 66, 260, 14);
+		lblCpf.setBounds(10, 47, 260, 14);
 		panelId.add(lblCpf);
 
 		spProdutos = new JScrollPane();
@@ -242,10 +242,10 @@ public class PontoDeVenda extends JDialog {
 		};
 		prodVenda.setModel(modelo);
 
-		lblNewLabel = new JLabel("F6 - Fechar caixa");
+		lblNewLabel = new JLabel("F6 - Atualizar cadastros");
 		lblNewLabel.setForeground(new Color(255, 0, 0));
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblNewLabel.setBounds(1200, 0, 130, 14);
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		lblNewLabel.setBounds(1146, 0, 184, 14);
 		panelMother.add(lblNewLabel);
 
 		modelo.addColumn("Item");
@@ -270,6 +270,20 @@ public class PontoDeVenda extends JDialog {
 					break;
 				case (KeyEvent.VK_F4):
 					fecharVenda();
+					break;
+				case (KeyEvent.VK_F6):
+					try {
+						new ControlerVenda().atualizarCadastros();
+					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					} catch (NenhumaMercadoriaCadastradaException e) {
+						e.printStackTrace();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					JOptionPane.showMessageDialog(null, "Cadastro atualizado com sucesso");
 					break;
 				case (KeyEvent.VK_F7):
 					liberarCaixa();
@@ -414,7 +428,7 @@ public class PontoDeVenda extends JDialog {
 				}
 				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), "", idCliente, "",
 						JDateField.getDateHoraStatic(), mercFech,
-						Float.parseFloat(String.format("%.2f", total).replace(",", ".")), 0, 0, 0, 0);
+						Float.parseFloat(String.format("%.2f", total).replace(",", ".")), 0, 0, 0, 0, 0, 0);
 				new PontoDeVendaFecharVenda(venda).setVisible(true);
 			} catch (ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());

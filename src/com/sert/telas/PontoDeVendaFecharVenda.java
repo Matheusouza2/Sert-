@@ -70,7 +70,10 @@ public class PontoDeVendaFecharVenda extends JDialog {
 	private float valorCartao;
 	private float valorTotal;
 	private float cartaoDinheiro;
-	private float valorFinal;
+	private float descPorc;
+	private float descVal;
+	private float desconto = 0;
+	private float acrescimo = 0;
 
 	public PontoDeVendaFecharVenda(Venda venda) {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -89,7 +92,6 @@ public class PontoDeVendaFecharVenda extends JDialog {
 		this.vendaFinal = venda;
 		valorAPagar = venda.getValTotal();
 		auxTotal = valorAPagar;
-		valorFinal = valorAPagar;
 
 		panelTroco = new JPanel();
 		panelTroco.setBackground(new Color(255, 255, 0));
@@ -208,27 +210,8 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				txtDescPorc.setEditable(true);
 				txtDescReal.setEditable(true);
 				lblDesconto.setText("acrescimo");
-				txtDescPorc.addFocusListener(new FocusListener() {
-					@Override
-					public void focusLost(FocusEvent e) {
-						descontoPorc();
-					}
 
-					@Override
-					public void focusGained(FocusEvent e) {
-					}
-				});
-				txtDescReal.addFocusListener(new FocusListener() {
-					@Override
-					public void focusLost(FocusEvent e) {
-						descontoVal();
-					}
-
-					@Override
-					public void focusGained(FocusEvent e) {
-					}
-				});
-
+				descontoVal();
 			}
 		});
 
@@ -238,27 +221,7 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				txtDescPorc.setEditable(true);
 				txtDescReal.setEditable(true);
 				lblDesconto.setText("desconto");
-				txtDescPorc.addFocusListener(new FocusListener() {
-					@Override
-					public void focusLost(FocusEvent e) {
-						descontoPorc();
-					}
-
-					@Override
-					public void focusGained(FocusEvent e) {
-					}
-				});
-				txtDescReal.addFocusListener(new FocusListener() {
-					@Override
-					public void focusLost(FocusEvent e) {
-						descontoVal();
-					}
-
-					@Override
-					public void focusGained(FocusEvent e) {
-					}
-				});
-
+				descontoVal();
 			}
 		});
 
@@ -329,7 +292,7 @@ public class PontoDeVendaFecharVenda extends JDialog {
 		valorCartao = Float.parseFloat(txtCartao.getText().replace(",", "."));
 		valorTotal = Float.parseFloat(lblValTotal.getText().replace("R$", "").replace(",", "."));
 		cartaoDinheiro = valor + valorCartao;
-
+		
 		if (cartaoDinheiro >= valorTotal) {
 			float troco = cartaoDinheiro - valorTotal;
 			lblValAPagar.setText("R$ 0,00");
@@ -341,52 +304,72 @@ public class PontoDeVendaFecharVenda extends JDialog {
 		}
 	}
 
-	private void descontoPorc() {
-		float descVal = Float.parseFloat(txtDescReal.getText().replace(",", "."));
-		float descPorc = Float.parseFloat(txtDescPorc.getText().replace(",", "."));
-		descVal = (descPorc * auxTotal) / 100;
-		txtDescReal.setText(String.format("%.2f", descVal));
-
-		if (rdbtnDesconto.isSelected()) {
-			lblValAPagar.setText("R$ " + String.format("%.2f", (auxTotal - descVal)));
-			lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal - descVal)));
-			valorFinal = auxTotal - descVal;
-		} else if (rdbtnAcrescimo.isSelected()) {
-			lblValAPagar.setText("R$ " + String.format("%.2f", (auxTotal + descVal)));
-			lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal + descVal)));
-			valorFinal = auxTotal + descVal;
-		}
-
-	}
-
 	private void descontoVal() {
-		float descPorc = Float.parseFloat(txtDescPorc.getText().replace(",", "."));
-		float descVal = Float.parseFloat(txtDescReal.getText().replace(",", "."));
+		txtDescPorc.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				descPorc = Float.parseFloat(txtDescPorc.getText().replace(",", "."));
+				descVal = (descPorc * auxTotal) / 100;
+				txtDescReal.setText(String.format("%.2f", descVal));
+				if (rdbtnDesconto.isSelected()) {
+					lblValAPagar.setText("R$ " + String.format("%.2f", 0.0));
+					lblValTroco.setText("R$ " + String.format("%.2f", cartaoDinheiro - (auxTotal - descVal)));
+					lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal - descVal)));
+					desconto = descVal;
+				} else if (rdbtnAcrescimo.isSelected()) {
+					lblValAPagar.setText("R$ " + String.format("%.2f", (auxTotal + descVal) - cartaoDinheiro));
+					lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal + descVal)));
+					acrescimo = descVal;
+				}
+			}
 
-		descPorc = (descVal * 100) / auxTotal;
-		txtDescPorc.setText(String.format("%.2f", descPorc));
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+		});
 
-		if (rdbtnDesconto.isSelected()) {
-			lblValAPagar.setText("R$ " + String.format("%.2f", (auxTotal - descVal)));
-			lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal - descVal)));
-			valorFinal = auxTotal - descVal;
-		} else if (rdbtnAcrescimo.isSelected()) {
-			lblValAPagar.setText("R$ " + String.format("%.2f", (auxTotal + descVal)));
-			lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal + descVal)));
-			valorFinal = auxTotal + descVal;
-		}
+		txtDescReal.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				descVal = Float.parseFloat(txtDescReal.getText().replace(",", "."));
+				descPorc = (descVal * 100) / auxTotal;
+				txtDescPorc.setText(String.format("%.2f", descPorc));
+				if (rdbtnDesconto.isSelected()) {
+					lblValAPagar.setText("R$ " + String.format("%.2f", 0.0));
+					lblValTroco.setText("R$ " + String.format("%.2f", cartaoDinheiro - (auxTotal - descVal)));
+					lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal - descVal)));
+					desconto = descVal;
+				} else if (rdbtnAcrescimo.isSelected()) {
+					lblValAPagar.setText("R$ " + String.format("%.2f", (auxTotal + descVal) - cartaoDinheiro));
+					lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal + descVal)));
+					acrescimo = descVal;
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+		});
+
 	}
 
 	private void finalizarVenda() {
 		if ((Float.parseFloat(txtDinheiro.getText().replace(",", "."))
-				+ Float.parseFloat(txtCartao.getText().replace(",", "."))) >= valorFinal) {
+				+ Float.parseFloat(txtCartao.getText().replace(",", "."))) >= valorAPagar) {
 			if (Float.parseFloat(txtDinheiro.getText().replace(",", ".")) > 0) {
 				vendaFinal.setDinheiro(1);
 				vendaFinal.setValDInheiro(Float.parseFloat(txtDinheiro.getText().replace(",", ".")));
 			}
 			if (Float.parseFloat(txtCartao.getText().replace(",", ".")) > 0) {
-				vendaFinal.setCartao(1);
-				vendaFinal.setValCartao(Float.parseFloat(txtCartao.getText().replace(",", ".")));
+				valorCartao = Float.parseFloat(txtCartao.getText().replace(",", "."));
+				if(valorCartao <= valorTotal) {
+					vendaFinal.setCartao(1);
+					vendaFinal.setValCartao(valorCartao);
+				}else {
+					JOptionPane.showMessageDialog(null, "Pagamento em cartão não permite troco");
+					return;
+				}
+				
 			}
 			try {
 				int opcao = JOptionPane.showConfirmDialog(null, "Deseja imprimir a venda? ", "Impressão",
@@ -394,6 +377,8 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				if (opcao == JOptionPane.YES_NO_OPTION) {
 					new PrintableVenda(vendaFinal);
 				}
+				vendaFinal.setAcrescimo(acrescimo);
+				vendaFinal.setDesconto(desconto);
 				new ControlerVenda().finalizarVenda(vendaFinal);
 				JOptionPane.showMessageDialog(null, "Venda realizada com sucesso!", "VENDA FINALIZADA",
 						JOptionPane.WARNING_MESSAGE);

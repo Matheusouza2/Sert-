@@ -42,9 +42,7 @@ public class RelatorioCaixa extends JDialog {
 	private JScrollPane spListaMerc;
 	private JTable tabMerc;
 	private JLabel lblRelatorioCaixa;
-	private float totalCartao;
 	private float totalDinheiro;
-	private JLabel lblTotalCartao;
 
 	public RelatorioCaixa(String dtInicial, String dtFinal) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -123,23 +121,21 @@ public class RelatorioCaixa extends JDialog {
 		panel.add(lblTotal);
 
 		lblTotalDinheiro = new JLabel("");
-		lblTotalDinheiro.setBounds(676, 0, 64, 14);
+		lblTotalDinheiro.setBounds(740, 0, 64, 14);
 		panel.add(lblTotalDinheiro);
-		
-		lblTotalCartao = new JLabel();
-		lblTotalCartao.setBounds(750, 0, 64, 14);
-		panel.add(lblTotalCartao);
 
 		modelo.addColumn("Numero da Venda");
 		modelo.addColumn("Data");
 		modelo.addColumn("Vendedor");
 		modelo.addColumn("Dinheiro");
 		modelo.addColumn("Cartão");
+		modelo.addColumn("Total");
 		tabMerc.getColumnModel().getColumn(0).setPreferredWidth(200);
 		tabMerc.getColumnModel().getColumn(1).setPreferredWidth(230);
-		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(750);
+		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(700);
 		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(120);
 		tabMerc.getColumnModel().getColumn(4).setPreferredWidth(120);
+		tabMerc.getColumnModel().getColumn(5).setPreferredWidth(120);
 
 		try {
 			controlerVenda = new ControlerVenda();
@@ -148,13 +144,16 @@ public class RelatorioCaixa extends JDialog {
 				tabMerc.isCellEditable(i, 1);
 				modelo.addRow(new Object[] { preencheTable.get(i).getId(), preencheTable.get(i).getDataVenda(),
 						preencheTable.get(i).getVendedor().trim(),
-						"R$ "+String.format("%.2f",preencheTable.get(i).getValDInheiro()),
-						"R$ "+String.format("%.2f",preencheTable.get(i).getValCartao())});
-				totalCartao += preencheTable.get(i).getValCartao();
-				totalDinheiro += preencheTable.get(i).getValDInheiro();
+						"R$ " + String.format("%.2f",
+								preencheTable.get(i).getValTotal() + preencheTable.get(i).getAcrescimo()
+										- preencheTable.get(i).getDesconto() - preencheTable.get(i).getValCartao()),
+						"R$ " + String.format("%.2f", preencheTable.get(i).getValCartao()),
+						"R$ " + String.format("%.2f", preencheTable.get(i).getValTotal()
+								+ preencheTable.get(i).getAcrescimo() - preencheTable.get(i).getDesconto()) });
+				totalDinheiro += preencheTable.get(i).getValTotal() + preencheTable.get(i).getAcrescimo()
+						- preencheTable.get(i).getDesconto();
 			}
-			lblTotalDinheiro.setText("R$ "+String.format("%.2f",totalDinheiro));
-			lblTotalCartao.setText("R$ "+String.format("%.2f",totalCartao));
+			lblTotalDinheiro.setText("R$ " + String.format("%.2f", totalDinheiro));
 
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",

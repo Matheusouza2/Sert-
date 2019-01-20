@@ -55,6 +55,7 @@ public class DeserializableNfe {
 			nFeEntrada.setChave(chavNfe);
 			nFeEntrada.setNumNota(nNfe);
 			nFeEntrada.setCnpjForn(Long.parseLong(emit.getCNPJ()));
+			nFeEntrada.setIeForn(Long.parseLong(emit.getIE()));
 			nFeEntrada.setNomeFant(emit.getXFant());
 			nFeEntrada.setRazSocial(emit.getXNome());
 			nFeEntrada.setLograForn(emit.getEnderEmit().getXLgr());

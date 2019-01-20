@@ -2,7 +2,9 @@ package com.sert.entidades;
 
 import java.util.List;
 
-public class Venda {
+import ca.odell.glazedlists.TextFilterator;
+
+public class Venda implements TextFilterator<Venda> {
 
 	// Cabeçalho da venda
 	private int id;
@@ -23,6 +25,8 @@ public class Venda {
 	private int cartao;
 	private float valDInheiro;
 	private float valCartao;
+	private float acrescimo;
+	private float desconto;
 	// Fim formas de pagamento
 
 	public Venda() {
@@ -30,7 +34,8 @@ public class Venda {
 	}
 
 	public Venda(int id, int vendedorCad, String vendedor, int clienteCad, String cliente, String dataVenda,
-			List<Mercadoria> mercadorias, float valTotal, int dinheiro, int cartao, float valDInheiro, float valCartao) {
+			List<Mercadoria> mercadorias, float valTotal, int dinheiro, int cartao, float valDInheiro, float valCartao,
+			float acrescimo, float desconto) {
 		super();
 		this.id = id;
 		this.vendedorCad = vendedorCad;
@@ -44,6 +49,8 @@ public class Venda {
 		this.cartao = cartao;
 		this.valDInheiro = valDInheiro;
 		this.valCartao = valCartao;
+		this.acrescimo = acrescimo;
+		this.desconto = desconto;
 	}
 
 	public int getId() {
@@ -101,15 +108,15 @@ public class Venda {
 	public void setMercadorias(List<Mercadoria> mercadorias) {
 		this.mercadorias = mercadorias;
 	}
-	
-	public float getValTotal(){
+
+	public float getValTotal() {
 		return valTotal;
 	}
-	
-	public void setValTotal(float valTotal){
+
+	public void setValTotal(float valTotal) {
 		this.valTotal = valTotal;
 	}
-	
+
 	public int getDinheiro() {
 		return dinheiro;
 	}
@@ -140,5 +147,29 @@ public class Venda {
 
 	public void setValCartao(float valCartao) {
 		this.valCartao = valCartao;
+	}
+
+	public float getAcrescimo() {
+		return acrescimo;
+	}
+
+	public void setAcrescimo(float acrescimo) {
+		this.acrescimo = acrescimo;
+	}
+
+	public float getDesconto() {
+		return desconto;
+	}
+
+	public void setDesconto(float desconto) {
+		this.desconto = desconto;
+	}
+
+	@Override
+	public void getFilterStrings(List<String> baseList, Venda vendaList) {
+		baseList.add(String.valueOf(vendaList.getId()));
+		baseList.add(vendaList.getDataVenda());
+		baseList.add(String.valueOf(vendaList.getVendedor()));
+		baseList.add(String.valueOf(vendaList.getCliente()));
 	}
 }

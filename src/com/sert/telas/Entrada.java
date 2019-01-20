@@ -119,13 +119,10 @@ public class Entrada extends JFrame {
 			}
 			AutoCompletion.enable(txtUser);
 		} catch (ClassNotFoundException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		} catch (SQLException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
+			JOptionPane.showMessageDialog(null, "O banco de dados encontrou um problema ao ser aberto \n"+e2.getMessage(),"ERRO DE BANCO DE DADOS",JOptionPane.ERROR_MESSAGE);
 		} catch (NenhumUsuCadException e2) {
-			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
@@ -223,6 +220,7 @@ public class Entrada extends JFrame {
 
 		if (senha.equals("s3rtc0nfig")) {
 			new ConfigEmpresa().setVisible(true);
+			dispose();
 		} else {
 			Usuario usu = new ControlerUsuario().login(login, senha);
 			if (usu.getId() != 0) {

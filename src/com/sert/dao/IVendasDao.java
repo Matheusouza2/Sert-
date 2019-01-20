@@ -13,4 +13,5 @@ public interface IVendasDao {
 	public void cancelarVenda(int id) throws SQLException;
 	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal)throws SQLException;
 	public int getIdVenda() throws SQLException;
+	public Venda imprimirVenda(int id)throws SQLException;
 }
