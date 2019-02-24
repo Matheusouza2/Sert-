@@ -1,4 +1,4 @@
-package com.sert.telas;
+package com.sert.opcoes;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,6 +10,10 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+import com.sert.telas.BackupSistema;
+import com.sert.telas.ContaCedula;
+import com.sert.telas.MovimentoCaixa;
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * @author Matheus Souza
@@ -104,6 +108,13 @@ public class OpcFerramentas extends JDialog {
 			}
 		});
 		contentPane.add(btnBackup);
+		
+		JButton btnEstorno = new JButton("troca e estorno");
+		btnEstorno.setForeground(Color.BLACK);
+		btnEstorno.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnEstorno.setBackground(Color.YELLOW);
+		btnEstorno.setBounds(10, 235, 248, 21);
+		contentPane.add(btnEstorno);
 		
 	}
 }

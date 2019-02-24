@@ -27,8 +27,7 @@ public class TableModelVenda implements TableFormat<Object> {
 
 	public Object getColumnValue(Object baseObject, int column) {
 		Venda venda = (Venda) baseObject;
-		float vendaTotal = venda.getValTotal() + venda.getAcrescimo()
-				- venda.getDesconto() - venda.getValCartao();
+		float vendaTotal = venda.getValTotal() + venda.getAcrescimo() - venda.getDesconto() - venda.getValCartao();
 		if (column == 0)
 			return venda.getId();
 		else if (column == 1)

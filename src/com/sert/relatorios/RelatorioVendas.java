@@ -1,4 +1,4 @@
-package com.sert.telas;
+package com.sert.relatorios;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -27,8 +27,10 @@ import com.sert.controler.ControlerVenda;
 import com.sert.entidades.Venda;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.exceptions.NenhumaVendaRalizadaException;
+import com.sert.exceptions.VendaNaoEncontradaException;
 import com.sert.impressao.PrintableVenda;
 import com.sert.tables.TableModelVenda;
+import com.sert.telas.DetalheVenda;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.FilterList;
@@ -63,7 +65,7 @@ public class RelatorioVendas extends JDialog {
 
 	public RelatorioVendas() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 834, 590);
+		setBounds(100, 100, 903, 644);
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		setModal(true);
@@ -73,7 +75,7 @@ public class RelatorioVendas extends JDialog {
 		contentPanel.setLayout(null);
 
 		btnX = new JButton("X");
-		btnX.setBounds(788, 0, 46, 23);
+		btnX.setBounds(857, 0, 46, 23);
 		contentPanel.add(btnX);
 		btnX.setForeground(Color.WHITE);
 		btnX.setBackground(Color.RED);
@@ -86,7 +88,7 @@ public class RelatorioVendas extends JDialog {
 
 		panelBtn = new JPanel();
 		panelBtn.setBackground(new Color(255, 255, 0));
-		panelBtn.setBounds(10, 34, 814, 113);
+		panelBtn.setBounds(10, 34, 883, 113);
 		panelBtn.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
 		contentPanel.add(panelBtn);
 		panelBtn.setLayout(null);
@@ -116,6 +118,9 @@ public class RelatorioVendas extends JDialog {
 					} catch (NenhumaMercadoriaCadastradaException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					} catch (VendaNaoEncontradaException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				} else {
 					JOptionPane.showMessageDialog(null, "Selecione uma venda para detalhar", "Aviso",
@@ -138,22 +143,22 @@ public class RelatorioVendas extends JDialog {
 		separator.setOrientation(SwingConstants.VERTICAL);
 		separator.setForeground(Color.WHITE);
 		separator.setBackground(Color.BLUE);
-		separator.setBounds(474, 0, 2, 116);
+		separator.setBounds(440, -1, 2, 116);
 		panelBtn.add(separator);
 		
 		lblProcurar = new JLabel("procurar");
 		lblProcurar.setFont(new Font("Gtek Technology", Font.BOLD, 11));
-		lblProcurar.setBounds(499, 49, 98, 14);
+		lblProcurar.setBounds(568, 49, 98, 14);
 		panelBtn.add(lblProcurar);
 		
 		textField = new JTextField();
 		textField.setColumns(10);
-		textField.setBounds(607, 46, 197, 20);
+		textField.setBounds(676, 46, 197, 20);
 		panelBtn.add(textField);
 		
 
 		spListaMerc = new JScrollPane();
-		spListaMerc.setBounds(10, 158, 814, 396);
+		spListaMerc.setBounds(10, 158, 883, 396);
 		spListaMerc.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
 		contentPanel.add(spListaMerc);
 		tabMerc = new JTable();
@@ -177,7 +182,7 @@ public class RelatorioVendas extends JDialog {
 		contentPanel.add(lblRelatorioVendas);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(10, 565, 814, 14);
+		panel.setBounds(10, 565, 883, 68);
 		contentPanel.add(panel);
 		panel.setLayout(null);
 		
@@ -221,6 +226,9 @@ public class RelatorioVendas extends JDialog {
 					} catch (NenhumaMercadoriaCadastradaException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
+					} catch (VendaNaoEncontradaException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
 				}else {
 					JOptionPane.showMessageDialog(null, "Selecione uma venda para ser impressa", "AVISO", JOptionPane.INFORMATION_MESSAGE);
@@ -239,6 +247,7 @@ public class RelatorioVendas extends JDialog {
 		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(500);
 		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(650);
 		tabMerc.getColumnModel().getColumn(4).setPreferredWidth(120);
+
 				
 		float total = 0;
 		

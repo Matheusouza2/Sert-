@@ -28,6 +28,9 @@ import java.awt.Font;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -78,18 +81,22 @@ public class CadCliente extends JDialog {
 	private JButton btnSalvar;
 	private JRadioButton rdbtnCpf;
 	private JRadioButton rdbtnCnpj;
+	
+	private int id;
 
 	private ButtonGroup bg = new ButtonGroup();
+	private JPanel panelDebito;
+	private JTextField txtFiltrar;
+	private JTable tableDebitos;
 
 	public CadCliente() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 834, 590);
+		setBounds(100, 100, 834, 618);
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		setModal(true);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(0, 0, 128));
-		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
@@ -112,26 +119,8 @@ public class CadCliente extends JDialog {
 		button_1.setBounds(109, 11, 89, 91);
 		panelBtn.add(button_1);
 
-		panelForm = new JPanel();
-		panelForm.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
-		panelForm.setBounds(10, 158, 814, 421);
-		contentPane.add(panelForm);
-		panelForm.setLayout(null);
-
-		lblCodigoCliente = new JLabel("Codigo Cliente:");
-		lblCodigoCliente.setBounds(10, 14, 97, 14);
-		panelForm.add(lblCodigoCliente);
-
-		txtCodCliente = new JTextField();
-		txtCodCliente.setEnabled(false);
-		txtCodCliente.setBounds(105, 11, 58, 20);
-		panelForm.add(txtCodCliente);
-		txtCodCliente.setColumns(10);
-
 		try {
-			int id;
 			id = new ControlerUsuario().confereId();
-			txtCodCliente.setText(String.valueOf(++id));
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
 					JOptionPane.ERROR_MESSAGE);
@@ -143,13 +132,74 @@ public class CadCliente extends JDialog {
 					JOptionPane.ERROR_MESSAGE);
 		}
 
+		txtCpf = new JDocumentFormatedField().getCpf();
+		txtCpf.setBounds(406, 14, 115, 20);
+		txtCpf.setColumns(10);
+
+		btnX = new JButton("X");
+		btnX.setBounds(788, 0, 46, 23);
+		contentPane.add(btnX);
+		btnX.setForeground(Color.WHITE);
+		btnX.setBackground(Color.RED);
+		btnX.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+
+		lblCadastroDeClientes = new JLabel("cadastro de clientes");
+		lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
+		lblCadastroDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 17));
+		lblCadastroDeClientes.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCadastroDeClientes.setBounds(33, -4, 768, 30);
+		contentPane.add(lblCadastroDeClientes);
+
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBounds(10, 158, 814, 449);
+		contentPane.add(tabbedPane);
+
+		panelForm = new JPanel();
+		panelForm.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
+		panelForm.setLayout(null);
+		
+		panelDebito = new JPanel();
+		panelDebito.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
+		panelDebito.setLayout(null);
+		
+		tabbedPane.addTab("Cadastro", null, panelForm, null);
+		tabbedPane.addTab("Débitos", null, panelDebito, null);
+		
+		JLabel lblFiltrar = new JLabel("Filtrar:");
+		lblFiltrar.setBounds(10, 11, 48, 14);
+		panelDebito.add(lblFiltrar);
+		
+		txtFiltrar = new JTextField();
+		txtFiltrar.setBounds(68, 8, 107, 20);
+		panelDebito.add(txtFiltrar);
+		txtFiltrar.setColumns(10);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 40, 789, 370);
+		panelDebito.add(scrollPane);
+		
+		tableDebitos = new JTable();
+		scrollPane.setViewportView(tableDebitos);
+
+		lblCodigoCliente = new JLabel("Codigo Cliente:");
+		lblCodigoCliente.setBounds(10, 14, 97, 14);
+		panelForm.add(lblCodigoCliente);
+
+		txtCodCliente = new JTextField();
+		txtCodCliente.setEnabled(false);
+		txtCodCliente.setBounds(105, 11, 58, 20);
+		panelForm.add(txtCodCliente);
+		txtCodCliente.setColumns(10);
+		txtCodCliente.setText(String.valueOf(id));
+
 		lblCpf = new JLabel("CPF:");
 		lblCpf.setBounds(369, 17, 46, 14);
 		panelForm.add(lblCpf);
-
-		txtCpf = new JTextField();
-		txtCpf.setBounds(406, 14, 115, 20);
-		txtCpf.setColumns(10);
 		panelForm.add(txtCpf);
 
 		lblRg = new JLabel("RG:");
@@ -276,8 +326,9 @@ public class CadCliente extends JDialog {
 				panelForm.remove(txtCpf);
 				lblCpf.setText("CNPJ: ");
 				txtCpf = new JDocumentFormatedField().getCnpj();
+				txtCpf.setBounds(406, 14, 115, 20);
+				txtCpf.setColumns(10);
 				panelForm.add(txtCpf);
-				txtCpf.revalidate();
 				lblRg.setText("IE: ");
 			}
 		});
@@ -288,29 +339,12 @@ public class CadCliente extends JDialog {
 				panelForm.remove(txtCpf);
 				lblCpf.setText("CPF: ");
 				txtCpf = new JDocumentFormatedField().getCpf();
+				txtCpf.setBounds(406, 14, 115, 20);
+				txtCpf.setColumns(10);
 				panelForm.add(txtCpf);
 				lblRg.setText("RG: ");
 			}
 		});
-
-		btnX = new JButton("X");
-		btnX.setBounds(788, 0, 46, 23);
-		contentPane.add(btnX);
-		btnX.setForeground(Color.WHITE);
-		btnX.setBackground(Color.RED);
-		btnX.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
-
-		lblCadastroDeClientes = new JLabel("cadastro de clientes");
-		lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
-		lblCadastroDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 17));
-		lblCadastroDeClientes.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCadastroDeClientes.setBounds(33, -4, 768, 30);
-		contentPane.add(lblCadastroDeClientes);
 
 		btnSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

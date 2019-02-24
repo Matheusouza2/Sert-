@@ -32,7 +32,7 @@ public class UsuDao implements IUsuDao {
 		String sql = "INSERT INTO usuario(nome, senha) VALUES (?,?)";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		preparador.setString(1, usu.getNome());
-		preparador.setString(1, usu.getSenha());
+		preparador.setString(2, usu.getSenha());
 		preparador.execute();
 		preparador.close();
 	}
@@ -77,7 +77,7 @@ public class UsuDao implements IUsuDao {
 	@Override
 	public int confereId() throws SQLException {
 		int id = 0;
-		String sql = "select auto_increment as id_usuario from information_schema.tables where table_name = 'usuario' and table_schema = 'sertbd'";
+		String sql = "SELECT last_value + 1 as id_usuario FROM clientes_id_seq;";
 
 		PreparedStatement prepare = con.prepareStatement(sql);
 		ResultSet resultado = prepare.executeQuery();
@@ -102,7 +102,6 @@ public class UsuDao implements IUsuDao {
 			usuario.setNome(result.getString("nome").trim());
 			usuario.setSenha(result.getString("senha").trim());
 		}
-		
 		return usuario;
 	}
 }

@@ -1,4 +1,4 @@
-package com.sert.telas;
+package com.sert.opcoes;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,13 +10,17 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+import com.sert.relatorios.RelatorioVendas;
+import com.sert.telas.CadCliente;
+import com.sert.telas.DataPicker;
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * @author Matheus Souza
  * @version 1.0.0
  * 
  * */
-public class OpcClientes extends JDialog {
+public class OpcDashBoard extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -25,8 +29,12 @@ public class OpcClientes extends JDialog {
 	private JButton btnNovoFornecedor;
 	private JButton btnListaDeClientes;
 	private JButton btnX;
+	private JButton btnRelaCaixa;
+	private JButton btnListaDeFornecedores;
+	private JButton btnDebitoClientes;
+	private JButton btnContasAPagar;
 	
-	public OpcClientes() {
+	public OpcDashBoard() {
 		setFocusableWindowState(true);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -41,7 +49,7 @@ public class OpcClientes extends JDialog {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 						
-		btnCadastrarNovoCliente = new JButton("novo cliente");
+		btnCadastrarNovoCliente = new JButton("estoque");
 		btnCadastrarNovoCliente.setBackground(new Color(255, 255, 0));
 		btnCadastrarNovoCliente.setForeground(new Color(0, 0, 0));
 		btnCadastrarNovoCliente.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
@@ -54,44 +62,48 @@ public class OpcClientes extends JDialog {
 			}
 		});
 		
-		btnNovoFornecedor = new JButton("novo  fornecedor");
-		btnNovoFornecedor.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new CadFornecedor().setVisible(true);
-			}
-		});
+		btnNovoFornecedor = new JButton("relatorio de compras");
 		btnNovoFornecedor.setBackground(new Color(255, 255, 0));
 		btnNovoFornecedor.setForeground(new Color(0, 0, 0));
 		btnNovoFornecedor.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnNovoFornecedor.setBounds(10, 124, 248, 21);
+		btnNovoFornecedor.setBounds(10, 156, 248, 21);
 		getContentPane().add(btnNovoFornecedor);
 		
-		btnListaDeClientes = new JButton("listar clientes");
+		btnListaDeClientes = new JButton("relatorio de vendas");
 		btnListaDeClientes.setBackground(new Color(255, 255, 0));
 		btnListaDeClientes.setForeground(new Color(0, 0, 0));
 		btnListaDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
 		btnListaDeClientes.setBounds(10, 92, 248, 21);
 		getContentPane().add(btnListaDeClientes);
+		btnListaDeClientes.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new RelatorioVendas().setVisible(true);
+				
+			}
+			
+		});
 		
-		JButton btnListaDeFornecedores = new JButton("listar fornecedores");
+		btnListaDeFornecedores = new JButton("auditoria");
 		btnListaDeFornecedores.setBackground(new Color(255, 255, 0));
 		btnListaDeFornecedores.setForeground(new Color(0, 0, 0));
 		btnListaDeFornecedores.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnListaDeFornecedores.setBounds(10, 156, 248, 21);
+		btnListaDeFornecedores.setBounds(10, 188, 248, 21);
 		getContentPane().add(btnListaDeFornecedores);
 		
-		JButton btnDebitoClientes = new JButton("contas a receber");
+		btnDebitoClientes = new JButton("contas a receber");
 		btnDebitoClientes.setBackground(new Color(255, 255, 0));
 		btnDebitoClientes.setForeground(new Color(0, 0, 0));
 		btnDebitoClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnDebitoClientes.setBounds(10, 188, 248, 21);
+		btnDebitoClientes.setBounds(10, 220, 248, 21);
 		getContentPane().add(btnDebitoClientes);
 		
-		JButton btnContasAPagar = new JButton("contas a pagar");
+		btnContasAPagar = new JButton("contas a pagar");
 		btnContasAPagar.setBackground(new Color(255, 255, 0));
 		btnContasAPagar.setForeground(new Color(0, 0, 0));
 		btnContasAPagar.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnContasAPagar.setBounds(10, 220, 248, 21);
+		btnContasAPagar.setBounds(10, 252, 248, 21);
 		getContentPane().add(btnContasAPagar);
 		
 		btnX = new JButton("X");
@@ -103,6 +115,19 @@ public class OpcClientes extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
+			}
+		});
+		
+		btnRelaCaixa = new JButton("relatorio de caixa");
+		btnRelaCaixa.setForeground(Color.BLACK);
+		btnRelaCaixa.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnRelaCaixa.setBackground(Color.YELLOW);
+		btnRelaCaixa.setBounds(10, 124, 248, 21);
+		contentPane.add(btnRelaCaixa);
+		btnRelaCaixa.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new DataPicker().setVisible(true);
 			}
 		});
 	}

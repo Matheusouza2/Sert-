@@ -120,6 +120,10 @@ public class AutoCompleteDecoratorCombo {
 	}
 
 	static class NonStrictBackspaceAction extends TextAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
 		Action backspace;
 		Action selectionBackward;
 		AbstractAutoCompleteAdaptor adaptor;
@@ -142,6 +146,11 @@ public class AutoCompleteDecoratorCombo {
 	}
 
 	static Object errorFeedbackAction = new TextAction("provide-error-feedback") {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public void actionPerformed(ActionEvent e) {
 			UIManager.getLookAndFeel().provideErrorFeedback(getTextComponent(e));
 		}

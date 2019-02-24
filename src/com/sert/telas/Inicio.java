@@ -1,20 +1,27 @@
 package com.sert.telas;
 
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
-import com.sert.controler.ControlerFuncCaixa;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
-import com.sert.entidades.Caixa;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
+import com.sert.opcoes.OpcClientes;
+import com.sert.opcoes.OpcDashBoard;
+import com.sert.opcoes.OpcFerramentas;
+import com.sert.opcoes.OpcFiscal;
+import com.sert.opcoes.OpcProdutos;
 
 import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -22,6 +29,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -53,6 +61,7 @@ public class Inicio extends JDialog {
 	private JLabel lblBanner;
 	private JLabel lblDataHora;
 	private JLabel lblLegenda;
+	private JButton btnFuncionario;
 
 	public Inicio() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -67,6 +76,8 @@ public class Inicio extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+
+		listen();
 
 		panelButtons = new JPanel();
 		panelButtons.setBackground(new Color(0, 0, 153));
@@ -96,7 +107,7 @@ public class Inicio extends JDialog {
 		btnProdutos.setBackground(new Color(153, 0, 102));
 		btnProdutos.setBorderPainted(false);
 		btnProdutos.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/produtosBtn.png")));
-		btnProdutos.setBounds(109, 11, 89, 91);
+		btnProdutos.setBounds(205, 11, 89, 91);
 		panelButtons.add(btnProdutos);
 
 		btnFiscal = new JButton();
@@ -108,41 +119,35 @@ public class Inicio extends JDialog {
 		btnFiscal.setBackground(new Color(255, 204, 0));
 		btnFiscal.setBorderPainted(false);
 		btnFiscal.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/fiscalBtn.png")));
-		btnFiscal.setBounds(208, 11, 89, 91);
+		btnFiscal.setBounds(304, 11, 89, 91);
 		panelButtons.add(btnFiscal);
 
 		btnVendas = new JButton();
 		btnVendas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				//try {
-//					Caixa caixa = new ControlerFuncCaixa().confereCaixa();
-
-//					if (caixa.getDataCaixaAbertura() == null) {
-//						new FuncCaixa(0).setVisible(true);
-//					} else {
-						//new ControlerVenda().atualizarCadastros();
-						new PontoDeVenda().setVisible(true);
-					//}
-//				} catch (ClassNotFoundException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				} catch (NenhumaMercadoriaCadastradaException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				} catch (SQLException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				} catch (IOException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
+				try {
+					new ControlerVenda().atualizarCadastros();
+					new PontoDeVenda().setVisible(true);
+				} catch (ClassNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (NenhumaMercadoriaCadastradaException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 		btnVendas.setBackground(new Color(255, 102, 0));
 		btnVendas.setBorderPainted(false);
 		btnVendas.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/vendasBtn.png")));
-		btnVendas.setBounds(307, 11, 89, 91);
+		btnVendas.setBounds(403, 11, 89, 91);
 		panelButtons.add(btnVendas);
 
 		btnDashboard = new JButton();
@@ -155,14 +160,14 @@ public class Inicio extends JDialog {
 		btnDashboard.setBackground(new Color(51, 255, 0));
 		btnDashboard.setBorderPainted(false);
 		btnDashboard.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/dashboardBtn.png")));
-		btnDashboard.setBounds(406, 11, 89, 91);
+		btnDashboard.setBounds(502, 11, 89, 91);
 		panelButtons.add(btnDashboard);
 
 		btnSair = new JButton();
 		btnSair.setBackground(new Color(255, 0, 0));
 		btnSair.setBorderPainted(false);
 		btnSair.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/sairBtn.png")));
-		btnSair.setBounds(604, 11, 89, 91);
+		btnSair.setBounds(700, 11, 89, 91);
 		panelButtons.add(btnSair);
 		btnSair.addActionListener(new ActionListener() {
 			@Override
@@ -194,8 +199,15 @@ public class Inicio extends JDialog {
 		btnFerramentas.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFerramentas.png")));
 		btnFerramentas.setBorderPainted(false);
 		btnFerramentas.setBackground(new Color(175, 238, 238));
-		btnFerramentas.setBounds(505, 11, 89, 91);
+		btnFerramentas.setBounds(601, 11, 89, 91);
 		panelButtons.add(btnFerramentas);
+
+		btnFuncionario = new JButton();
+		btnFuncionario.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFuncionarios.png")));
+		btnFuncionario.setBorderPainted(false);
+		btnFuncionario.setBackground(new Color(255, 245, 238));
+		btnFuncionario.setBounds(106, 11, 89, 91);
+		panelButtons.add(btnFuncionario);
 		btnFerramentas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -238,12 +250,25 @@ public class Inicio extends JDialog {
 
 		lblBanner = new JLabel("");
 		lblBanner.setHorizontalAlignment(SwingConstants.CENTER);
-		lblBanner.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/BannerInicio.png")));
+		lblBanner.setIcon(new ImageIcon("C:\\Sert+\\img\\BannerInicio.png"));
 		lblBanner.setBounds(0, 0, 1344, 590);
 		panelUsados.add(lblBanner);
 
 		lblLegenda = new JLabel("F2 - Pesquisa preço");
 		lblLegenda.setBounds(10, 11, 258, 14);
 		panelUsados.add(lblLegenda);
+	}
+
+	private void listen() {
+		JRootPane enterMerc = getRootPane();
+		enterMerc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "F2");
+		enterMerc.getRootPane().getActionMap().put("F2", new AbstractAction("F2") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				new PesqMercVenda().setVisible(true);
+			}
+		});
+
 	}
 }

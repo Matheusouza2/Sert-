@@ -2,37 +2,56 @@ package com.sert.entidades;
 
 import java.util.List;
 
-public class NFeEntrada extends Fornecedor 	 {
+public class NFeEntrada {
 
-	//Identificação do destinatario
+	// Identificação do destinatario
 	private long cnpjDest;
+	// Fonecedor
+	private Fornecedor fornecedor;
 	// Informações de idetificação da nota
+	private int id;
 	private String chave;
 	private int numNota;
-	//Mercadorias da nota
+	private float valNota;
+	// Mercadorias da nota
 	private List<MercadoriaNFe> mercadorias;
-	
+
 	public NFeEntrada() {
-		super(0, 0, null, null, null, null, null, 0, null, null, 0);
 	}
 
-	public NFeEntrada(long cnpjDest, long cnpjForn, long ieForn, String nomeFant, String razSocial, String lograForn, String numrEndForn,
-			String bairroForn, long cepForn, String cidadeForn, String ufForn, long foneForn, String chave, int numNota,
-			int codProduto, long codBarras, String descProd, String und, float quant, float valUnit, float valTotal, List<MercadoriaNFe>mercadorias) {
-		super(cnpjForn, ieForn, nomeFant, razSocial, lograForn, numrEndForn, bairroForn, cepForn, cidadeForn, ufForn,
-				foneForn);
+	public NFeEntrada(long cnpjDest, Fornecedor fornecedor, int id, String chave, int numNota,
+			List<MercadoriaNFe> mercadorias, float valNota) {
+		super();
 		this.cnpjDest = cnpjDest;
+		this.fornecedor = fornecedor;
+		this.id = id;
 		this.chave = chave;
 		this.numNota = numNota;
 		this.mercadorias = mercadorias;
 	}
-	
+
 	public long getCnpjDest() {
 		return cnpjDest;
 	}
 
 	public void setCnpjDest(long cnpjDest) {
 		this.cnpjDest = cnpjDest;
+	}
+
+	public Fornecedor getFornecedor() {
+		return fornecedor;
+	}
+
+	public void setFornecedor(Fornecedor fornecedor) {
+		this.fornecedor = fornecedor;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getChave() {
@@ -57,5 +76,13 @@ public class NFeEntrada extends Fornecedor 	 {
 
 	public void setMercadorias(List<MercadoriaNFe> mercadorias) {
 		this.mercadorias = mercadorias;
+	}
+
+	public float getValNota() {
+		return valNota;
+	}
+
+	public void setValNota(float valNota) {
+		this.valNota = valNota;
 	}
 }

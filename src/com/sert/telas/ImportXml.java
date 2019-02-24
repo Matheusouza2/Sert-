@@ -30,19 +30,27 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
+import com.sert.alertas.Info;
 import com.sert.controler.ControlerEmpresa;
+import com.sert.controler.ControlerFornecedor;
 import com.sert.controler.ControlerMercadoria;
+import com.sert.controler.ControlerNfe;
 import com.sert.controler.DeserializableNfe;
 import com.sert.controler.JDateField;
+import com.sert.controler.Log;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.AutoCompleteDecoratorCombo;
 import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Empresa;
+import com.sert.entidades.Fornecedor;
 import com.sert.entidades.Mercadoria;
+import com.sert.entidades.MercadoriaNFe;
 import com.sert.entidades.NFeEntrada;
 import com.sert.exceptions.CodBarrasJaCadastradoException;
+import com.sert.exceptions.FornecedorJaCadastradoException;
 import com.sert.exceptions.MercadoriaNaoEncontradaException;
+import com.sert.exceptions.NFeJaCadastradaException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.DefaultCellEditor;
@@ -212,13 +220,11 @@ public class ImportXml extends JDialog {
 					protected void done() {
 						progressBar.setVisible(false);
 						contentPanel.setCursor(Cursor.getDefaultCursor());
-						JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso!");
-
 						while (table.getRowCount() > 0) {
 							modelo.removeRow(0);
 						}
 						table.setModel(modelo);
-						
+
 						txtCaminhoXML.setText(null);
 						txtCnpj.setText(null);
 						txtChave.setText(null);
@@ -501,7 +507,6 @@ public class ImportXml extends JDialog {
 					}
 				} else {
 					importaNota();
-
 				}
 			} else {
 				JOptionPane.showMessageDialog(null, "Nenhum arquivo selecionado", "AVISO", JOptionPane.WARNING_MESSAGE);
@@ -561,15 +566,16 @@ public class ImportXml extends JDialog {
 			codBarrasFlag = 0;
 			mercadoriaFlag = "";
 		}
-		txtFornecedor.setText(nfeXml.getNomeFant());
-		txtCnpj.setText(String.valueOf(nfeXml.getCnpjForn()));
-		txtIe.setText(String.valueOf(nfeXml.getIeForn()));
-		txtRua.setText(nfeXml.getLograForn());
-		txtNumero.setText(String.valueOf(nfeXml.getNumrEndForn()));
-		txtCidade.setText(nfeXml.getCidadeForn());
-		txtUf.setText(nfeXml.getUfForn());
+		txtFornecedor.setText(nfeXml.getFornecedor().getNomeFant());
+		txtCnpj.setText(nfeXml.getFornecedor().getCnpjForn());
+		txtIe.setText(nfeXml.getFornecedor().getIeForn());
+		txtRua.setText(nfeXml.getFornecedor().getLograForn());
+		txtNumero.setText(String.valueOf(nfeXml.getFornecedor().getNumrEndForn()));
+		txtCidade.setText(nfeXml.getFornecedor().getCidadeForn());
+		txtUf.setText(nfeXml.getFornecedor().getUfForn());
 		txtNumeroNota.setText(String.valueOf(nfeXml.getNumNota()));
 		txtChave.setText(nfeXml.getChave());
+		txtValorNota.setText(String.valueOf(nfeXml.getValNota()));
 	}
 
 	public void escutaComboMerc() {
@@ -618,6 +624,8 @@ public class ImportXml extends JDialog {
 		});
 	}
 
+	// Recupera os itens da nota para cadastro das mercadorias e seus respectivos
+	// estoques
 	private void recuperaNota() {
 		if (table.getRowCount() == 0) {
 			JOptionPane.showMessageDialog(null, "Selecione um xml para começar o lançamento da nota", "AVISO",
@@ -626,6 +634,7 @@ public class ImportXml extends JDialog {
 
 			for (int i = 0; i < table.getRowCount(); i++) {
 				mercadoriaImport = new Mercadoria();
+				mercadoriaImport.setId(Integer.parseInt(table.getValueAt(i, 0).toString()));
 				mercadoriaImport.setMercadoria(table.getValueAt(i, 1).toString());
 				mercadoriaImport.setCodBarras(nfeXml.getMercadorias().get(i).getCodBarras());
 				mercadoriaImport.setDataCadastro(JDateField.getDate());
@@ -641,21 +650,63 @@ public class ImportXml extends JDialog {
 		}
 	}
 
+	// Cadastra os itens da nota, atualiza o estoque, cadastra fornecedor, e grava a
+	// nota
 	private void confirmarCadastro() throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException,
 			IOException, CodBarrasJaCadastradoException, MercadoriaNaoEncontradaException {
 		controlerMercadoria = new ControlerMercadoria();
-		for (int i = 0; i < mercadoriaGravar.size(); i++) {
-			if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
-				Mercadoria mercadoria = new Mercadoria(0, mercadoriaGravar.get(i).getCodBarras(),
-						mercadoriaGravar.get(i).getMercadoria(), 0, mercadoriaGravar.get(i).getDataCadastro(),
-						mercadoriaGravar.get(i).getUsuCad(), mercadoriaGravar.get(i).getUnd(),
-						mercadoriaGravar.get(i).getPrecoCompra(), UsuLogado.getNome(), "",
-						mercadoriaGravar.get(i).getEstoque());
-				controlerMercadoria.cadastrarMercadoriaNf(mercadoria);
-			} else {
-				controlerMercadoria.entradaMercadoria(mercadoriaGravar.get(i).getEstoque(),
-						mercadoriaGravar.get(i).getCodBarras());
+		ControlerNfe controlerNfe = new ControlerNfe();
+		List<Mercadoria> mercadoriasNF = new ArrayList<>();
+
+		if (controlerNfe.pesqNfe(nfeXml.getChave()).getChave() != nfeXml.getChave()) {
+			// Cadastra as mercadorias e seu estoque
+			for (int i = 0; i < mercadoriaGravar.size(); i++) {
+				if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
+					Mercadoria mercadoria = new Mercadoria(mercadoriaGravar.get(i).getId(),
+							mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getMercadoria(), 0,
+							mercadoriaGravar.get(i).getDataCadastro(), mercadoriaGravar.get(i).getUsuCad(),
+							mercadoriaGravar.get(i).getUnd(),
+							mercadoriaGravar.get(i).getPrecoCompra() / mercadoriaGravar.get(i).getEstoque(),
+							UsuLogado.getNome(), "", mercadoriaGravar.get(i).getEstoque());
+					controlerMercadoria.cadastrarMercadoriaNf(mercadoria);
+					mercadoriasNF.add(mercadoria);
+				} else {
+					controlerMercadoria.entradaMercadoria(mercadoriaGravar.get(i).getEstoque(),
+							mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getId());
+				}
 			}
+
+			// Cadastra o cabeçalho da nota junto com o fornecedor
+			ControlerFornecedor controlerFornecedor = new ControlerFornecedor();
+
+			try {
+				
+				controlerFornecedor.cadadastrar(nfeXml.getFornecedor());
+			} catch (FornecedorJaCadastradoException e) {
+				Log.gravaLog("ImportXml ----> " + e.getMessage());
+			}
+			MercadoriaNFe mercadoriaNota;
+			List<MercadoriaNFe> mercadoriasNota = new ArrayList<MercadoriaNFe>();
+			for (Mercadoria mercadoria : mercadoriasNF) {
+				mercadoriaNota = new MercadoriaNFe();
+				mercadoriaNota.setCodBarras(mercadoria.getCodBarras());
+				mercadoriaNota.setCodProd(String.valueOf(mercadoria.getId()));
+				mercadoriaNota.setPrecoUn(mercadoria.getPrecoCompra());
+				mercadoriaNota.setQuantCompra(mercadoria.getEstoque());
+				mercadoriasNota.add(mercadoriaNota);
+			}
+			Fornecedor fornecedor = controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn());
+			int id = controlerNfe.recuperaId();
+			NFeEntrada entrada = new NFeEntrada(nfeXml.getCnpjDest(), fornecedor, id, nfeXml.getChave(),
+					nfeXml.getNumNota(), mercadoriasNota, nfeXml.getValNota());
+
+			controlerNfe.cadastrarNfe(entrada);
+
+			Info.AlertInfo("Nota fiscal cadastrada com sucesso !", Info.INFO);
+
+		} else {
+			Info.AlertInfo("Nota fiscal já cadastrada no sistema !", Info.ALERT);
 		}
+
 	}
 }

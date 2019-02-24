@@ -11,7 +11,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			
+			long num = Long.parseLong("00060");
+					
 			new Entrada().setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();

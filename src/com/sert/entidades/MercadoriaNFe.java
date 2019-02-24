@@ -2,6 +2,7 @@ package com.sert.entidades;
 
 public class MercadoriaNFe {
 
+	private int id;
 	private String codProd;
 	private long codBarras;
 	private String mercadoria;
@@ -10,11 +11,14 @@ public class MercadoriaNFe {
 	private float precoUn;
 	private float precoTotal;
 	private float valDesc;
-	
-	public MercadoriaNFe(){}
-	
-	public MercadoriaNFe(String codProd, long codBarras, String mercadoria, String und, float quantCompra, float precoUn,
-			float precoTotal, float valDesc) {
+
+	public MercadoriaNFe() {
+	}
+
+	public MercadoriaNFe(int id, String codProd, long codBarras, String mercadoria, String und, float quantCompra,
+			float precoUn, float precoTotal, float valDesc) {
+		super();
+		this.id = id;
 		this.codProd = codProd;
 		this.codBarras = codBarras;
 		this.mercadoria = mercadoria;
@@ -23,6 +27,14 @@ public class MercadoriaNFe {
 		this.precoUn = precoUn;
 		this.precoTotal = precoTotal;
 		this.valDesc = valDesc;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getCodProd() {

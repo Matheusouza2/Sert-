@@ -1,4 +1,4 @@
-package com.sert.telas;
+package com.sert.relatorios;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import com.sert.controler.ControlerVenda;
 import com.sert.entidades.Venda;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
+import com.sert.telas.ListarMercadorias;
 
 public class RelatorioCaixa extends JDialog {
 
@@ -36,17 +37,30 @@ public class RelatorioCaixa extends JDialog {
 	private JButton btnEditar;
 	private ControlerVenda controlerVenda;
 	private JPanel panel;
-	private JLabel lblTotal;
-	private JLabel lblTotalDinheiro;
+	private JLabel lblQuantVenda;
+	private JLabel lblDinheiro;
 	private DefaultTableModel modelo;
 	private JScrollPane spListaMerc;
 	private JTable tabMerc;
 	private JLabel lblRelatorioCaixa;
 	private float totalDinheiro;
+	private float totalCartao;
+	private float totalAmbos;
+	private float totalCompra;
+	private float lucroDinheiro;
+	private float lucroPorcento;
+	private JLabel lblTotalVenda;
+	private JLabel lblCartao;
+	private JLabel lblTotalDinheiro;
+	private JLabel lblTotalCarto;
+	private JLabel lblTotalCompra;
+	private JLabel lblLucroBruto;
+	private JLabel lblCompra;
+	private JLabel lblLucro;
 
 	public RelatorioCaixa(String dtInicial, String dtFinal) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 834, 590);
+		setBounds(100, 100, 834, 708);
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		setModal(true);
@@ -112,21 +126,54 @@ public class RelatorioCaixa extends JDialog {
 		contentPanel.add(lblRelatorioCaixa);
 
 		panel = new JPanel();
-		panel.setBounds(10, 565, 814, 14);
+		panel.setBounds(10, 565, 814, 132);
 		contentPanel.add(panel);
 		panel.setLayout(null);
 
-		lblTotal = new JLabel("Total:");
-		lblTotal.setBounds(0, 0, 482, 14);
-		panel.add(lblTotal);
+		lblQuantVenda = new JLabel("Quantidade de Vendas:");
+		lblQuantVenda.setBounds(0, 0, 135, 14);
+		panel.add(lblQuantVenda);
 
-		lblTotalDinheiro = new JLabel("");
-		lblTotalDinheiro.setBounds(740, 0, 64, 14);
+		lblDinheiro = new JLabel("");
+		lblDinheiro.setBounds(142, 25, 155, 14);
+		panel.add(lblDinheiro);
+
+		lblTotalVenda = new JLabel("");
+		lblTotalVenda.setBounds(142, 0, 58, 14);
+		panel.add(lblTotalVenda);
+
+		lblCartao = new JLabel("");
+		lblCartao.setBounds(142, 50, 155, 14);
+		panel.add(lblCartao);
+		
+		lblTotalDinheiro = new JLabel("Total dinheiro:");
+		lblTotalDinheiro.setBounds(0, 25, 135, 14);
 		panel.add(lblTotalDinheiro);
+		
+		lblTotalCarto = new JLabel("Total Cartão:");
+		lblTotalCarto.setBounds(0, 50, 135, 14);
+		panel.add(lblTotalCarto);
+		
+		lblTotalCompra = new JLabel("Total compra:");
+		lblTotalCompra.setBounds(0, 75, 135, 14);
+		panel.add(lblTotalCompra);
+		
+		lblLucroBruto = new JLabel("Lucro Bruto:");
+		lblLucroBruto.setBounds(0, 109, 135, 14);
+		panel.add(lblLucroBruto);
+		
+		lblCompra = new JLabel();
+		lblCompra.setBounds(142, 75, 155, 14);
+		panel.add(lblCompra);
+		
+		lblLucro = new JLabel();
+		lblLucro.setBounds(142, 100, 172, 32);
+		panel.add(lblLucro);
 
 		modelo.addColumn("Numero da Venda");
 		modelo.addColumn("Data");
 		modelo.addColumn("Vendedor");
+		modelo.addColumn("Compra");
 		modelo.addColumn("Dinheiro");
 		modelo.addColumn("Cartão");
 		modelo.addColumn("Total");
@@ -136,24 +183,38 @@ public class RelatorioCaixa extends JDialog {
 		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(120);
 		tabMerc.getColumnModel().getColumn(4).setPreferredWidth(120);
 		tabMerc.getColumnModel().getColumn(5).setPreferredWidth(120);
+		tabMerc.getColumnModel().getColumn(6).setPreferredWidth(120);
 
 		try {
 			controlerVenda = new ControlerVenda();
 			List<Venda> preencheTable = controlerVenda.pesquisarVenda(dtInicial, dtFinal);
+			
 			for (int i = 0; i < preencheTable.size(); i++) {
 				tabMerc.isCellEditable(i, 1);
 				modelo.addRow(new Object[] { preencheTable.get(i).getId(), preencheTable.get(i).getDataVenda(),
 						preencheTable.get(i).getVendedor().trim(),
+						"R$ " + String.format("%.2f", preencheTable.get(i).getMercadorias().get(i).getPrecoCompra()),
 						"R$ " + String.format("%.2f",
 								preencheTable.get(i).getValTotal() + preencheTable.get(i).getAcrescimo()
 										- preencheTable.get(i).getDesconto() - preencheTable.get(i).getValCartao()),
 						"R$ " + String.format("%.2f", preencheTable.get(i).getValCartao()),
 						"R$ " + String.format("%.2f", preencheTable.get(i).getValTotal()
 								+ preencheTable.get(i).getAcrescimo() - preencheTable.get(i).getDesconto()) });
-				totalDinheiro += preencheTable.get(i).getValTotal() + preencheTable.get(i).getAcrescimo()
+				totalAmbos += preencheTable.get(i).getValTotal() + preencheTable.get(i).getAcrescimo()
 						- preencheTable.get(i).getDesconto();
+				totalDinheiro += preencheTable.get(i).getValTotal() + preencheTable.get(i).getAcrescimo()
+						- preencheTable.get(i).getDesconto() - preencheTable.get(i).getValCartao();
+				totalCartao += preencheTable.get(i).getValCartao();
+				
+				totalCompra += preencheTable.get(i).getMercadorias().get(i).getPrecoCompra();
 			}
-			lblTotalDinheiro.setText("R$ " + String.format("%.2f", totalDinheiro));
+			lblDinheiro.setText("R$ " + String.format("%.2f", totalDinheiro));
+			lblTotalVenda.setText(String.valueOf(tabMerc.getRowCount()));
+			lblCartao.setText("R$ " + String.format("%.2f", totalCartao));
+			lblCompra.setText("R$ " + String.format("%.2f", totalCompra));
+			lucroDinheiro = totalAmbos - totalCompra; 
+			lucroPorcento = ((totalAmbos / totalCompra) - 1) * 100;
+			lblLucro.setText("<html>R$ "+ String.format("%.2f", lucroDinheiro)+ "<br>"+String.format("%.2f", lucroPorcento)+" %</html>");
 
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",

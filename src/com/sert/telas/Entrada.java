@@ -21,8 +21,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import java.awt.Font;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -102,7 +100,6 @@ public class Entrada extends JFrame {
 		panelLogin.setBounds(210, 0, 340, 400);
 		contentPane.add(panelLogin);
 		panelLogin.setLayout(null);
-		
 
 		txtUser = new JComboBox<String>();
 		txtUser.setEditable(true);
@@ -121,7 +118,9 @@ public class Entrada extends JFrame {
 		} catch (ClassNotFoundException e2) {
 			e2.printStackTrace();
 		} catch (SQLException e2) {
-			JOptionPane.showMessageDialog(null, "O banco de dados encontrou um problema ao ser aberto \n"+e2.getMessage(),"ERRO DE BANCO DE DADOS",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null,
+					"O banco de dados encontrou um problema ao ser aberto \n" + e2.getMessage(),
+					"ERRO DE BANCO DE DADOS", JOptionPane.ERROR_MESSAGE);
 		} catch (NenhumUsuCadException e2) {
 			e2.printStackTrace();
 		} catch (IOException e2) {
@@ -203,6 +202,11 @@ public class Entrada extends JFrame {
 		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				"ENTER");
 		escback.getRootPane().getActionMap().put("ENTER", new AbstractAction("ENTER") {
+			/**
+			 * 
+			 */
+			private static final long serialVersionUID = 1L;
+
 			public void actionPerformed(ActionEvent e) {
 				try {
 					entrada();
@@ -234,7 +238,7 @@ public class Entrada extends JFrame {
 			}
 		}
 	}
-	
+
 //	public final Image getIconImage(){
 //		Image icone = Toolkit.getDefaultToolkit().getImage(Entrada.class.getResource("/com/sert/img/logo2.png"));
 //		return icone;

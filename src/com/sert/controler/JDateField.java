@@ -8,7 +8,7 @@ public class JDateField {
 	private Date data = new Date();
 	private static Date dataStatic = new Date();
 	private static SimpleDateFormat formatadorDate = new SimpleDateFormat("dd/MM/yyyy");;
-	private static SimpleDateFormat formatadorDateHoraStatic = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");;
+	private static SimpleDateFormat formatadorDateHoraStatic = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");;
 	private SimpleDateFormat formatadorDateHora;
 	
 	public JDateField() {

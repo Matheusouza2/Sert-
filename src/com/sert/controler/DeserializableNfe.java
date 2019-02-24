@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import com.sert.entidades.Fornecedor;
 import com.sert.entidades.MercadoriaNFe;
 import com.sert.entidades.NFeEntrada;
 import com.sert.xmlcontroler.TNFe;
@@ -29,15 +30,17 @@ public class DeserializableNfe {
 	private NFeEntrada nFeEntrada;
 	private List<MercadoriaNFe> mercadorias;
 	private MercadoriaNFe mercadoria;
+	private Fornecedor fornecedor;
 
 	public DeserializableNfe() {
 		this.nFeEntrada = new NFeEntrada();
+		this.fornecedor = new Fornecedor();
 		mercadorias = new ArrayList<>();
 	}
 
 	public NFeEntrada lerXml(String caminho) throws SQLException, ClassNotFoundException, IOException {
 		try {
-			this.xmlFilePathNFe = caminho;	
+			this.xmlFilePathNFe = caminho;
 			// Realizando o parser do XML da NFe para Objeto Java
 			context = JAXBContext.newInstance(TNfeProc.class.getPackage().getName());
 			Unmarshaller unmarshaller1 = context.createUnmarshaller();
@@ -50,26 +53,30 @@ public class DeserializableNfe {
 			String chavNfe = tNfeProc.getNFe().getInfNFe().getId().replace("NFe", "").replace("\"", "");
 			int nNfe = Integer.parseInt(tNfeProc.getNFe().getInfNFe().getIde().getNNF());
 
-			// Insere as informações do Dest. e do Emit. na entidade
+			// Insere as informações do Dest., numero e chave da nota
 			nFeEntrada.setCnpjDest(Long.parseLong(dest.getCNPJ()));
 			nFeEntrada.setChave(chavNfe);
 			nFeEntrada.setNumNota(nNfe);
-			nFeEntrada.setCnpjForn(Long.parseLong(emit.getCNPJ()));
-			nFeEntrada.setIeForn(Long.parseLong(emit.getIE()));
-			nFeEntrada.setNomeFant(emit.getXFant());
-			nFeEntrada.setRazSocial(emit.getXNome());
-			nFeEntrada.setLograForn(emit.getEnderEmit().getXLgr());
-			nFeEntrada.setNumrEndForn(emit.getEnderEmit().getNro());
-			nFeEntrada.setBairroForn(emit.getEnderEmit().getXBairro());
-			nFeEntrada.setCidadeForn(emit.getEnderEmit().getXMun());
-			nFeEntrada.setUfForn(String.valueOf(emit.getEnderEmit().getUF()));
-			nFeEntrada.setFoneForn(Long.parseLong(emit.getEnderEmit().getFone()));
+			nFeEntrada.setValNota(Float.parseFloat(tNfeProc.getNFe().getInfNFe().getTotal().getICMSTot().getVNF()));
+
+			// insere as informações do emitente
+			fornecedor.setCnpjForn(emit.getCNPJ());
+			fornecedor.setIeForn(emit.getIE());
+			fornecedor.setNomeFant(emit.getXFant());
+			fornecedor.setRazSocial(emit.getXNome());
+			fornecedor.setLograForn(emit.getEnderEmit().getXLgr());
+			fornecedor.setNumrEndForn(Integer.parseInt(emit.getEnderEmit().getNro()));
+			fornecedor.setBairroForn(emit.getEnderEmit().getXBairro());
+			fornecedor.setCidadeForn(emit.getEnderEmit().getXMun());
+			fornecedor.setUfForn(String.valueOf(emit.getEnderEmit().getUF()));
+			fornecedor.setFoneForn(Long.parseLong(emit.getEnderEmit().getFone()));
+			nFeEntrada.setFornecedor(fornecedor);
 
 			// Iterando na lista de produtos da NFe
 			for (TNFe.InfNFe.Det item : tNfeProc.getNFe().getInfNFe().getDet()) {
-				mercadoria = new MercadoriaNFe(null, 0, null, null, 0, 0, 0, 0);
+				mercadoria = new MercadoriaNFe();
 				mercadoria.setCodProd(item.getProd().getCProd());
-				if(!item.getProd().getCEANTrib().equals("SEM GTIN")){
+				if (!item.getProd().getCEANTrib().equals("SEM GTIN")) {
 					mercadoria.setCodBarras(Long.parseLong(item.getProd().getCEANTrib()));
 				}
 				mercadoria.setMercadoria(item.getProd().getXProd());
@@ -80,7 +87,7 @@ public class DeserializableNfe {
 				if (item.getProd().getVDesc() != null) {
 					mercadoria.setValDesc(Float.parseFloat(item.getProd().getVDesc()));
 				}
-				
+
 				mercadorias.add(mercadoria);
 			}
 			nFeEntrada.setMercadorias(mercadorias);

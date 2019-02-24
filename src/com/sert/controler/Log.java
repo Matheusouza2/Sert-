@@ -9,9 +9,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.swing.JOptionPane;
+
+import com.sert.alertas.Info;
+
 public class Log {
 
-	public void gravaLog(String avsLog) throws IOException {
+	public static void gravaLog(String avsLog) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar calendar = new GregorianCalendar();
@@ -26,16 +30,21 @@ public class Log {
 		int minuto = calendar.get(GregorianCalendar.MINUTE);
 		int sec = calendar.get(GregorianCalendar.SECOND);
 
-		String caminho = "C:/Sert+/Logs/" + dia + ".txt";
+		String caminho = "C:/Program Files/Sert+/Logs/" + dia + ".txt";
 
 		File file = new File(caminho);
 
-		FileWriter arq = new FileWriter(file.getAbsoluteFile(), true);
+		FileWriter arq;
+		try {
+			arq = new FileWriter(file.getAbsoluteFile(), true);
 
-		PrintWriter gravarArq = new PrintWriter(arq);
+			PrintWriter gravarArq = new PrintWriter(arq);
 
-		gravarArq.println(dia+"/"+mes+"/"+ano+" "+hora+":"+minuto+":"+sec+" --> " + avsLog);
+			gravarArq.println(dia + "/" + mes + "/" + ano + " " + hora + ":" + minuto + ":" + sec + " --> " + avsLog);
 
-		arq.close();
+			arq.close();
+		} catch (IOException e) {
+			Info.AlertInfo("Erro na abertura ou escrita do arquivo de Log \n" + e.getMessage(), Info.INFO);
+		}
 	}
 }

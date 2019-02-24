@@ -1,10 +1,10 @@
 package com.sert.telas;
 
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
 import com.sert.dao.ConexaoDao;
@@ -12,6 +12,7 @@ import com.sert.dao.ConexaoDao;
 import javax.swing.JProgressBar;
 import java.awt.Color;
 import javax.swing.JLabel;
+
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -44,28 +45,28 @@ public class Banner extends JFrame {
 		progressBar.setBounds(10, 290, 650, 29);
 		contentPane.add(progressBar);
 		progressBar.setStringPainted(true);
-		
+
 		JLabel label = new JLabel("");
 		label.setVerticalAlignment(SwingConstants.TOP);
 		label.setIcon(new ImageIcon(Banner.class.getResource("/com/sert/img/SertSoftBanner.png")));
 		label.setBounds(0, 0, 681, 297);
 		contentPane.add(label);
-		
+
 		progressBar.setIndeterminate(true);
-		
-		new SwingWorker<Object, Object>(){
+
+		new SwingWorker<Object, Object>() {
 			@Override
 			protected Object doInBackground() throws Exception {
 				progressBar.setString("Testando conexão do banco de dados");
-//				new ConexaoDao().testeConexao();
-				progressBar.setString("Carregando modulos do sistema");
+				ConexaoDao.testarCon();
+				progressBar.setString("Carregando modulos internos do sistema");
 				ListarMercadorias.setPreencheTable(new ControlerMercadoria().listarMercadorias());
 				PesqMercVenda.setPreencheTable(new ControlerMercadoria().listarMercadorias());
 				new ControlerVenda().atualizarCadastros();
 
 				return null;
 			}
-			
+
 			protected void done() {
 				new Inicio().setVisible(true);
 				dispose();

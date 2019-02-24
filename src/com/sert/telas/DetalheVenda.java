@@ -16,8 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -225,7 +223,7 @@ public class DetalheVenda extends JDialog {
 					* venda.getMercadorias().get(i).getEstoque();
 		}
 		totalGlobal = total + (venda.getAcrescimo() - venda.getDesconto());
-		lblTotal.setText("Total: R$ "+String.format("%.2f", total));
+		lblTotal.setText("Sub-Total: R$ nu");
 		lblTotal_1.setText("Total: R$ "+String.format("%.2f", totalGlobal));
 	
 		

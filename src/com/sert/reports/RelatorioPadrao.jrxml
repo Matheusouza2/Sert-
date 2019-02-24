@@ -67,7 +67,7 @@
 					<text><![CDATA[Add a description here]]></text>
 				</staticText>
 				<textField pattern="EEEEE dd MMMMM yyyy">
-					<reportElement x="463" y="65" width="100" height="13" forecolor="#FFFFFF" uuid="fc593335-5cbf-4caf-97b3-ff897c676bde"/>
+					<reportElement x="480" y="70" width="100" height="13" forecolor="#FFFFFF" uuid="fc593335-5cbf-4caf-97b3-ff897c676bde"/>
 					<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 				</textField>
 			</frame>

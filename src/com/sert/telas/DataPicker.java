@@ -9,6 +9,7 @@ import javax.swing.border.LineBorder;
 
 import com.sert.controler.JDateField;
 import com.sert.editableFields.JDocumentFormatedField;
+import com.sert.relatorios.RelatorioCaixa;
 
 import javax.swing.JTextField;
 import java.awt.Font;

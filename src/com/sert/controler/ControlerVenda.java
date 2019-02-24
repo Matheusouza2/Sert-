@@ -13,6 +13,7 @@ import com.sert.exceptions.MercadoriaSemEstoqueException;
 import com.sert.exceptions.MercadoriaSemPrecoException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.exceptions.NenhumaVendaRalizadaException;
+import com.sert.exceptions.VendaNaoEncontradaException;
 import com.sert.telas.PesqMercVenda;
 
 public class ControlerVenda {
@@ -67,6 +68,7 @@ public class ControlerVenda {
 						mercadoria.setCodBarras(mercadorias.get(i).getCodBarras());
 						mercadoria.setMercadoria(mercadorias.get(i).getMercadoria());
 						mercadoria.setPrecoVenda(mercadorias.get(i).getPrecoVenda());
+						mercadoria.setPrecoCompra(mercadorias.get(i).getPrecoCompra());
 						mercadorias.get(i).setEstoque(mercadorias.get(i).getEstoque() - quant);
 						return mercadoria;
 					} else {
@@ -96,12 +98,15 @@ public class ControlerVenda {
 		mercadorias = new ControlerMercadoria().listarMercadorias();
 		PesqMercVenda.setPreencheTable(mercadorias);
 	}
-	
-	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal) throws SQLException{
+
+	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal) throws SQLException {
 		return vendaDao.pesquisarVenda(dtInicial, dtFinal);
 	}
-	
-	public Venda imprimirVenda(int id) throws SQLException {
+
+	public Venda imprimirVenda(int id) throws SQLException, VendaNaoEncontradaException {
+		if (vendaDao.imprimirVenda(id).getMercadorias() == null)
+			throw new VendaNaoEncontradaException();
+
 		return vendaDao.imprimirVenda(id);
 	}
 }

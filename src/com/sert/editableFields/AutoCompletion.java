@@ -20,7 +20,11 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 
 public class AutoCompletion extends PlainDocument {   
-    JComboBox comboBox;    
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	JComboBox comboBox;    
     ComboBoxModel model;    
     JTextComponent editor;    
     // flag to indicate if setSelectedItem has been called    

@@ -1,4 +1,4 @@
-package com.sert.telas;
+package com.sert.opcoes;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -10,13 +10,16 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+import com.sert.telas.CadCliente;
+import com.sert.telas.CadFornecedor;
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * @author Matheus Souza
  * @version 1.0.0
  * 
  * */
-public class OpcFiscal extends JDialog {
+public class OpcClientes extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -26,7 +29,7 @@ public class OpcFiscal extends JDialog {
 	private JButton btnListaDeClientes;
 	private JButton btnX;
 	
-	public OpcFiscal() {
+	public OpcClientes() {
 		setFocusableWindowState(true);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -41,37 +44,58 @@ public class OpcFiscal extends JDialog {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 						
-		btnCadastrarNovoCliente = new JButton("entrada de nota");
+		btnCadastrarNovoCliente = new JButton("novo cliente");
 		btnCadastrarNovoCliente.setBackground(new Color(255, 255, 0));
 		btnCadastrarNovoCliente.setForeground(new Color(0, 0, 0));
 		btnCadastrarNovoCliente.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnCadastrarNovoCliente.setBounds(10, 107, 248, 21);
+		btnCadastrarNovoCliente.setBounds(10, 60, 248, 21);
 		getContentPane().add(btnCadastrarNovoCliente);
 		btnCadastrarNovoCliente.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new CadNotas().setVisible(true);				
+				new CadCliente().setVisible(true);				
 			}
 		});
 		
-		btnNovoFornecedor = new JButton("vizualizar notas");
+		btnNovoFornecedor = new JButton("novo  fornecedor");
+		btnNovoFornecedor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new CadFornecedor().setVisible(true);
+			}
+		});
 		btnNovoFornecedor.setBackground(new Color(255, 255, 0));
 		btnNovoFornecedor.setForeground(new Color(0, 0, 0));
 		btnNovoFornecedor.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnNovoFornecedor.setBounds(10, 171, 248, 21);
+		btnNovoFornecedor.setBounds(10, 124, 248, 21);
 		getContentPane().add(btnNovoFornecedor);
 		
-		btnListaDeClientes = new JButton("mov estoque");
-		btnListaDeClientes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new AjusteEstoque().setVisible(true);
-			}
-		});
+		btnListaDeClientes = new JButton("listar clientes");
 		btnListaDeClientes.setBackground(new Color(255, 255, 0));
 		btnListaDeClientes.setForeground(new Color(0, 0, 0));
 		btnListaDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnListaDeClientes.setBounds(10, 139, 248, 21);
+		btnListaDeClientes.setBounds(10, 92, 248, 21);
 		getContentPane().add(btnListaDeClientes);
+		
+		JButton btnListaDeFornecedores = new JButton("listar fornecedores");
+		btnListaDeFornecedores.setBackground(new Color(255, 255, 0));
+		btnListaDeFornecedores.setForeground(new Color(0, 0, 0));
+		btnListaDeFornecedores.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnListaDeFornecedores.setBounds(10, 156, 248, 21);
+		getContentPane().add(btnListaDeFornecedores);
+		
+		JButton btnDebitoClientes = new JButton("contas a receber");
+		btnDebitoClientes.setBackground(new Color(255, 255, 0));
+		btnDebitoClientes.setForeground(new Color(0, 0, 0));
+		btnDebitoClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnDebitoClientes.setBounds(10, 188, 248, 21);
+		getContentPane().add(btnDebitoClientes);
+		
+		JButton btnContasAPagar = new JButton("contas a pagar");
+		btnContasAPagar.setBackground(new Color(255, 255, 0));
+		btnContasAPagar.setForeground(new Color(0, 0, 0));
+		btnContasAPagar.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnContasAPagar.setBounds(10, 220, 248, 21);
+		getContentPane().add(btnContasAPagar);
 		
 		btnX = new JButton("X");
 		btnX.setBackground(Color.RED);

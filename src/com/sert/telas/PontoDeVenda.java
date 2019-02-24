@@ -23,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.sert.alertas.Info;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
@@ -255,8 +256,11 @@ public class PontoDeVenda extends JDialog {
 		modelo.addColumn("Quant.");
 		modelo.addColumn("Valor Unit.");
 		modelo.addColumn("Valor Total");
+		modelo.addColumn("Valor Compra");
 		prodVenda.getColumnModel().getColumn(2).setPreferredWidth(200);
 		prodVenda.getColumnModel().getColumn(3).setPreferredWidth(800);
+		prodVenda.getColumnModel().getColumn(7).setMinWidth(0);
+		prodVenda.getColumnModel().getColumn(7).setMaxWidth(0);
 
 		txtCodBarras.addKeyListener(new KeyAdapter() {
 			@Override
@@ -324,8 +328,8 @@ public class PontoDeVenda extends JDialog {
 				item = Integer.parseInt(prodVenda.getValueAt(i, 0).toString()) - 1;
 				prodVenda.setValueAt(item, i, 0);
 			}
-			total = total - Float.parseFloat(prodVenda.getValueAt(prodVenda.getSelectedRow(), 5).toString());
-			lblTotal.setText("TOTAL: " + total);
+			total = total - Float.parseFloat(prodVenda.getValueAt(prodVenda.getSelectedRow(), 5).toString().replace(",", "."));
+			lblTotal.setText("TOTAL: R$ " + String.format("%.2f", total));
 			repor();
 			modelo.removeRow(prodVenda.getSelectedRow());
 			item = prodVenda.getRowCount();
@@ -355,12 +359,12 @@ public class PontoDeVenda extends JDialog {
 				precoTotal = Float.parseFloat(txtQuant.getText()) * precoMerc;
 
 				modelo.addRow(new Object[] { ++item, merc.getId(), merc.getCodBarras(), merc.getMercadoria(),
-						quantidade, String.format("%.2f", precoMerc), String.format("%.2f", precoTotal) });
+						quantidade, String.format("%.2f", precoMerc), String.format("%.2f", precoTotal), merc.getPrecoCompra()});
 				txtCodBarras.setText(null);
 				txtQuant.setText("1");
 				lblStatus.setText("Status: Venda em andamento");
 				total += precoTotal;
-				lblTotal.setText("TOTAL: " + String.format("%.2f", total));
+				lblTotal.setText("TOTAL: R$ " + String.format("%.2f", total));
 
 			}
 		} catch (NumberFormatException e) {
@@ -424,6 +428,7 @@ public class PontoDeVenda extends JDialog {
 					merc.setMercadoria(prodVenda.getValueAt(i, 3).toString());
 					merc.setEstoque(Float.parseFloat(prodVenda.getValueAt(i, 4).toString()));
 					merc.setPrecoVenda(Float.parseFloat(prodVenda.getValueAt(i, 5).toString().replace(",", ".")));
+					merc.setPrecoCompra(Float.parseFloat(prodVenda.getValueAt(i, 7).toString().replace(",", ".")) * merc.getEstoque());
 					mercFech.add(merc);
 				}
 				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), "", idCliente, "",

@@ -2,21 +2,28 @@ package com.sert.entidades;
 
 public class Fornecedor {
 
-	private long cnpjForn;
-	private long ieForn;
+	private int id;
+	private String cnpjForn;
+	private String ieForn;
 	private String nomeFant;
 	private String razSocial;
 	private String lograForn;
-	private String numrEndForn;
+	private int numrEndForn;
 	private String bairroForn;
 	private long cepForn;
 	private String cidadeForn;
 	private String ufForn;
 	private long foneForn;
+	private long celularForn;
 
-	public Fornecedor(long cnpjForn, long ieForn, String nomeFant, String razSocial, String lograForn, String numrEndForn,
-			String bairroForn, long cepForn, String cidadeForn, String ufForn, long foneForn) {
+	public Fornecedor() {
+	}
+
+	public Fornecedor(int id, String cnpjForn, String ieForn, String nomeFant, String razSocial, String lograForn,
+			int numrEndForn, String bairroForn, long cepForn, String cidadeForn, String ufForn, long foneForn,
+			long celularForn) {
 		super();
+		this.id = id;
 		this.cnpjForn = cnpjForn;
 		this.ieForn = ieForn;
 		this.nomeFant = nomeFant;
@@ -28,21 +35,30 @@ public class Fornecedor {
 		this.cidadeForn = cidadeForn;
 		this.ufForn = ufForn;
 		this.foneForn = foneForn;
+		this.celularForn = celularForn;
 	}
 
-	public long getCnpjForn() {
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getCnpjForn() {
 		return cnpjForn;
 	}
 
-	public void setCnpjForn(long cnpjForn) {
+	public void setCnpjForn(String cnpjForn) {
 		this.cnpjForn = cnpjForn;
 	}
 
-	public long getIeForn() {
+	public String getIeForn() {
 		return ieForn;
 	}
 
-	public void setIeForn(long ieForn) {
+	public void setIeForn(String ieForn) {
 		this.ieForn = ieForn;
 	}
 
@@ -70,11 +86,11 @@ public class Fornecedor {
 		this.lograForn = lograForn;
 	}
 
-	public String getNumrEndForn() {
+	public int getNumrEndForn() {
 		return numrEndForn;
 	}
 
-	public void setNumrEndForn(String numrEndForn) {
+	public void setNumrEndForn(int numrEndForn) {
 		this.numrEndForn = numrEndForn;
 	}
 
@@ -117,4 +133,13 @@ public class Fornecedor {
 	public void setFoneForn(long foneForn) {
 		this.foneForn = foneForn;
 	}
+
+	public long getCelularForn() {
+		return celularForn;
+	}
+
+	public void setCelularForn(long celularForn) {
+		this.celularForn = celularForn;
+	}
+
 }
