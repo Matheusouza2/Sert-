@@ -18,22 +18,27 @@ public class FornecedorDAO implements IFornecedorDAO {
 
 	@Override
 	public void cadastrar(Fornecedor fornecedor) throws SQLException {
-		String sql = "INSERT INTO fornecedor(cnpj, ie, nome, nome_fant, rua, numero_end, bairro, cidade, uf, cep, telefone, celular) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		String sql = "INSERT INTO fornecedor(id, cnpj, ie, nome, nome_fant, rua, numero_end, bairro, cidade, uf, cep, telefone, celular) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		String seq = "ALTER SEQUENCE fornecedor_id_seq RESTART WITH " + fornecedor.getId();
 
 		PreparedStatement preparedStatement = con.prepareStatement(sql);
-		preparedStatement.setString(1, fornecedor.getCnpjForn());
-		preparedStatement.setString(2, fornecedor.getIeForn());
-		preparedStatement.setString(3, fornecedor.getRazSocial());
-		preparedStatement.setString(4, fornecedor.getNomeFant());
-		preparedStatement.setString(5, fornecedor.getLograForn());
-		preparedStatement.setInt(6, fornecedor.getNumrEndForn());
-		preparedStatement.setString(7, fornecedor.getBairroForn());
-		preparedStatement.setString(8, fornecedor.getCidadeForn());
-		preparedStatement.setString(9, fornecedor.getUfForn());
-		preparedStatement.setLong(10, fornecedor.getCepForn());
-		preparedStatement.setLong(11, fornecedor.getFoneForn());
-		preparedStatement.setLong(12, fornecedor.getCelularForn());
+		preparedStatement.setInt(1, fornecedor.getId());
+		preparedStatement.setString(2, fornecedor.getCnpjForn());
+		preparedStatement.setString(3, fornecedor.getIeForn());
+		preparedStatement.setString(4, fornecedor.getRazSocial());
+		preparedStatement.setString(5, fornecedor.getNomeFant());
+		preparedStatement.setString(6, fornecedor.getLograForn());
+		preparedStatement.setInt(7, fornecedor.getNumrEndForn());
+		preparedStatement.setString(8, fornecedor.getBairroForn());
+		preparedStatement.setString(9, fornecedor.getCidadeForn());
+		preparedStatement.setString(10, fornecedor.getUfForn());
+		preparedStatement.setLong(11, fornecedor.getCepForn());
+		preparedStatement.setLong(12, fornecedor.getFoneForn());
+		preparedStatement.setLong(13, fornecedor.getCelularForn());
 
+		preparedStatement.execute();
+		
+		preparedStatement = con.prepareStatement(seq);
 		preparedStatement.execute();
 		preparedStatement.close();
 	}
@@ -66,21 +71,34 @@ public class FornecedorDAO implements IFornecedorDAO {
 
 		while (result.next()) {
 			fornecedor.setId(result.getInt("id"));
-			fornecedor.setCnpjForn(result.getString("cnpj"));
-			fornecedor.setIeForn(result.getString("ie"));
-			fornecedor.setRazSocial(result.getString("nome"));
-			fornecedor.setNomeFant(result.getString("nome_fant"));
-			fornecedor.setLograForn(result.getString("rua"));
+			fornecedor.setCnpjForn(result.getString("cnpj").trim());
+			fornecedor.setIeForn(result.getString("ie").trim());
+			fornecedor.setRazSocial(result.getString("nome").trim());
+			fornecedor.setNomeFant(result.getString("nome_fant").trim());
+			fornecedor.setLograForn(result.getString("rua").trim());
 			fornecedor.setNumrEndForn(result.getInt("numero_end"));
-			fornecedor.setBairroForn(result.getString("bairro"));
-			fornecedor.setCidadeForn(result.getString("cidade"));
-			fornecedor.setUfForn(result.getString("uf"));
+			fornecedor.setBairroForn(result.getString("bairro").trim());
+			fornecedor.setCidadeForn(result.getString("cidade").trim());
+			fornecedor.setUfForn(result.getString("uf").trim());
 			fornecedor.setCepForn(result.getLong("cep"));
 			fornecedor.setFoneForn(result.getLong("telefone"));
 			fornecedor.setCelularForn(result.getLong("celular"));
 		}
 
 		return fornecedor;
+	}
+	
+	public int recuperaId() throws SQLException {
+		int id = 0;
+		String sql = "SELECT last_value + 1 AS idFornecedor FROM fornecedor_id_seq";
+		PreparedStatement preparedStatement = con.prepareStatement(sql);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		while(resultSet.next()) {
+			id = resultSet.getInt("idFornecedor");
+		}
+		
+		return id;
+		
 	}
 
 }

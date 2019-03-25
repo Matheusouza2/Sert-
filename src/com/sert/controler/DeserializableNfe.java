@@ -75,8 +75,8 @@ public class DeserializableNfe {
 			// Iterando na lista de produtos da NFe
 			for (TNFe.InfNFe.Det item : tNfeProc.getNFe().getInfNFe().getDet()) {
 				mercadoria = new MercadoriaNFe();
-				mercadoria.setCodProd(item.getProd().getCProd());
-				if (!item.getProd().getCEANTrib().equals("SEM GTIN")) {
+				mercadoria.setCodProd(Long.parseLong(item.getProd().getCProd()));
+				if (!item.getProd().getCEANTrib().equals("SEM GTIN") && !item.getProd().getCEANTrib().equals("")) {
 					mercadoria.setCodBarras(Long.parseLong(item.getProd().getCEANTrib()));
 				}
 				mercadoria.setMercadoria(item.getProd().getXProd());
@@ -90,6 +90,16 @@ public class DeserializableNfe {
 
 				mercadorias.add(mercadoria);
 			}
+
+//			for (int i = 0; i < mercadorias.size(); i++) {
+//				for (int j = 0; j < mercadorias.size(); i++) {
+//					if (mercadorias.get(i).getCodBarras() == mercadorias.get(j).getCodBarras()
+//							&& mercadorias.get(i).getMercadoria().equals(mercadorias.get(j).getMercadoria())) {
+//
+//					}
+//				}
+//			}
+
 			nFeEntrada.setMercadorias(mercadorias);
 			return nFeEntrada;
 		} catch (JAXBException e) {

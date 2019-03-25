@@ -2,7 +2,6 @@ package com.sert.telas;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -89,7 +88,7 @@ public class CadMercadoria extends JDialog {
 		setModal(true);
 		contentPanel = new JPanel();
 		contentPanel.setBackground(new Color(0, 0, 128));
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPanel.setBorder(new LineBorder(new Color(255, 255, 0), 1, true));
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
 
@@ -134,13 +133,13 @@ public class CadMercadoria extends JDialog {
 									"Os campos 'Cod. de Barras' e 'Descrição' não podem estar em branco", "Erro",
 									JOptionPane.ERROR_MESSAGE);
 						} else {
-							Mercadoria mercadoria = new Mercadoria(0, Long.parseLong(txtCodBarras.getText()),
+							Mercadoria mercadoria = new Mercadoria(Integer.parseInt(txtCodMercadoria.getText()), Long.parseLong(txtCodBarras.getText()),
 									txtDescricaoMerc.getText(),
 									Float.parseFloat(txtPrecoVenda.getText().replace(",", ".")), lblData.getText(),
 									codUsu, cbUnd.getSelectedItem().toString(),
 									Float.parseFloat(txtPrecoCompra.getText().replace(",", ".")), UsuLogado.getNome(),
 									dataPrincipal, 0);
-							new ControlerMercadoria().cadastrarMercadoria(mercadoria);
+							controlerMercadoria.cadastrarMercadoria(mercadoria);
 							JOptionPane.showMessageDialog(null, "Mercadoria cadastrada com sucesso", "Sucesso!",
 									JOptionPane.INFORMATION_MESSAGE);
 							limpaCampos();

@@ -3,15 +3,18 @@ package com.sert.telas;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
@@ -35,6 +38,7 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
 
 /**
@@ -60,10 +64,11 @@ public class ListarMercadorias extends JDialog {
 	private static ControlerMercadoria controlerMercadoria;
 
 	private JLabel lblListaDeMercadorias;
-	private JTextField textField;
+	private JTextField txtPesquisa;
 	private JSeparator separator;
 	private JLabel lblProcurar;
 	private FilterList<Mercadoria> textFilteredIssues;
+	private JSeparator separator_1;
 	private static BasicEventList<Mercadoria> mercadorias;
 	private static List<Mercadoria> preencheTable;
 
@@ -78,6 +83,8 @@ public class ListarMercadorias extends JDialog {
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
 
+		listen();
+		
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);
 		contentPanel.add(btnX);
@@ -131,14 +138,19 @@ public class ListarMercadorias extends JDialog {
 		panelBtn.add(separator);
 
 		lblProcurar = new JLabel("procurar");
-		lblProcurar.setFont(new Font("Gtek Technology", Font.BOLD, 11));
-		lblProcurar.setBounds(499, 48, 98, 14);
+		lblProcurar.setForeground(new Color(0, 0, 128));
+		lblProcurar.setFont(new Font("Gtek Technology", Font.BOLD, 13));
+		lblProcurar.setBounds(499, 48, 108, 14);
 		panelBtn.add(lblProcurar);
 
-		textField = new JTextField();
-		textField.setBounds(607, 45, 197, 20);
-		panelBtn.add(textField);
-		textField.setColumns(10);
+		txtPesquisa = new JTextField();
+		txtPesquisa.setBackground(new Color(255, 255, 0));
+		txtPesquisa.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		txtPesquisa.setBorder(null);
+		txtPesquisa.setForeground(new Color(0, 0, 0));
+		txtPesquisa.setBounds(607, 45, 197, 20);
+		panelBtn.add(txtPesquisa);
+		txtPesquisa.setColumns(10);
 		btnExcluir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -190,12 +202,17 @@ public class ListarMercadorias extends JDialog {
 		lblListaDeMercadorias.setBounds(280, 0, 273, 35);
 		contentPanel.add(lblListaDeMercadorias);
 
-			for (Mercadoria merc : preencheTable) {
-				mercadorias.add(merc);
-			}
+		for (Mercadoria merc : preencheTable) {
+			mercadorias.add(merc);
+		}
 
-		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(textField,
+		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(txtPesquisa,
 				new Mercadoria());
+		
+		separator_1 = new JSeparator();
+		separator_1.setBackground(new Color(0, 0, 128));
+		separator_1.setBounds(607, 65, 197, 2);
+		panelBtn.add(separator_1);
 
 		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
 		AdvancedTableModel<Mercadoria> mercTableModel = GlazedListsSwing
@@ -206,7 +223,7 @@ public class ListarMercadorias extends JDialog {
 		tabMerc.getColumnModel().getColumn(1).setPreferredWidth(140);
 		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(790);
 		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(100);
-		
+
 		repagina();
 	}
 
@@ -230,11 +247,20 @@ public class ListarMercadorias extends JDialog {
 		} catch (NenhumaMercadoriaCadastradaException e1) {
 			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 		}
-		
+
 		tabMerc.revalidate();
 	}
-	
-	public static void setPreencheTable(List<Mercadoria> preencheTable1){
+
+	public static void setPreencheTable(List<Mercadoria> preencheTable1) {
 		preencheTable = preencheTable1;
+	}
+
+	private void listen() {
+		JRootPane escback = getRootPane();
+		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				"ESCAPE");
+
+		JRootPane enterMerc = getRootPane();
+		enterMerc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "DELETE");
 	}
 }

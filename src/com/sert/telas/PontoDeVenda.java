@@ -23,7 +23,6 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.sert.alertas.Info;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
@@ -39,6 +38,7 @@ import javax.swing.UIManager;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
+import javax.swing.JSeparator;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -85,25 +85,26 @@ public class PontoDeVenda extends JDialog {
 	private static int item;
 	private static int idCliente = 0;
 	private JLabel lblNewLabel;
+	private JSeparator separator_1;
 
 	public PontoDeVenda() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension screenSize = toolkit.getScreenSize();
 		setBounds(0, 0, screenSize.width, screenSize.height);
-		setLocationRelativeTo(null);
 		setModal(true);
 		setUndecorated(true);
 
 		contentPane = new JPanel();
 		setBounds(0, 0, screenSize.width-10, screenSize.height-40);
+		setLocationRelativeTo(null);
 		contentPane.setBackground(new Color(255, 255, 0));
-		contentPane.setBorder(new LineBorder(new Color(0, 0, 128), 1, true));
+		contentPane.setBorder(new LineBorder(new Color(0, 0, 255), 1, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		panelMother = new JPanel();
-		panelMother.setBorder(new LineBorder(new Color(0, 0, 0), 2, true));
+		panelMother.setBorder(new LineBorder(new Color(0, 0, 255), 2, true));
 		panelMother.setBackground(new Color(0, 0, 128));
 		panelMother.setBounds(10, 11, 1330, 707);
 		contentPane.add(panelMother);
@@ -116,7 +117,11 @@ public class PontoDeVenda extends JDialog {
 		panelMother.add(lblCodDeBarras);
 
 		txtCodBarras = new JNumberField();
+		txtCodBarras.setForeground(new Color(255, 255, 255));
+		txtCodBarras.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		txtCodBarras.setBackground(new Color(0, 0, 128));
 		txtCodBarras.setBounds(177, 21, 138, 20);
+		txtCodBarras.setBorder(null);
 		txtCodBarras.requestFocusInWindow();
 		panelMother.add(txtCodBarras);
 		txtCodBarras.addFocusListener(new FocusListener() {
@@ -137,8 +142,12 @@ public class PontoDeVenda extends JDialog {
 		panelMother.add(lblQuantidade);
 
 		txtQuant = new JTextField();
+		txtQuant.setForeground(new Color(255, 255, 255));
+		txtQuant.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtQuant.setBackground(new Color(0, 0, 128));
 		txtQuant.setBounds(475, 26, 86, 20);
 		txtQuant.setEditable(false);
+		txtQuant.setBorder(null);
 		txtQuant.setText(String.valueOf(1));
 		panelMother.add(txtQuant);
 		txtQuant.setColumns(10);
@@ -233,7 +242,6 @@ public class PontoDeVenda extends JDialog {
 		prodVenda = new JTable();
 		prodVenda.setBorder(new LineBorder(new Color(41, 171, 226)));
 		spProdutos.setViewportView(prodVenda);
-		modelo = new DefaultTableModel();
 		modelo = new DefaultTableModel() {
 			private static final long serialVersionUID = 1L;
 
@@ -248,6 +256,14 @@ public class PontoDeVenda extends JDialog {
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblNewLabel.setBounds(1146, 0, 184, 14);
 		panelMother.add(lblNewLabel);
+		
+		JSeparator separator = new JSeparator();
+		separator.setBounds(176, 44, 139, 5);
+		panelMother.add(separator);
+		
+		separator_1 = new JSeparator();
+		separator_1.setBounds(475, 47, 86, 2);
+		panelMother.add(separator_1);
 
 		modelo.addColumn("Item");
 		modelo.addColumn("Cod.");
@@ -346,7 +362,7 @@ public class PontoDeVenda extends JDialog {
 
 	public static void adicionarItem() {
 		try {
-			quantidade = Float.parseFloat(txtQuant.getText());
+			quantidade = Float.parseFloat(txtQuant.getText().replace(",", "."));
 			Mercadoria merc = new ControlerVenda().consultaMercVenda(Long.parseLong(txtCodBarras.getText()),
 					quantidade);
 			if (merc == null) {
@@ -356,7 +372,7 @@ public class PontoDeVenda extends JDialog {
 						JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				precoMerc = merc.getPrecoVenda();
-				precoTotal = Float.parseFloat(txtQuant.getText()) * precoMerc;
+				precoTotal = quantidade * precoMerc;
 
 				modelo.addRow(new Object[] { ++item, merc.getId(), merc.getCodBarras(), merc.getMercadoria(),
 						quantidade, String.format("%.2f", precoMerc), String.format("%.2f", precoTotal), merc.getPrecoCompra()});

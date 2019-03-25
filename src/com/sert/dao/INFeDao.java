@@ -8,7 +8,12 @@ import com.sert.entidades.NFeEntrada;
 public interface INFeDao {
 
 	public void cadastrar(NFeEntrada nFeEntrada) throws SQLException;
+
 	public List<NFeEntrada> listarNota() throws SQLException;
+
 	public NFeEntrada pesq(String chave) throws SQLException;
+
 	public int recuperaId() throws SQLException;
+
+	public List<NFeEntrada> nfePeriodo(String dtI, String dtF) throws SQLException;
 }

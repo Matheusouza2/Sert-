@@ -56,7 +56,7 @@ public class RelatorioVendas extends JDialog {
 	private ControlerVenda controlerVenda;
 	private JLabel label;
 	private JButton btnCancelar;
-	private JTextField textField;
+	private JTextField txtPesquisa;
 	private JSeparator separator;
 	private JLabel lblProcurar;
 	private BasicEventList<Venda> vendas;
@@ -147,14 +147,19 @@ public class RelatorioVendas extends JDialog {
 		panelBtn.add(separator);
 		
 		lblProcurar = new JLabel("procurar");
+		lblProcurar.setForeground(new Color(0, 0, 128));
 		lblProcurar.setFont(new Font("Gtek Technology", Font.BOLD, 11));
 		lblProcurar.setBounds(568, 49, 98, 14);
 		panelBtn.add(lblProcurar);
 		
-		textField = new JTextField();
-		textField.setColumns(10);
-		textField.setBounds(676, 46, 197, 20);
-		panelBtn.add(textField);
+		txtPesquisa = new JTextField();
+		txtPesquisa.setColumns(10);
+		txtPesquisa.setBounds(676, 46, 197, 20);
+		txtPesquisa.setForeground(new Color(0, 0, 128));
+		txtPesquisa.setFont(new Font("Tahoma", Font.BOLD, 15));
+		txtPesquisa.setBackground(Color.YELLOW);
+		txtPesquisa.setBorder(null);
+		panelBtn.add(txtPesquisa);
 		
 
 		spListaMerc = new JScrollPane();
@@ -195,7 +200,7 @@ public class RelatorioVendas extends JDialog {
 		panel.add(label);
 
 		vendas = new BasicEventList<Venda>();
-		MatcherEditor<Venda> textMatcherEditor = new TextComponentMatcherEditor<Venda>(textField,
+		MatcherEditor<Venda> textMatcherEditor = new TextComponentMatcherEditor<Venda>(txtPesquisa,
 				new Venda());
 		
 		btnReimprimir = new JButton();
@@ -204,6 +209,10 @@ public class RelatorioVendas extends JDialog {
 		btnReimprimir.setBackground(new Color(0, 128, 128));
 		btnReimprimir.setBounds(10, 11, 89, 91);
 		panelBtn.add(btnReimprimir);
+		
+		JSeparator separator_1 = new JSeparator();
+		separator_1.setBounds(676, 66, 197, 7);
+		panelBtn.add(separator_1);
 		btnReimprimir.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

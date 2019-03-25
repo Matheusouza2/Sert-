@@ -15,7 +15,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import javax.swing.JOptionPane;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.DefaultCaret;
 import javax.swing.text.JTextComponent;
 
 import com.sert.controler.JDateField;
@@ -73,7 +72,7 @@ public class BackupSistema extends JDialog {
 				final List<String> comandos = new ArrayList<String>();
 				String data = JDateField.getDate().replace("/", "_");
 				String dir = "C:/Sert+/Backup/" + data + ".backup";
-				comandos.add("C:/Program Files/PostgreSQL/10/bin/pg_dump.exe");
+				comandos.add("C:/Program Files/PostgreSQL/9.6/bin/pg_dump.exe");
 
 				comandos.add("-h");
 				comandos.add("localhost");

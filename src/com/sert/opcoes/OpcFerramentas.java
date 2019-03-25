@@ -14,6 +14,7 @@ import javax.swing.border.LineBorder;
 import com.sert.telas.BackupSistema;
 import com.sert.telas.ContaCedula;
 import com.sert.telas.MovimentoCaixa;
+import com.sert.telas.TrocaEstorno;
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * @author Matheus Souza
@@ -115,6 +116,12 @@ public class OpcFerramentas extends JDialog {
 		btnEstorno.setBackground(Color.YELLOW);
 		btnEstorno.setBounds(10, 235, 248, 21);
 		contentPane.add(btnEstorno);
+		btnEstorno.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new TrocaEstorno().setVisible(true);				
+			}
+		});
 		
 	}
 }

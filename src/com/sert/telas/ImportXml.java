@@ -2,6 +2,7 @@ package com.sert.telas;
 
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
-import com.sert.alertas.Info;
 import com.sert.controler.ControlerEmpresa;
 import com.sert.controler.ControlerFornecedor;
 import com.sert.controler.ControlerMercadoria;
@@ -47,10 +48,8 @@ import com.sert.entidades.Fornecedor;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.MercadoriaNFe;
 import com.sert.entidades.NFeEntrada;
-import com.sert.exceptions.CodBarrasJaCadastradoException;
 import com.sert.exceptions.FornecedorJaCadastradoException;
 import com.sert.exceptions.MercadoriaNaoEncontradaException;
-import com.sert.exceptions.NFeJaCadastradaException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.DefaultCellEditor;
@@ -131,9 +130,11 @@ public class ImportXml extends JDialog {
 
 	private JProgressBar progressBar;
 
+	private JButton btnFsist;
+
 	public ImportXml() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1300, 760);
+		setBounds(100, 100, 1366, 760);
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		setModal(true);
@@ -143,7 +144,7 @@ public class ImportXml extends JDialog {
 		contentPanel.setLayout(null);
 
 		btnX = new JButton("X");
-		btnX.setBounds(1254, 0, 46, 23);
+		btnX.setBounds(1320, 0, 46, 23);
 		contentPanel.add(btnX);
 		btnX.setForeground(Color.WHITE);
 		btnX.setBackground(Color.RED);
@@ -164,13 +165,13 @@ public class ImportXml extends JDialog {
 		panelBtn = new JPanel();
 		panelBtn.setBackground(new Color(255, 255, 0));
 		panelBtn.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
-		panelBtn.setBounds(10, 34, 1280, 113);
+		panelBtn.setBounds(10, 34, 1346, 113);
 		contentPanel.add(panelBtn);
 		panelBtn.setLayout(null);
 
 		progressBar = new JProgressBar();
 		progressBar.setForeground(new Color(0, 0, 255));
-		progressBar.setBounds(127, 31, 392, 44);
+		progressBar.setBounds(223, 31, 296, 44);
 		progressBar.setStringPainted(true);
 		progressBar.setString("Aguarde...");
 		progressBar.setIndeterminate(true);
@@ -186,33 +187,15 @@ public class ImportXml extends JDialog {
 		btnSalvar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				progressBar.setVisible(true);
+				recuperaNota();
+				confirmarCadastro();
 				new SwingWorker() {
 					@Override
 					public Object doInBackground() throws Exception {
-						try {
-							recuperaNota();
-							confirmarCadastro();
-						} catch (ClassNotFoundException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (NenhumaMercadoriaCadastradaException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (CodBarrasJaCadastradoException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (MercadoriaNaoEncontradaException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+						
 						return null;
 					}
 
@@ -245,13 +228,13 @@ public class ImportXml extends JDialog {
 		});
 
 		txtCaminhoXML = new JTextField();
-		txtCaminhoXML.setBounds(688, 46, 431, 20);
+		txtCaminhoXML.setBounds(784, 46, 431, 20);
 		panelBtn.add(txtCaminhoXML);
 		txtCaminhoXML.setColumns(10);
 		txtCaminhoXML.setEditable(false);
 
 		btnBuscarXml = new JButton("Buscar XML");
-		btnBuscarXml.setBounds(1129, 45, 111, 23);
+		btnBuscarXml.setBounds(1225, 45, 111, 23);
 		panelBtn.add(btnBuscarXml);
 
 		separator = new JSeparator();
@@ -263,17 +246,38 @@ public class ImportXml extends JDialog {
 		panelBtn.add(separator);
 
 		lblCaminhoDoXml = new JLabel("Caminho do XML:");
-		lblCaminhoDoXml.setBounds(550, 49, 128, 17);
+		lblCaminhoDoXml.setBounds(646, 48, 128, 17);
 		panelBtn.add(lblCaminhoDoXml);
+		
+		btnFsist = new JButton();
+		btnFsist.setIcon(new ImageIcon(ImportXml.class.getResource("/com/sert/img/btnFsist.png")));
+		btnFsist.setBorderPainted(false);
+		btnFsist.setBackground(Color.WHITE);
+		btnFsist.setBounds(109, 11, 89, 91);
+		panelBtn.add(btnFsist);
+		btnFsist.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+			    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+			        try {
+			        	URI uri = new URI("https://www.fsist.com.br/");
+			            desktop.browse(uri);
+			        } catch (Exception e1) {
+			            e1.printStackTrace();
+			        }
+			    }				
+			}
+		});
 
 		panelForm = new JPanel();
 		panelForm.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
-		panelForm.setBounds(10, 158, 1280, 591);
+		panelForm.setBounds(10, 158, 1346, 591);
 		contentPanel.add(panelForm);
 		panelForm.setLayout(null);
 
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 120, 1260, 460);
+		scrollPane.setBounds(10, 120, 1326, 460);
 		panelForm.add(scrollPane);
 
 		table = new JTable();
@@ -439,16 +443,18 @@ public class ImportXml extends JDialog {
 		modelo.addColumn("Cod. Barras");
 		modelo.addColumn("Descrição");
 		modelo.addColumn("Quant.");
-		table.getColumnModel().getColumn(0).setPreferredWidth(100);
-		table.getColumnModel().getColumn(1).setPreferredWidth(700);
-		table.getColumnModel().getColumn(2).setPreferredWidth(100);
+		modelo.addColumn("Preço Venda");
+		table.getColumnModel().getColumn(0).setPreferredWidth(75);
+		table.getColumnModel().getColumn(1).setPreferredWidth(450);
+		table.getColumnModel().getColumn(2).setPreferredWidth(95);
 		table.getColumnModel().getColumn(3).setPreferredWidth(110);
 		table.getColumnModel().getColumn(4).setPreferredWidth(100);
 		table.getColumnModel().getColumn(5).setPreferredWidth(105);
 		table.getColumnModel().getColumn(6).setPreferredWidth(1);
 		table.getColumnModel().getColumn(7).setPreferredWidth(150);
-		table.getColumnModel().getColumn(8).setPreferredWidth(700);
+		table.getColumnModel().getColumn(8).setPreferredWidth(450);
 		table.getColumnModel().getColumn(9).setPreferredWidth(70);
+		table.getColumnModel().getColumn(10).setPreferredWidth(100);
 		table.getColumnModel().getColumn(7).setCellEditor(new DefaultCellEditor(cbMercRef));
 		table.getColumnModel().getColumn(8).setCellEditor(new DefaultCellEditor(cbMercDesc));
 		table.getColumnModel().getColumn(9).setCellEditor(new DefaultCellEditor(new JNumberField()));
@@ -457,13 +463,13 @@ public class ImportXml extends JDialog {
 		btnBuscarXml.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				buscarXml(lfAnterior);
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				progressBar.setVisible(true);
 				new SwingWorker() {
 					@Override
 					public Object doInBackground() throws Exception {
-						buscarXml(lfAnterior);
+						
 						return null;
 					}
 
@@ -555,13 +561,13 @@ public class ImportXml extends JDialog {
 			descUn = nfeXml.getMercadorias().get(i).getValDesc() / nfeXml.getMercadorias().get(i).getQuantCompra();
 			modelo.addRow(new Object[] { nfeXml.getMercadorias().get(i).getCodProd(),
 					nfeXml.getMercadorias().get(i).getMercadoria(),
-					String.format("%.4f", nfeXml.getMercadorias().get(i).getPrecoUn() - descUn),
+					String.format("R$ %.4f", nfeXml.getMercadorias().get(i).getPrecoUn() - descUn),
 					String.format("%.2f", nfeXml.getMercadorias().get(i).getQuantCompra()),
-					String.format("%.4f", nfeXml.getMercadorias().get(i).getValDesc()),
-					String.format("%.2f",
+					String.format("R$ %.4f", nfeXml.getMercadorias().get(i).getValDesc()),
+					String.format("R$ %.2f",
 							(nfeXml.getMercadorias().get(i).getPrecoTotal()
 									- nfeXml.getMercadorias().get(i).getValDesc())),
-					flag, codBarrasFlag, mercadoriaFlag, 1 });
+					flag, codBarrasFlag, mercadoriaFlag, 1, 0 });
 			flag = "N";
 			codBarrasFlag = 0;
 			mercadoriaFlag = "";
@@ -587,6 +593,7 @@ public class ImportXml extends JDialog {
 					if (cbMercRef.getSelectedItem() != null) {
 						for (Mercadoria merc : mercList) {
 							if (cbMercRef.getSelectedItem().equals(merc.getCodBarras())) {
+								modelo.setValueAt("C", table.getSelectedRow(), 6);
 								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 8);
 								table.setModel(modelo);
 							}
@@ -609,6 +616,7 @@ public class ImportXml extends JDialog {
 					if (cbMercDesc.getSelectedItem() != null) {
 						for (Mercadoria merc : mercList) {
 							if (cbMercDesc.getSelectedItem().equals(merc.getMercadoria())) {
+								modelo.setValueAt("C", table.getSelectedRow(), 6);
 								modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 7);
 								table.setModel(modelo);
 							}
@@ -636,15 +644,20 @@ public class ImportXml extends JDialog {
 				mercadoriaImport = new Mercadoria();
 				mercadoriaImport.setId(Integer.parseInt(table.getValueAt(i, 0).toString()));
 				mercadoriaImport.setMercadoria(table.getValueAt(i, 1).toString());
-				mercadoriaImport.setCodBarras(nfeXml.getMercadorias().get(i).getCodBarras());
+				if(nfeXml.getMercadorias().get(i).getCodBarras() == 0) {
+					mercadoriaImport.setCodBarras(Long.parseLong("98500000"+mercadoriaImport.getId()));
+				}else {
+					mercadoriaImport.setCodBarras(nfeXml.getMercadorias().get(i).getCodBarras());
+				}
 				mercadoriaImport.setDataCadastro(JDateField.getDate());
 				mercadoriaImport.setUnd(nfeXml.getMercadorias().get(i).getUnd());
-				mercadoriaImport.setPrecoCompra(Float.parseFloat(table.getValueAt(i, 2).toString().replace(",", ".")));
+				mercadoriaImport.setPrecoCompra(
+						Float.parseFloat(table.getValueAt(i, 2).toString().replace("R$", "").replace(",", ".")));
 				mercadoriaImport.setUsuCad(UsuLogado.getId());
 				mercadoriaImport.setEstoque(Float.parseFloat(table.getValueAt(i, 3).toString().replace(",", "."))
 						* Float.parseFloat(table.getValueAt(i, 9).toString().replace(",", ".")));
 				mercadoriaImport.setCadastrada(table.getValueAt(i, 6).toString());
-
+				mercadoriaImport.setPrecoVenda(Float.parseFloat(table.getValueAt(i, 10).toString().replace(",", ".")));
 				mercadoriaGravar.add(mercadoriaImport);
 			}
 		}
@@ -652,61 +665,73 @@ public class ImportXml extends JDialog {
 
 	// Cadastra os itens da nota, atualiza o estoque, cadastra fornecedor, e grava a
 	// nota
-	private void confirmarCadastro() throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException,
-			IOException, CodBarrasJaCadastradoException, MercadoriaNaoEncontradaException {
-		controlerMercadoria = new ControlerMercadoria();
-		ControlerNfe controlerNfe = new ControlerNfe();
-		List<Mercadoria> mercadoriasNF = new ArrayList<>();
+	private void confirmarCadastro() {
+		ControlerNfe controlerNfe;
+		try {
+			controlerMercadoria = new ControlerMercadoria();
+			controlerNfe = new ControlerNfe();
 
-		if (controlerNfe.pesqNfe(nfeXml.getChave()).getChave() != nfeXml.getChave()) {
-			// Cadastra as mercadorias e seu estoque
-			for (int i = 0; i < mercadoriaGravar.size(); i++) {
-				if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
-					Mercadoria mercadoria = new Mercadoria(mercadoriaGravar.get(i).getId(),
-							mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getMercadoria(), 0,
-							mercadoriaGravar.get(i).getDataCadastro(), mercadoriaGravar.get(i).getUsuCad(),
-							mercadoriaGravar.get(i).getUnd(),
-							mercadoriaGravar.get(i).getPrecoCompra() / mercadoriaGravar.get(i).getEstoque(),
-							UsuLogado.getNome(), "", mercadoriaGravar.get(i).getEstoque());
-					controlerMercadoria.cadastrarMercadoriaNf(mercadoria);
-					mercadoriasNF.add(mercadoria);
-				} else {
-					controlerMercadoria.entradaMercadoria(mercadoriaGravar.get(i).getEstoque(),
-							mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getId());
+			if (controlerNfe.pesqNfe(nfeXml.getChave()).getChave() == null) {
+				// Cadastra as mercadorias e seu estoque
+				for (int i = 0; i < mercadoriaGravar.size(); i++) {
+					if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
+						Mercadoria mercadoria = new Mercadoria(mercadoriaGravar.get(i).getId(),
+								mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getMercadoria(),
+								mercadoriaGravar.get(i).getPrecoVenda(), mercadoriaGravar.get(i).getDataCadastro(),
+								mercadoriaGravar.get(i).getUsuCad(), mercadoriaGravar.get(i).getUnd(),
+								mercadoriaGravar.get(i).getPrecoCompra() / mercadoriaGravar.get(i).getEstoque(),
+								UsuLogado.getNome(), "", mercadoriaGravar.get(i).getEstoque());
+						controlerMercadoria.cadastrarMercadoriaNf(mercadoria);
+
+					} else {
+						controlerMercadoria.entradaMercadoria(mercadoriaGravar.get(i).getEstoque(),
+								mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getId());
+					}
 				}
+
+				// Cadastra o cabeçalho da nota junto com o fornecedor
+				ControlerFornecedor controlerFornecedor = new ControlerFornecedor();
+				if (controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn()).getCnpjForn() == null) {
+					controlerFornecedor.cadadastrar(nfeXml.getFornecedor());
+				}
+
+				MercadoriaNFe mercadoriaNota;
+				List<MercadoriaNFe> mercadoriasNota = new ArrayList<MercadoriaNFe>();
+				for (Mercadoria mercadoria : mercadoriaGravar) {
+					mercadoriaNota = new MercadoriaNFe();
+					mercadoriaNota.setCodBarras(mercadoria.getCodBarras());
+					mercadoriaNota.setCodProd(mercadoria.getId());
+					mercadoriaNota.setPrecoUn(mercadoria.getPrecoCompra());
+					mercadoriaNota.setQuantCompra(mercadoria.getEstoque());
+					mercadoriasNota.add(mercadoriaNota);
+				}
+				Fornecedor fornecedor = controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn());
+				int id = controlerNfe.recuperaId();
+				NFeEntrada entrada = new NFeEntrada(nfeXml.getCnpjDest(), fornecedor, id, nfeXml.getChave(),
+						nfeXml.getNumNota(), mercadoriasNota, nfeXml.getValNota(), JDateField.getDate());
+
+				controlerNfe.cadastrarNfe(entrada);
+
+				JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso !", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+
+			} else {
+				JOptionPane.showMessageDialog(null,"Nota fiscal já cadastrada no sistema !", "Nota já cadastrada",JOptionPane.ERROR_MESSAGE);
 			}
 
-			// Cadastra o cabeçalho da nota junto com o fornecedor
-			ControlerFornecedor controlerFornecedor = new ControlerFornecedor();
-
-			try {
-				
-				controlerFornecedor.cadadastrar(nfeXml.getFornecedor());
-			} catch (FornecedorJaCadastradoException e) {
-				Log.gravaLog("ImportXml ----> " + e.getMessage());
-			}
-			MercadoriaNFe mercadoriaNota;
-			List<MercadoriaNFe> mercadoriasNota = new ArrayList<MercadoriaNFe>();
-			for (Mercadoria mercadoria : mercadoriasNF) {
-				mercadoriaNota = new MercadoriaNFe();
-				mercadoriaNota.setCodBarras(mercadoria.getCodBarras());
-				mercadoriaNota.setCodProd(String.valueOf(mercadoria.getId()));
-				mercadoriaNota.setPrecoUn(mercadoria.getPrecoCompra());
-				mercadoriaNota.setQuantCompra(mercadoria.getEstoque());
-				mercadoriasNota.add(mercadoriaNota);
-			}
-			Fornecedor fornecedor = controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn());
-			int id = controlerNfe.recuperaId();
-			NFeEntrada entrada = new NFeEntrada(nfeXml.getCnpjDest(), fornecedor, id, nfeXml.getChave(),
-					nfeXml.getNumNota(), mercadoriasNota, nfeXml.getValNota());
-
-			controlerNfe.cadastrarNfe(entrada);
-
-			Info.AlertInfo("Nota fiscal cadastrada com sucesso !", Info.INFO);
-
-		} else {
-			Info.AlertInfo("Nota fiscal já cadastrada no sistema !", Info.ALERT);
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null,"Erro de banco de dados, ver o LOG para mais detalhes", "Erro",JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml LINE 699---> " + e1.getMessage());
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null,"Erro de arquivo, ver o LOG para mais detalhes", "Erro",JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml LINE 702---> " + e1.getMessage());
+		} catch (MercadoriaNaoEncontradaException e) {
+			JOptionPane.showMessageDialog(null,"Erro no cadastro de mercadoria, ver o LOG para mais detalhes", "Erro",JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml LINE 705---> " + e.getMessage());
+		} catch (FornecedorJaCadastradoException e) {
+			JOptionPane.showMessageDialog(null,"Erro ao cadastrar o Fornecedor, ver o LOG para mais detalhes", "Erro",JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml LINE 708---> " + e.getMessage());
 		}
-
 	}
 }

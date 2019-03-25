@@ -5,15 +5,20 @@ import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.PrintJob;
 import java.awt.Toolkit;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
+import com.sert.controler.ControlerEmpresa;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
+import com.sert.entidades.Empresa;
 import com.sert.entidades.Venda;
 
 public class PrintableVenda {
 
 	public PrintableVenda(Venda venda) {
-
+		List<Empresa> empresa = null;
 		Frame f = new Frame();
 		f.pack();
 		Graphics g[] = new Graphics[50];
@@ -23,14 +28,22 @@ public class PrintableVenda {
 		// para que seja escolhida uma impressora.
 		// Também pode ser uma impressora de rede
 		PrintJob pj = tk.getPrintJob(f, "Venda", null);
-		
+		try {
+			empresa = new ControlerEmpresa().listEmpresa();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		if (pj != null) {
 			g[0] = pj.getGraphics();
 			g[0].setFont(new Font("Arial", Font.BOLD, 14));
-			g[0].drawString("M&K Papelaria", 60, 10);
+			g[0].drawString(empresa.get(0).getNomeFant(), 60, 10);
 			g[0].setFont(new Font("Arial", Font.PLAIN, 10));
-			g[0].drawString("CNPJ: 31.199.696/0001-50", 47, 20);
-			g[0].drawString("Rua José de Siqueira Campos, Nº 135", 30, 28);
+			g[0].drawString("CNPJ: "+empresa.get(0).getCnpj(), 47, 20);
+			g[0].drawString(empresa.get(0).getRua()+", Nº "+empresa.get(0).getNumero(), 30, 28);
 			g[0].setFont(new Font("Arial", Font.BOLD, 9));
 			g[0].drawString("Cupom não fiscal", 60, 38);
 			g[0].drawLine(0, 40, 210, 40);

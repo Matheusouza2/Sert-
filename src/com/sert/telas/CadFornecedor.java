@@ -202,7 +202,7 @@ public class CadFornecedor extends JDialog {
 		panel_1.add(txtUsuInclude);
 		txtUsuInclude.setColumns(10);
 		
-		JLabel lblDataDeIncluso = new JLabel("Data de inclusão: "+new JDateField().getDate());
+		JLabel lblDataDeIncluso = new JLabel("Data de inclusão: "+ JDateField.getDate());
 		lblDataDeIncluso.setBounds(589, 297, 215, 14);
 		panel_1.add(lblDataDeIncluso);
 		

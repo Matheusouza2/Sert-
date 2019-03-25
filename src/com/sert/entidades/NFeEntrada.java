@@ -2,7 +2,9 @@ package com.sert.entidades;
 
 import java.util.List;
 
-public class NFeEntrada {
+import ca.odell.glazedlists.TextFilterator;
+
+public class NFeEntrada implements TextFilterator<NFeEntrada>{
 
 	// Identificação do destinatario
 	private long cnpjDest;
@@ -13,6 +15,7 @@ public class NFeEntrada {
 	private String chave;
 	private int numNota;
 	private float valNota;
+	private String dataEntrada;
 	// Mercadorias da nota
 	private List<MercadoriaNFe> mercadorias;
 
@@ -20,7 +23,7 @@ public class NFeEntrada {
 	}
 
 	public NFeEntrada(long cnpjDest, Fornecedor fornecedor, int id, String chave, int numNota,
-			List<MercadoriaNFe> mercadorias, float valNota) {
+			List<MercadoriaNFe> mercadorias, float valNota, String dataEntrada) {
 		super();
 		this.cnpjDest = cnpjDest;
 		this.fornecedor = fornecedor;
@@ -28,6 +31,8 @@ public class NFeEntrada {
 		this.chave = chave;
 		this.numNota = numNota;
 		this.mercadorias = mercadorias;
+		this.valNota = valNota;
+		this.dataEntrada = dataEntrada;
 	}
 
 	public long getCnpjDest() {
@@ -84,5 +89,21 @@ public class NFeEntrada {
 
 	public void setValNota(float valNota) {
 		this.valNota = valNota;
+	}
+	
+	public String getDataEntrada() {
+		return dataEntrada;
+	}
+
+	public void setDataEntrada(String dataEntrada) {
+		this.dataEntrada = dataEntrada;
+	}
+
+	@Override
+	public void getFilterStrings(List<String> baseList, NFeEntrada nfeList) {
+		baseList.add(String.valueOf(nfeList.getNumNota()));
+		baseList.add(nfeList.getChave());
+		baseList.add(nfeList.getFornecedor().getRazSocial());
+		
 	}
 }

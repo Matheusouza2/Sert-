@@ -316,6 +316,7 @@ public class PontoDeVendaFecharVenda extends JDialog {
 					lblValTroco.setText("R$ " + String.format("%.2f", cartaoDinheiro - (auxTotal - descVal)));
 					lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal - descVal)));
 					desconto = descVal;
+					valorAPagar -= desconto;
 				} else if (rdbtnAcrescimo.isSelected()) {
 					lblValAPagar.setText("R$ " + String.format("%.2f", (auxTotal + descVal) - cartaoDinheiro));
 					lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal + descVal)));
@@ -339,6 +340,7 @@ public class PontoDeVendaFecharVenda extends JDialog {
 					lblValTroco.setText("R$ " + String.format("%.2f", cartaoDinheiro - (auxTotal - descVal)));
 					lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal - descVal)));
 					desconto = descVal;
+					valorAPagar -= desconto;
 				} else if (rdbtnAcrescimo.isSelected()) {
 					lblValAPagar.setText("R$ " + String.format("%.2f", (auxTotal + descVal) - cartaoDinheiro));
 					lblValTotal.setText("R$ " + String.format("%.2f", (auxTotal + descVal)));

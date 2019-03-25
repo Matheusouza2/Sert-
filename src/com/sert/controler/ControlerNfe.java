@@ -20,8 +20,8 @@ public class ControlerNfe {
 		dao.cadastrar(entrada);
 	}
 
-	public List<NFeEntrada> listarNfe() {
-		return null;
+	public List<NFeEntrada> listarNfe() throws SQLException {
+		return dao.listarNota();
 	}
 
 	public void alterarNfe(NFeEntrada entrada) {
@@ -38,5 +38,9 @@ public class ControlerNfe {
 	
 	public int recuperaId() throws SQLException {
 		return dao.recuperaId();
+	}
+	
+	public List<NFeEntrada> nfePorPeriodo(String dtInicial, String dtFinal) throws SQLException{
+		return dao.nfePeriodo(dtInicial, dtFinal);
 	}
 }

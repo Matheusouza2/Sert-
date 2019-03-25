@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 
 import java.awt.Color;
+
 import javax.swing.border.LineBorder;
 
 import com.sert.entidades.Mercadoria;
@@ -33,6 +34,7 @@ import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.JSeparator;
 
 public class PesqMercVenda extends JDialog {
 
@@ -97,6 +99,9 @@ public class PesqMercVenda extends JDialog {
 		panelPesq.add(lblPesquisa);
 
 		txtPesquisa = new JTextField();
+		txtPesquisa.setForeground(Color.WHITE);
+		txtPesquisa.setBackground(Color.GRAY);
+		txtPesquisa.setBorder(null);
 		txtPesquisa.setFont(new Font("Tahoma", Font.BOLD, 18));
 		txtPesquisa.setBounds(185, 48, 234, 32);
 		panelPesq.add(txtPesquisa);
@@ -134,12 +139,15 @@ public class PesqMercVenda extends JDialog {
 
 		table = new JTable();
 		table.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		table.setBorder(new LineBorder(Color.YELLOW, 1, true));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane.setViewportView(table);
 
 		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(txtPesquisa,
 				new Mercadoria());
+
+		JSeparator separator = new JSeparator();
+		separator.setBounds(185, 79, 234, 2);
+		panelPesq.add(separator);
 
 		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
 		mercTableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(textFilteredIssues, new TableModelMerc());

@@ -2,43 +2,46 @@ package com.sert.telas;
 
 import java.awt.BorderLayout;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+
 import java.awt.Color;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
-import com.sert.alertas.Info;
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.Log;
+import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.Venda;
+import com.sert.exceptions.MercadoriaNaoEncontradaException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.exceptions.VendaNaoEncontradaException;
-import com.sert.tables.TableModelMerc;
-
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.matchers.MatcherEditor;
-import ca.odell.glazedlists.swing.AdvancedTableModel;
-import ca.odell.glazedlists.swing.GlazedListsSwing;
-import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JSeparator;
 
 public class TrocaEstorno extends JDialog {
 
@@ -48,7 +51,7 @@ public class TrocaEstorno extends JDialog {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtCodVenda;
-	private JTextField txtMerc;
+	private JComboBox<String> txtMerc;
 	private JPanel panel_merc_troc;
 	private JLabel lblTroca;
 	private JPanel panel;
@@ -69,9 +72,13 @@ public class TrocaEstorno extends JDialog {
 	private JScrollPane scrollPaneTroca;
 	private JTable tableMerc;
 	private JScrollPane scrollPane;
-	private AdvancedTableModel<Mercadoria> mercTableModel;
-	private FilterList<Mercadoria> textFilteredIssues;
-	private BasicEventList<Mercadoria> mercadorias;
+	private JTextField txtQuant;
+	private JLabel lblQuant;
+	private JSeparator separator;
+	private JSeparator separator_1;
+	private JSeparator separator_2;
+	private DefaultTableModel tableModelMercTroca;
+	private List<Mercadoria> mercadorias;
 
 	/**
 	 * Launch the application.
@@ -111,7 +118,7 @@ public class TrocaEstorno extends JDialog {
 				dispose();
 			}
 		});
-
+		listen();
 		panelBtn1 = new JPanel();
 		panelBtn1.setBorder(new LineBorder(new Color(30, 144, 255), 2, true));
 		panelBtn1.setBackground(new Color(255, 255, 0));
@@ -125,6 +132,8 @@ public class TrocaEstorno extends JDialog {
 		panelBtn1.add(lblNumeroDaVenda);
 
 		txtCodVenda = new JNumberField();
+		txtCodVenda.setBorder(null);
+		txtCodVenda.setBackground(new Color(255, 255, 0));
 		txtCodVenda.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		txtCodVenda.setBounds(156, 29, 106, 20);
 		panelBtn1.add(txtCodVenda);
@@ -132,6 +141,8 @@ public class TrocaEstorno extends JDialog {
 		txtCodVenda.setColumns(10);
 
 		btnBuscar = new JButton("Buscar");
+		btnBuscar.setBorderPainted(false);
+		btnBuscar.setBackground(Color.LIGHT_GRAY);
 		btnBuscar.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnBuscar.setBounds(272, 28, 89, 23);
 		panelBtn1.add(btnBuscar);
@@ -148,6 +159,10 @@ public class TrocaEstorno extends JDialog {
 		lblInstrucoes.setForeground(new Color(255, 0, 0));
 		lblInstrucoes.setBounds(550, 0, 330, 79);
 		panelBtn1.add(lblInstrucoes);
+
+		separator_2 = new JSeparator();
+		separator_2.setBounds(156, 49, 106, 2);
+		panelBtn1.add(separator_2);
 
 		panel_merc_venda = new JPanel();
 		panel_merc_venda.setBorder(new LineBorder(new Color(30, 144, 255), 2, true));
@@ -171,11 +186,14 @@ public class TrocaEstorno extends JDialog {
 		lblMercadoria.setBounds(10, 32, 97, 14);
 		panelBtn2.add(lblMercadoria);
 
-		txtMerc = new JTextField();
+		txtMerc = new JComboBox<String>();
+		txtMerc.setEditable(true);
+		txtMerc.setVisible(true);
+		txtMerc.setBackground(new Color(255, 255, 224));
 		txtMerc.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		txtMerc.setBorder(null);
 		txtMerc.setBounds(117, 29, 232, 20);
 		panelBtn2.add(txtMerc);
-		txtMerc.setColumns(10);
 
 		lblInstrucao2 = new JLabel(
 				"<html><ul><li>Procure uma mercadoria.</li><br><li>Selecione e confime para efetivar a troca.</li></ul></html>");
@@ -216,6 +234,8 @@ public class TrocaEstorno extends JDialog {
 		panel.add(lblMsg);
 
 		btnConfirmar = new JButton("Confirmar");
+		btnConfirmar.setBackground(new Color(0, 255, 0));
+		btnConfirmar.setBorderPainted(false);
 		btnConfirmar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnConfirmar.setBounds(748, 8, 122, 23);
 		panel.add(btnConfirmar);
@@ -245,35 +265,63 @@ public class TrocaEstorno extends JDialog {
 		tableMercTroca.getColumnModel().getColumn(4).setPreferredWidth(120);
 		tableMercTroca.getColumnModel().getColumn(5).setPreferredWidth(120);
 
-		mercadorias = new BasicEventList<Mercadoria>();
-
 		try {
-			for (Mercadoria merc : new ControlerMercadoria().listarMercadorias()) {
-				mercadorias.add(merc);
+			txtMerc.addItem("");
+			mercadorias = new ControlerMercadoria().listarMercadorias();
+			for (Mercadoria merc : mercadorias) {
+				txtMerc.addItem(merc.getMercadoria());
+				txtMerc.setSelectedIndex(-1);
 			}
+			AutoCompletion.enable(txtMerc);
 			tableMerc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(txtMerc,
-					new Mercadoria());
 
-			textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
-			mercTableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(textFilteredIssues,
-					new TableModelMerc());
-			tableMerc.setModel(mercTableModel);
+			lblQuant = new JLabel("Quant.");
+			lblQuant.setFont(new Font("Tahoma", Font.PLAIN, 15));
+			lblQuant.setBounds(398, 33, 56, 17);
+			panelBtn2.add(lblQuant);
+
+			txtQuant = new JTextField();
+			txtQuant.setBackground(new Color(255, 255, 0));
+			txtQuant.setBounds(464, 29, 86, 20);
+			txtQuant.setBorder(null);
+			panelBtn2.add(txtQuant);
+			txtQuant.setColumns(10);
+			txtQuant.setText(String.valueOf(1));
+
+			separator = new JSeparator();
+			separator.setBounds(117, 49, 232, 2);
+			panelBtn2.add(separator);
+
+			separator_1 = new JSeparator();
+			separator_1.setBounds(464, 49, 86, 2);
+			panelBtn2.add(separator_1);
 
 		} catch (ClassNotFoundException e1) {
-			Info.AlertInfo(e1.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, "Erro interno, ver o LOG para mais detalhes", "Erro 404",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e1.getMessage());
 		} catch (NenhumaMercadoriaCadastradaException e1) {
-			Info.AlertInfo(e1.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro 404", JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e1.getMessage());
 		} catch (SQLException e1) {
-			Info.AlertInfo(e1.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, ver o LOG para mais detalhes", "Erro 404",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e1.getMessage());
 		} catch (IOException e1) {
-			Info.AlertInfo(e1.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, "Erro na escrita de arquivo, ver o LOG para mais detalhes", "Erro 404",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e1.getMessage());
 		}
 
+		tableModelMercTroca = new DefaultTableModel();
+		tableModelMercTroca.addColumn("Código");
+		tableModelMercTroca.addColumn("Cod. barras");
+		tableModelMercTroca.addColumn("Descrição");
+		tableModelMercTroca.addColumn("Preço Un");
+		tableModelMercTroca.addColumn("Quant");
+		tableModelMercTroca.addColumn("Preço Total");
+
+		tableMerc.setModel(tableModelMercTroca);
 		tableMerc.getColumnModel().getColumn(0).setPreferredWidth(58);
 		tableMerc.getColumnModel().getColumn(1).setPreferredWidth(140);
 		tableMerc.getColumnModel().getColumn(2).setPreferredWidth(790);
@@ -282,39 +330,108 @@ public class TrocaEstorno extends JDialog {
 	}
 
 	public void buscarVenda() {
-		codVenda = Integer.parseInt(txtCodVenda.getText());
-		if (codVenda == 0) {
-
-		}
 		try {
+			if (tableModel.getRowCount() != 0) {
+				for (int i = 0; i < tableModel.getRowCount(); i++) {
+					tableModel.removeRow(0);
+				}
+				tableMercTroca.revalidate();
+			}
+			codVenda = Integer.parseInt(txtCodVenda.getText());
 			Venda venda = new ControlerVenda().imprimirVenda(codVenda);
 			for (int i = 0; i < venda.getMercadorias().size(); i++) {
 				tableModel.addRow(new Object[] { venda.getMercadorias().get(i).getId(),
 						venda.getMercadorias().get(i).getCodBarras(),
 						venda.getMercadorias().get(i).getMercadoria().trim(),
-						 String.format("R$ %.2f", venda.getMercadorias().get(i).getPrecoVenda()), venda.getMercadorias().get(i).getEstoque(),
-						String.format("R$ %.2f", venda.getMercadorias().get(i).getPrecoVenda() * venda.getMercadorias().get(i).getEstoque()) });
+						String.format("R$ %.2f", venda.getMercadorias().get(i).getPrecoVenda()),
+						venda.getMercadorias().get(i).getEstoque(),
+						String.format("R$ %.2f", venda.getMercadorias().get(i).getPrecoVenda()
+								* venda.getMercadorias().get(i).getEstoque()) });
 			}
 
 		} catch (ClassNotFoundException e) {
-			Info.AlertInfo(e.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, "Erro interno, ver o LOG para mais detalhes", "Erro 404",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e.getMessage());
 		} catch (SQLException e) {
-			Info.AlertInfo(e.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, ver o LOG para mais detalhes", "Erro 404",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e.getMessage());
 		} catch (IOException e) {
-			Info.AlertInfo(e.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, "Erro na escrita de arquivo, ver o LOG para mais detalhes", "Erro 404",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e.getMessage());
 		} catch (NenhumaMercadoriaCadastradaException e) {
-			Info.AlertInfo(e.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Nenhuma Mercadoria", JOptionPane.INFORMATION_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e.getMessage());
 		} catch (VendaNaoEncontradaException e) {
-			Info.AlertInfo(e.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Venda", JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog("|TrocaEstorno|" + e.getMessage());
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(null, "Codigo da venda não pode ser nulo", "Venda",
+					JOptionPane.INFORMATION_MESSAGE);
 			Log.gravaLog("|TrocaEstorno|" + e.getMessage());
 		}
 	}
 
 	private void confirmarTroca() {
+		System.out.println(tableMerc.getSelectedRow());
+	}
 
+	private void lancarTrocaMerc() {
+		long codBarras = 0;
+		for (int i = 0; i < mercadorias.size(); i++) {
+			if(txtMerc.getSelectedItem().toString().equals(mercadorias.get(i).getMercadoria())) {
+				codBarras = mercadorias.get(i).getCodBarras();
+			}
+		}
+		
+		try {
+			Mercadoria merc = new ControlerMercadoria().consultaMercadoria(codBarras);
+			tableModelMercTroca.addRow(new Object[] {merc.getId(), merc.getCodBarras(), merc.getMercadoria(), merc.getPrecoVenda(), txtQuant.getText(), merc.getPrecoVenda() * Float.parseFloat(txtQuant.getText())});
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (MercadoriaNaoEncontradaException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void listen() {
+		JRootPane escback = getRootPane();
+		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				"ESC");
+		escback.getRootPane().getActionMap().put("ESC", new AbstractAction("ESC") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+
+		});
+
+		JRootPane enter = getRootPane();
+		enter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "ENTER");
+		enter.getRootPane().getActionMap().put("ENTER", new AbstractAction("ENTER") {
+
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				if (txtCodVenda.hasFocus()) {
+					btnBuscar.doClick();
+				} else if (txtQuant.hasFocus()) {
+					if (txtMerc.getSelectedIndex() == -1) {
+						JOptionPane.showMessageDialog(null, "Selecione uma mercadoria para substituir a da venda",
+								"AVISO", JOptionPane.INFORMATION_MESSAGE);
+					}else {
+						lancarTrocaMerc();
+					}
+				}
+			}
+		});
 	}
 }

@@ -88,7 +88,7 @@ public class CadNotas extends JDialog {
 	private JButton btnSalvar;
 	private JButton btnImportXML;
 
-	public CadNotas() {
+	public CadNotas(int opcao) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1300, 760);
 		setUndecorated(true);

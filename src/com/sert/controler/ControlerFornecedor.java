@@ -18,9 +18,11 @@ public class ControlerFornecedor {
 	}
 
 	public void cadadastrar(Fornecedor fornecedor) throws SQLException, FornecedorJaCadastradoException {
-		if (pesqFornecedor(fornecedor.getCnpjForn()).getCnpjForn() == fornecedor.getCnpjForn())
+		fornecedor.setId(getIdForn());
+		if (pesqFornecedor(fornecedor.getCnpjForn()).getCnpjForn() == null) 
+			dao.cadastrar(fornecedor);
+		else
 			throw new FornecedorJaCadastradoException();
-		dao.cadastrar(fornecedor);
 	}
 
 	public List<Fornecedor> listarFornecedor() {
@@ -38,5 +40,9 @@ public class ControlerFornecedor {
 
 	public Fornecedor pesqFornecedor(String cnpj) throws SQLException {
 		return dao.pesquisar(cnpj);
+	}
+	
+	public int getIdForn() throws SQLException {
+		return dao.recuperaId();
 	}
 }

@@ -10,6 +10,7 @@ import javax.swing.border.LineBorder;
 import com.sert.controler.JDateField;
 import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.relatorios.RelatorioCaixa;
+import com.sert.relatorios.RelatorioCompras;
 
 import javax.swing.JTextField;
 import java.awt.Font;
@@ -31,8 +32,10 @@ public class DataPicker extends JDialog {
 	private JLabel lblDataFinal;
 	private JButton btnOk;
 	private JButton btnX;
+	public static int VENDAS = 0;
+	public static int COMPRAS = 1;
 
-	public DataPicker() {
+	public DataPicker(int tela) {
 		setFocusableWindowState(true);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -89,7 +92,11 @@ public class DataPicker extends JDialog {
 				if(data1 > data2) {
 					JOptionPane.showMessageDialog(null, "A data inicial não pode ser maior que a data final");
 				}else {
-					new RelatorioCaixa(txtDtInicial.getText(), txtDtFinal.getText()).setVisible(true);
+					if(tela == COMPRAS) {
+						new RelatorioCompras(txtDtInicial.getText(), txtDtFinal.getText()).setVisible(true);
+					}else if(tela == VENDAS) {
+						new RelatorioCaixa(txtDtInicial.getText(), txtDtFinal.getText()).setVisible(true);
+					}
 				}
 			}
 		});

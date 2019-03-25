@@ -11,8 +11,6 @@ import java.util.GregorianCalendar;
 
 import javax.swing.JOptionPane;
 
-import com.sert.alertas.Info;
-
 public class Log {
 
 	public static void gravaLog(String avsLog) {
@@ -44,7 +42,8 @@ public class Log {
 
 			arq.close();
 		} catch (IOException e) {
-			Info.AlertInfo("Erro na abertura ou escrita do arquivo de Log \n" + e.getMessage(), Info.INFO);
+			JOptionPane.showMessageDialog(null, "Erro na abertura ou escrita do arquivo de Log \n" + e.getMessage(),
+					"Erro", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

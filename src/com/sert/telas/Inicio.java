@@ -65,12 +65,12 @@ public class Inicio extends JDialog {
 
 	public Inicio() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		setLocationRelativeTo(null);
 		setUndecorated(true);
 		Toolkit toolkit = Toolkit.getDefaultToolkit();
 		Dimension screenSize = toolkit.getScreenSize();
 		setBounds(0, 0, screenSize.width, screenSize.height);
 		setTitle("Bem-vindo ao Sert+");
+		setLocationRelativeTo(null);
 		contentPane = new JPanel();
 		contentPane.setBackground(Color.WHITE);
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -217,7 +217,7 @@ public class Inicio extends JDialog {
 
 		panelUsados = new JPanel();
 		panelUsados.setBackground(new Color(41, 171, 226));
-		panelUsados.setBounds(10, 135, 1344, 590);
+		panelUsados.setBounds(10, 135, 1344, 622);
 		contentPane.add(panelUsados);
 		panelUsados.setLayout(null);
 
@@ -269,6 +269,5 @@ public class Inicio extends JDialog {
 				new PesqMercVenda().setVisible(true);
 			}
 		});
-
 	}
 }

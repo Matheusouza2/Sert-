@@ -3,7 +3,7 @@ package com.sert.entidades;
 public class MercadoriaNFe {
 
 	private int id;
-	private String codProd;
+	private long codProd;
 	private long codBarras;
 	private String mercadoria;
 	private String und;
@@ -15,7 +15,7 @@ public class MercadoriaNFe {
 	public MercadoriaNFe() {
 	}
 
-	public MercadoriaNFe(int id, String codProd, long codBarras, String mercadoria, String und, float quantCompra,
+	public MercadoriaNFe(int id, long codProd, long codBarras, String mercadoria, String und, float quantCompra,
 			float precoUn, float precoTotal, float valDesc) {
 		super();
 		this.id = id;
@@ -37,11 +37,11 @@ public class MercadoriaNFe {
 		this.id = id;
 	}
 
-	public String getCodProd() {
+	public long getCodProd() {
 		return codProd;
 	}
 
-	public void setCodProd(String codProd) {
+	public void setCodProd(long codProd) {
 		this.codProd = codProd;
 	}
 

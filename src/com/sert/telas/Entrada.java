@@ -100,11 +100,12 @@ public class Entrada extends JFrame {
 		panelLogin.setBounds(210, 0, 340, 400);
 		contentPane.add(panelLogin);
 		panelLogin.setLayout(null);
-
+		
 		txtUser = new JComboBox<String>();
 		txtUser.setEditable(true);
 		txtUser.setVisible(true);
 		txtUser.setBounds(107, 160, 146, 28);
+		txtUser.setBackground(Color.YELLOW);
 		panelLogin.add(txtUser);
 
 		List<Usuario> usuList;
@@ -122,7 +123,7 @@ public class Entrada extends JFrame {
 					"O banco de dados encontrou um problema ao ser aberto \n" + e2.getMessage(),
 					"ERRO DE BANCO DE DADOS", JOptionPane.ERROR_MESSAGE);
 		} catch (NenhumUsuCadException e2) {
-			e2.printStackTrace();
+			JOptionPane.showMessageDialog(null,e2.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
 		} catch (IOException e2) {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
@@ -199,19 +200,33 @@ public class Entrada extends JFrame {
 	private void listen() {
 
 		JRootPane escback = getRootPane();
-		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
+		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				"ESC");
+		escback.getRootPane().getActionMap().put("ESC", new AbstractAction("ESC") {
+			private static final long serialVersionUID = 1L;
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+			
+		});
+		
+		JRootPane enter = getRootPane();
+		enter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
 				"ENTER");
-		escback.getRootPane().getActionMap().put("ENTER", new AbstractAction("ENTER") {
-			/**
-			 * 
-			 */
+		enter.getRootPane().getActionMap().put("ENTER", new AbstractAction("ENTER") {
+			
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				try {
-					entrada();
+					if(txtUser.hasFocus()) {
+						txtUser.transferFocus();
+					}else if(pwdUsu.hasFocus()){
+						entrada();
+					}	
 				} catch (ClassNotFoundException | UsuarioNaoCadastradoException | SQLException | IOException e1) {
-					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, e1.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});

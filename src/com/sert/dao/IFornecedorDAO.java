@@ -12,4 +12,5 @@ public interface IFornecedorDAO {
 	public void alterar(Fornecedor fornecedor) throws SQLException;
 	public void excluir(int id)throws SQLException;
 	public Fornecedor pesquisar(String cnpj)throws SQLException;
+	public int recuperaId() throws SQLException;
 }

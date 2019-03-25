@@ -22,7 +22,7 @@ public class EmpresaDao implements IEmpresaDao{
 	
 	@Override
 	public void cadastra(Empresa empresa) throws SQLException {
-		String sql = "INSERT INTO empresa(cnpj, nome, nomeFant, rua, numeroEnd, bairro, cidade, uf, contato, ie) VALUES (?,?,?,?,?,?,?,?,?,?)";
+		String sql = "INSERT INTO empresa(cnpj, nome, nome_fant, rua, numero_end, bairro, cidade, uf, contato, ie) VALUES (?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		preparador.setLong(1, empresa.getCnpj());
 		preparador.setString(2, empresa.getNome());
@@ -51,9 +51,9 @@ public class EmpresaDao implements IEmpresaDao{
 			empresa = new Empresa();
 			empresa.setCnpj(result.getLong("cnpj"));
 			empresa.setNome(result.getString("nome"));
-			empresa.setNomeFant(result.getString("nomeFant"));
+			empresa.setNomeFant(result.getString("nome_fant"));
 			empresa.setRua(result.getString("rua"));
-			empresa.setNumero(result.getInt("numeroEnd"));
+			empresa.setNumero(result.getInt("numero_end"));
 			empresa.setBairro(result.getString("bairro"));
 			empresa.setCidade(result.getString("cidade"));
 			empresa.setUf(result.getString("uf"));
@@ -66,7 +66,7 @@ public class EmpresaDao implements IEmpresaDao{
 
 	@Override
 	public void alterar(Empresa empresa) throws SQLException {
-		String sql = "UPDATE empresa SET cnpj=?, nome=?, nomeFant=?, rua=?, numeroEnd=?, bairro=?, cidade=?, uf=?, contato=?, ie=? WHERE cnpj = ?";
+		String sql = "UPDATE empresa SET cnpj=?, nome=?, nome_fant=?, rua=?, numero_end=?, bairro=?, cidade=?, uf=?, contato=?, ie=? WHERE cnpj = ?";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		preparador.setString(1, empresa.getNome());
 		preparador.setString(2, empresa.getNomeFant());
@@ -94,9 +94,9 @@ public class EmpresaDao implements IEmpresaDao{
 			empresa = new Empresa();
 			empresa.setCnpj(result.getLong("cnpj"));
 			empresa.setNome(result.getString("nome"));
-			empresa.setNomeFant(result.getString("nomeFant"));
+			empresa.setNomeFant(result.getString("nome_fant"));
 			empresa.setRua(result.getString("rua"));
-			empresa.setNumero(result.getInt("numeroEnd"));
+			empresa.setNumero(result.getInt("numero_end"));
 			empresa.setBairro(result.getString("bairro"));
 			empresa.setCidade(result.getString("cidade"));
 			empresa.setUf(result.getString("uf"));

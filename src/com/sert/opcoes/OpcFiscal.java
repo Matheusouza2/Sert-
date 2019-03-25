@@ -13,22 +13,25 @@ import javax.swing.border.LineBorder;
 
 import com.sert.telas.AjusteEstoque;
 import com.sert.telas.CadNotas;
+import com.sert.telas.ListarNFeEntrada;
+
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
+ * 
  * @author Matheus Souza
  * @version 1.0.0
  * 
- * */
+ */
 public class OpcFiscal extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	
-	private JButton btnCadastrarNovoCliente ;
-	private JButton btnNovoFornecedor;
-	private JButton btnListaDeClientes;
+
+	private JButton btnCadastroNfe;
+	private JButton btnVizuNota;
+	private JButton btnMovEstoque;
 	private JButton btnX;
-	
+
 	public OpcFiscal() {
 		setFocusableWindowState(true);
 		setResizable(false);
@@ -43,39 +46,45 @@ public class OpcFiscal extends JDialog {
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 2));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-						
-		btnCadastrarNovoCliente = new JButton("entrada de nota");
-		btnCadastrarNovoCliente.setBackground(new Color(255, 255, 0));
-		btnCadastrarNovoCliente.setForeground(new Color(0, 0, 0));
-		btnCadastrarNovoCliente.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnCadastrarNovoCliente.setBounds(10, 107, 248, 21);
-		getContentPane().add(btnCadastrarNovoCliente);
-		btnCadastrarNovoCliente.addActionListener(new ActionListener() {
+
+		btnCadastroNfe = new JButton("entrada de nota");
+		btnCadastroNfe.setBackground(new Color(255, 255, 0));
+		btnCadastroNfe.setForeground(new Color(0, 0, 0));
+		btnCadastroNfe.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnCadastroNfe.setBounds(10, 107, 248, 21);
+		getContentPane().add(btnCadastroNfe);
+		btnCadastroNfe.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new CadNotas().setVisible(true);				
+				new CadNotas(0).setVisible(true);
 			}
 		});
-		
-		btnNovoFornecedor = new JButton("vizualizar notas");
-		btnNovoFornecedor.setBackground(new Color(255, 255, 0));
-		btnNovoFornecedor.setForeground(new Color(0, 0, 0));
-		btnNovoFornecedor.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnNovoFornecedor.setBounds(10, 171, 248, 21);
-		getContentPane().add(btnNovoFornecedor);
-		
-		btnListaDeClientes = new JButton("mov estoque");
-		btnListaDeClientes.addActionListener(new ActionListener() {
+
+		btnVizuNota = new JButton("vizualizar notas");
+		btnVizuNota.setBackground(new Color(255, 255, 0));
+		btnVizuNota.setForeground(new Color(0, 0, 0));
+		btnVizuNota.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnVizuNota.setBounds(10, 171, 248, 21);
+		getContentPane().add(btnVizuNota);
+		btnVizuNota.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ListarNFeEntrada().setVisible(true);
+			}
+		});
+
+		btnMovEstoque = new JButton("mov estoque");
+		btnMovEstoque.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				new AjusteEstoque().setVisible(true);
 			}
 		});
-		btnListaDeClientes.setBackground(new Color(255, 255, 0));
-		btnListaDeClientes.setForeground(new Color(0, 0, 0));
-		btnListaDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnListaDeClientes.setBounds(10, 139, 248, 21);
-		getContentPane().add(btnListaDeClientes);
-		
+		btnMovEstoque.setBackground(new Color(255, 255, 0));
+		btnMovEstoque.setForeground(new Color(0, 0, 0));
+		btnMovEstoque.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnMovEstoque.setBounds(10, 139, 248, 21);
+		getContentPane().add(btnMovEstoque);
+
 		btnX = new JButton("X");
 		btnX.setBackground(Color.RED);
 		btnX.setForeground(Color.WHITE);
