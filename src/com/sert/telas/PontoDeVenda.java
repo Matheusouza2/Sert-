@@ -447,7 +447,7 @@ public class PontoDeVenda extends JDialog {
 					merc.setPrecoCompra(Float.parseFloat(prodVenda.getValueAt(i, 7).toString().replace(",", ".")) * merc.getEstoque());
 					mercFech.add(merc);
 				}
-				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), "", idCliente, "",
+				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), UsuLogado.getNome(), idCliente, lblCliente.getText().replace("Cliente: ", ""),
 						JDateField.getDateHoraStatic(), mercFech,
 						Float.parseFloat(String.format("%.2f", total).replace(",", ".")), 0, 0, 0, 0, 0, 0);
 				new PontoDeVendaFecharVenda(venda).setVisible(true);

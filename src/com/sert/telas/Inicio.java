@@ -203,6 +203,11 @@ public class Inicio extends JDialog {
 		panelButtons.add(btnFerramentas);
 
 		btnFuncionario = new JButton();
+		btnFuncionario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new ListarUsu().setVisible(true);
+			}
+		});
 		btnFuncionario.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFuncionarios.png")));
 		btnFuncionario.setBorderPainted(false);
 		btnFuncionario.setBackground(new Color(255, 245, 238));

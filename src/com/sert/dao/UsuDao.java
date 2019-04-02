@@ -29,7 +29,7 @@ public class UsuDao implements IUsuDao {
 
 	@Override
 	public void cadastrar(Usuario usu) throws SQLException {
-		String sql = "INSERT INTO usuario(nome, senha) VALUES (?,?)";
+		String sql = "INSERT INTO funcionario(nome, senha) VALUES (?,?)";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		preparador.setString(1, usu.getNome());
 		preparador.setString(2, usu.getSenha());
@@ -39,7 +39,7 @@ public class UsuDao implements IUsuDao {
 
 	@Override
 	public List<Usuario> listar() throws SQLException {
-		String sql = "SELECT * FROM funcionario";
+		String sql = "SELECT * FROM funcionario ORDER BY id ASC";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		ResultSet result = preparador.executeQuery();
 
@@ -47,6 +47,7 @@ public class UsuDao implements IUsuDao {
 
 		while (result.next()) {
 			usu = new Usuario();
+			usu.setId(result.getInt("id"));
 			usu.setNome(result.getString("nome").trim());
 			usu.setSenha(result.getString("senha").trim());
 			listUsu.add(usu);
@@ -56,18 +57,27 @@ public class UsuDao implements IUsuDao {
 
 	@Override
 	public void atualizar(Usuario usu) throws SQLException {
-		String sql = "UPDATE usuario SET nome=?, senha=? WHERE id=?";
+		String sql = "UPDATE funcionario SET nome=?, senha=?, rg=?, cpf=?, cep=?, endereco=?, numero=?, bairro=?, cidade=?, estado=?, observacoes=? WHERE id=?";
 		PreparedStatement prepare = con.prepareStatement(sql);
 		prepare.setString(1, usu.getNome());
-		prepare.setString(1, usu.getSenha());
-		prepare.setInt(3, usu.getId());
+		prepare.setString(2, usu.getSenha());
+		prepare.setInt(3, usu.getRg());
+		prepare.setLong(4, usu.getCpf());
+		prepare.setInt(5, usu.getCep());
+		prepare.setString(6, usu.getRua());
+		prepare.setInt(7, usu.getNumero());
+		prepare.setString(8, usu.getBairro());
+		prepare.setString(9, usu.getCidade());
+		prepare.setString(10, usu.getUf());
+		prepare.setString(11, usu.getObs());
+		prepare.setInt(12, usu.getId());
 		prepare.executeUpdate();
 		prepare.close();
 	}
 
 	@Override
 	public void excluir(int id) throws SQLException {
-		String sql = "DELETE FROM usuario WHERE id=?";
+		String sql = "DELETE FROM funcionario WHERE id=?";
 		PreparedStatement prepare = con.prepareStatement(sql);
 		prepare.setInt(1, id);
 		prepare.execute();
@@ -77,7 +87,7 @@ public class UsuDao implements IUsuDao {
 	@Override
 	public int confereId() throws SQLException {
 		int id = 0;
-		String sql = "SELECT last_value + 1 as id_usuario FROM clientes_id_seq;";
+		String sql = "SELECT last_value + 1 as id_usuario FROM funcionario_id_seq;";
 
 		PreparedStatement prepare = con.prepareStatement(sql);
 		ResultSet resultado = prepare.executeQuery();
@@ -94,14 +104,57 @@ public class UsuDao implements IUsuDao {
 		preparador.setString(1, login);
 		preparador.setString(2, senha);
 		ResultSet result = preparador.executeQuery();
-		
+
 		Usuario usuario = new Usuario();
-		
-		if(result.next()){
+
+		if (result.next()) {
 			usuario.setId(result.getInt("id"));
 			usuario.setNome(result.getString("nome").trim());
 			usuario.setSenha(result.getString("senha").trim());
 		}
 		return usuario;
+	}
+
+	@Override
+	public Usuario consultaCad(String login) throws SQLException {
+		String sql = "SELECT * FROM funcionario WHERE nome=?";
+		PreparedStatement preparador = con.prepareStatement(sql);
+		preparador.setString(1, login);
+		ResultSet result = preparador.executeQuery();
+
+		usu = new Usuario();
+
+		if (result.next()) {
+			usu.setId(result.getInt("id"));
+			usu.setNome(result.getString("nome").trim());
+			usu.setSenha(result.getString("senha").trim());
+		}
+		return usu;
+	}
+
+	@Override
+	public Usuario consultaAlter(int id) throws SQLException {
+		String sql = "SELECT * FROM funcionario WHERE id=?";
+		PreparedStatement preparador = con.prepareStatement(sql);
+		preparador.setInt(1, id);
+		ResultSet result = preparador.executeQuery();
+
+		usu = new Usuario();
+
+		if (result.next()) {
+			usu.setId(result.getInt("id"));
+			usu.setNome(result.getString("nome").trim());
+			usu.setSenha(result.getString("senha").trim());
+			usu.setRg(result.getInt("rg"));
+			usu.setCpf(result.getLong("cpf"));
+			usu.setCep(result.getInt("cep"));
+			usu.setRua(result.getString("endereco").trim());
+			usu.setNumero(result.getInt("numero"));
+			usu.setBairro(result.getString("bairro").trim());
+			usu.setCidade(result.getString("cidade").trim());
+			usu.setUf(result.getString("estado"));
+			usu.setObs(result.getString("observacoes").trim());
+		}
+		return usu;
 	}
 }

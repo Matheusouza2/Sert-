@@ -45,9 +45,6 @@ import javax.swing.JSeparator;
 
 public class TrocaEstorno extends JDialog {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 	private JTextField txtCodVenda;
@@ -375,20 +372,27 @@ public class TrocaEstorno extends JDialog {
 	}
 
 	private void confirmarTroca() {
-		System.out.println(tableMerc.getSelectedRow());
+		Venda venda = new Venda();
+		if (tableMercTroca.getSelectedRow() != -1) {
+			
+		} else {
+			JOptionPane.showMessageDialog(null, "Você deve selecionar uma mercadoria a ser trocada ou devolvida");
+		}
 	}
 
 	private void lancarTrocaMerc() {
 		long codBarras = 0;
 		for (int i = 0; i < mercadorias.size(); i++) {
-			if(txtMerc.getSelectedItem().toString().equals(mercadorias.get(i).getMercadoria())) {
+			if (txtMerc.getSelectedItem().toString().equals(mercadorias.get(i).getMercadoria())) {
 				codBarras = mercadorias.get(i).getCodBarras();
 			}
 		}
-		
+
 		try {
 			Mercadoria merc = new ControlerMercadoria().consultaMercadoria(codBarras);
-			tableModelMercTroca.addRow(new Object[] {merc.getId(), merc.getCodBarras(), merc.getMercadoria(), merc.getPrecoVenda(), txtQuant.getText(), merc.getPrecoVenda() * Float.parseFloat(txtQuant.getText())});
+			tableModelMercTroca.addRow(
+					new Object[] { merc.getId(), merc.getCodBarras(), merc.getMercadoria(), merc.getPrecoVenda(),
+							txtQuant.getText(), merc.getPrecoVenda() * Float.parseFloat(txtQuant.getText()) });
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -427,7 +431,7 @@ public class TrocaEstorno extends JDialog {
 					if (txtMerc.getSelectedIndex() == -1) {
 						JOptionPane.showMessageDialog(null, "Selecione uma mercadoria para substituir a da venda",
 								"AVISO", JOptionPane.INFORMATION_MESSAGE);
-					}else {
+					} else {
 						lancarTrocaMerc();
 					}
 				}

@@ -13,5 +13,7 @@ public interface IUsuDao {
 	public void excluir(int id) throws SQLException;
 	public Usuario consulta(String login, String senha) throws SQLException;
 	public int confereId()throws SQLException;
+	Usuario consultaCad(String login) throws SQLException;
+	Usuario consultaAlter(int id) throws SQLException;
 	
 }

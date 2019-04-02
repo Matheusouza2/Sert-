@@ -11,6 +11,7 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -708,7 +709,7 @@ public class ImportXml extends JDialog {
 				Fornecedor fornecedor = controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn());
 				int id = controlerNfe.recuperaId();
 				NFeEntrada entrada = new NFeEntrada(nfeXml.getCnpjDest(), fornecedor, id, nfeXml.getChave(),
-						nfeXml.getNumNota(), mercadoriasNota, nfeXml.getValNota(), JDateField.getDate());
+						nfeXml.getNumNota(), mercadoriasNota, nfeXml.getValNota(), JDateField.getDateHoraStatic());
 
 				controlerNfe.cadastrarNfe(entrada);
 

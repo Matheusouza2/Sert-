@@ -6,6 +6,8 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -13,10 +15,12 @@ import javax.swing.JTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
+import com.sert.controler.ConsultaCep;
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
@@ -26,6 +30,7 @@ import javax.swing.SwingConstants;
 import java.awt.Font;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
 import javax.swing.JTabbedPane;
@@ -71,7 +76,7 @@ public class CadCliente extends JDialog {
 	private JTextField txtEndereco;
 	private JTextField txtBairro;
 	private JTextField txtCidade;
-	private JTextField txtEstado;
+	private JComboBox<String> txtEstado;
 	private JTextField txtNumero;
 	private JTextField txtComplemento;
 	private JTextField txtContato;
@@ -81,7 +86,7 @@ public class CadCliente extends JDialog {
 	private JButton btnSalvar;
 	private JRadioButton rdbtnCpf;
 	private JRadioButton rdbtnCnpj;
-	
+
 	private int id;
 
 	private ButtonGroup bg = new ButtonGroup();
@@ -99,8 +104,6 @@ public class CadCliente extends JDialog {
 		contentPane.setBackground(new Color(0, 0, 128));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
-		String dataPrincipal = JDateField.getDate();
 
 		panelBtn = new JPanel();
 		panelBtn.setBackground(new Color(255, 255, 0));
@@ -162,27 +165,27 @@ public class CadCliente extends JDialog {
 		panelForm = new JPanel();
 		panelForm.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
 		panelForm.setLayout(null);
-		
+
 		panelDebito = new JPanel();
 		panelDebito.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
 		panelDebito.setLayout(null);
-		
+
 		tabbedPane.addTab("Cadastro", null, panelForm, null);
 		tabbedPane.addTab("Débitos", null, panelDebito, null);
-		
+
 		JLabel lblFiltrar = new JLabel("Filtrar:");
 		lblFiltrar.setBounds(10, 11, 48, 14);
 		panelDebito.add(lblFiltrar);
-		
+
 		txtFiltrar = new JTextField();
 		txtFiltrar.setBounds(68, 8, 107, 20);
 		panelDebito.add(txtFiltrar);
 		txtFiltrar.setColumns(10);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 40, 789, 370);
 		panelDebito.add(scrollPane);
-		
+
 		tableDebitos = new JTable();
 		scrollPane.setViewportView(tableDebitos);
 
@@ -228,6 +231,23 @@ public class CadCliente extends JDialog {
 		txtCep.setBounds(589, 59, 115, 20);
 		panelForm.add(txtCep);
 		txtCep.setColumns(10);
+		txtCep.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if (!txtCep.getText().replace("     -   ", "").isEmpty()) {
+					ConsultaCep consulta = new ConsultaCep(txtCep.getText().replace("-", ""));
+					txtBairro.setText(consulta.getBairro());
+					txtCidade.setText(consulta.getCidade());
+					txtEndereco.setText(consulta.getLogradouro());
+					txtEstado.setSelectedItem(consulta.getEstado());
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent arg0) {
+
+			}
+		});
 
 		lblEndereco = new JLabel("Endereço:");
 		lblEndereco.setBounds(10, 115, 58, 14);
@@ -269,10 +289,12 @@ public class CadCliente extends JDialog {
 		lblEstado.setBounds(520, 157, 46, 14);
 		panelForm.add(lblEstado);
 
-		txtEstado = new JTextField();
+		txtEstado = new JComboBox<String>();
 		txtEstado.setBounds(576, 154, 58, 20);
+		txtEstado.setModel(new DefaultComboBoxModel<String>(
+				new String[] { "", "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA",
+						"PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" }));
 		panelForm.add(txtEstado);
-		txtEstado.setColumns(10);
 
 		lblComplemento = new JLabel("Complemento:");
 		lblComplemento.setBounds(10, 212, 85, 14);
@@ -296,11 +318,11 @@ public class CadCliente extends JDialog {
 		lblUsuario.setBounds(322, 297, 198, 14);
 		panelForm.add(lblUsuario);
 
-		lblDataDeInclusao = new JLabel("Data de inclusão: " + dataPrincipal);
+		lblDataDeInclusao = new JLabel("Data de inclusão: " + JDateField.getDate());
 		lblDataDeInclusao.setBounds(589, 297, 215, 14);
 		panelForm.add(lblDataDeInclusao);
 
-		lblObservacoes = new JLabel("Observa\u00E7\u00F5es:");
+		lblObservacoes = new JLabel("Observações:");
 		lblObservacoes.setBounds(10, 297, 95, 14);
 		panelForm.add(lblObservacoes);
 

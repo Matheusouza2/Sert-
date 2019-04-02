@@ -4,7 +4,7 @@ import java.util.List;
 
 import ca.odell.glazedlists.TextFilterator;
 
-public class NFeEntrada implements TextFilterator<NFeEntrada>{
+public class NFeEntrada implements TextFilterator<NFeEntrada> {
 
 	// Identificação do destinatario
 	private long cnpjDest;
@@ -90,7 +90,7 @@ public class NFeEntrada implements TextFilterator<NFeEntrada>{
 	public void setValNota(float valNota) {
 		this.valNota = valNota;
 	}
-	
+
 	public String getDataEntrada() {
 		return dataEntrada;
 	}
@@ -104,6 +104,7 @@ public class NFeEntrada implements TextFilterator<NFeEntrada>{
 		baseList.add(String.valueOf(nfeList.getNumNota()));
 		baseList.add(nfeList.getChave());
 		baseList.add(nfeList.getFornecedor().getRazSocial());
-		
+		baseList.add(nfeList.getDataEntrada());
+
 	}
 }

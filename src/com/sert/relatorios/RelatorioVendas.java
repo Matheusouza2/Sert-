@@ -284,7 +284,7 @@ public class RelatorioVendas extends JDialog {
 		} catch (NenhumaMercadoriaCadastradaException e1) {
 			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
 		} catch (NenhumaVendaRalizadaException e1) {			
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, e1.getMessage(), "Vendas", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 }

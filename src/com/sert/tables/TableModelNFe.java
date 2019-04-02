@@ -8,7 +8,7 @@ public class TableModelNFe implements TableFormat<Object> {
 
 	@Override
 	public int getColumnCount() {
-		return 4;
+		return 5;
 	}
 
 	@Override
@@ -16,10 +16,12 @@ public class TableModelNFe implements TableFormat<Object> {
 		if (columnName == 0)
 			return "Id";
 		else if (columnName == 1)
-			return "Numero NFe";
+			return "Data entrada";
 		else if (columnName == 2)
-			return "Chave de acesso";
+			return "Numero NFe";
 		else if (columnName == 3)
+			return "Chave de acesso";
+		else if (columnName == 4)
 			return "Fornecedor";
 		else
 			return null;
@@ -31,10 +33,12 @@ public class TableModelNFe implements TableFormat<Object> {
 		if (column == 0)
 			return entrada.getId();
 		else if (column == 1)
-			return entrada.getNumNota();
+			return entrada.getDataEntrada();
 		else if (column == 2)
-			return entrada.getChave();
+			return entrada.getNumNota();
 		else if (column == 3)
+			return entrada.getChave();
+		else if (column == 4)
 			return entrada.getFornecedor().getRazSocial();
 		else
 			return null;

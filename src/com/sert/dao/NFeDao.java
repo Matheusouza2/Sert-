@@ -5,8 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.sql.Date;
 import java.util.List;
 
 import com.sert.entidades.Fornecedor;
@@ -30,7 +30,7 @@ public class NFeDao implements INFeDao {
 		prepare.setInt(2, nFeEntrada.getNumNota());
 		prepare.setInt(3, nFeEntrada.getFornecedor().getId());
 		prepare.setFloat(4, nFeEntrada.getValNota());
-		prepare.setDate(5, Date.valueOf(nFeEntrada.getDataEntrada()));
+		prepare.setTimestamp(5, Timestamp.valueOf(nFeEntrada.getDataEntrada()));
 		prepare.execute();
 
 		prepare = con.prepareStatement(sql2);
@@ -46,7 +46,7 @@ public class NFeDao implements INFeDao {
 
 	@Override
 	public List<NFeEntrada> listarNota() throws SQLException {
-		String sql = "SELECT nf.id, nf.numero, nf.chave, f.nome AS nome_forn FROM nfe_compra nf INNER JOIN fornecedor f ON nf.fornecedor = f.id";
+		String sql = "SELECT nf.id, nf.numero, nf.chave, f.nome AS nome_forn, to_char(nf.data_entrada, 'dd/MM/yyyy HH:mm:SS') data_entrada FROM nfe_compra nf INNER JOIN fornecedor f ON nf.fornecedor = f.id ORDER BY id ASC";
 		PreparedStatement prepare = con.prepareStatement(sql);
 		ResultSet resultSet = prepare.executeQuery();
 		Fornecedor fornecedor;
@@ -56,6 +56,7 @@ public class NFeDao implements INFeDao {
 			fornecedor = new Fornecedor();
 			nFeEntrada = new NFeEntrada();
 			nFeEntrada.setId(resultSet.getInt("id"));
+			nFeEntrada.setDataEntrada(resultSet.getString("data_entrada"));
 			nFeEntrada.setNumNota(resultSet.getInt("numero"));
 			nFeEntrada.setChave(resultSet.getString("chave").trim());
 			fornecedor.setRazSocial(resultSet.getString("nome_forn").trim());

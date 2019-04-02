@@ -169,7 +169,8 @@ public class ListarNFeEntrada extends JDialog {
 		table.setModel(nfeEntradaTableModel);
 		table.getColumnModel().getColumn(0).setPreferredWidth(75);
 		table.getColumnModel().getColumn(1).setPreferredWidth(100);
-		table.getColumnModel().getColumn(2).setPreferredWidth(400);
+		table.getColumnModel().getColumn(2).setPreferredWidth(100);
 		table.getColumnModel().getColumn(3).setPreferredWidth(400);
+		table.getColumnModel().getColumn(4).setPreferredWidth(400);
 	}
 }

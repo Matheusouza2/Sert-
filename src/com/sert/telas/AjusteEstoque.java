@@ -82,6 +82,7 @@ public class AjusteEstoque extends JDialog {
 	private List<Mercadoria> mercList;
 	private JComboBox<String> cbMercRef;
 	private JLabel lblCadastroDeMercadoria;
+	private JComboBox<Integer> cbId;
 
 	public AjusteEstoque() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -231,12 +232,12 @@ public class AjusteEstoque extends JDialog {
 				if (table.getSelectedRow() >= 0 && modelo.getValueAt(table.getSelectedRow(), 2) != ""
 						&& modelo.getValueAt(table.getSelectedRow(), 3) != "") {
 					int linha = table.getSelectedRow();
-					double preco = Double.parseDouble(modelo.getValueAt(linha, 2).toString().replace(",", "."));
-					int qtd = Integer.parseInt(modelo.getValueAt(linha, 3).toString());
+					double preco = Double.parseDouble(modelo.getValueAt(linha, 3).toString().replace(",", ".").replace("R$", ""));
+					float qtd = Float.parseFloat(modelo.getValueAt(linha, 4).toString().replace(",", "."));
 					double total = qtd * preco;
 					String valor = String.valueOf(total);
 					String convert = String.format(valor, "%.2f");
-					modelo.setValueAt(convert, linha, 4);
+					modelo.setValueAt(convert, linha, 5);
 				}
 
 			}
@@ -248,28 +249,36 @@ public class AjusteEstoque extends JDialog {
 
 		lblUsuario = new JLabel("Usuario: " + UsuLogado.getNome());
 		lblUsuario.setBounds(605, 406, 174, 14);
-
+		
+		cbId = new JComboBox<Integer>();
+		cbId.setEditable(true);
+		cbId.setVisible(true);
+		cbId.setBounds(107, 160, 146, 28);
+		
 		cbMercDesc = new JComboBox<String>();
 		cbMercDesc.setEditable(true);
 		cbMercDesc.setVisible(true);
 		cbMercDesc.setBounds(107, 160, 146, 28);
-		panelForm.add(cbMercDesc);
 
 		cbMercRef = new JComboBox<String>();
 		cbMercRef.setEditable(true);
 		cbMercRef.setVisible(true);
 		cbMercRef.setBounds(107, 160, 146, 28);
-		panelForm.add(cbMercRef);
 
 		try {
 			mercList = new ControlerMercadoria().listarMercadorias();
 			for (int i = 0; i < mercList.size(); i++) {
+				
+				cbId.addItem(mercList.get(i).getId());
+				cbId.setSelectedItem(null);
+				
 				cbMercDesc.addItem(mercList.get(i).getMercadoria());
 				cbMercDesc.setSelectedItem(null);
 
 				cbMercRef.addItem(String.valueOf(mercList.get(i).getCodBarras()));
 				cbMercRef.setSelectedItem(null);
 			}
+			AutoCompletion.enable(cbId);
 			AutoCompletion.enable(cbMercDesc);
 			AutoCompletion.enable(cbMercRef);
 		} catch (ClassNotFoundException e2) {
@@ -285,25 +294,53 @@ public class AjusteEstoque extends JDialog {
 		escutaComboMerc();
 
 		panelForm.add(lblUsuario);
+		modelo.addColumn("ID");
 		modelo.addColumn("Cod. barras");
 		modelo.addColumn("Descrição");
 		modelo.addColumn("Preço Venda");
 		modelo.addColumn("Quant.");
 		modelo.addColumn("Preço Total");
-		modelo.addRow(new Object[] { "", "", "", "" });
+		modelo.addRow(new Object[] { "","", "", "", "" });
 		table.setModel(modelo);
-		table.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(cbMercRef));
-		table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(cbMercDesc));
-		table.getColumnModel().getColumn(1).setPreferredWidth(300);
-		table.getColumnModel().getColumn(2)
+		table.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(cbId));
+		table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(cbMercRef));
+		table.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(cbMercDesc));
+		table.getColumnModel().getColumn(2).setPreferredWidth(300);
+		table.getColumnModel().getColumn(3)
 				.setCellEditor(new DefaultCellEditor(new JNumberFormatField(new DecimalFormat("0.00"))));
-		table.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(new JNumberField()));
-		table.getColumnModel().getColumn(4)
+		table.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(new JNumberField()));
+		table.getColumnModel().getColumn(5)
 				.setCellEditor(new DefaultCellEditor(new JNumberFormatField(new DecimalFormat("0.00"))));
 
 	}
 
 	public void escutaComboMerc() {
+		cbId.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				if (cbId.isPopupVisible()) {
+					if (cbId.getSelectedItem() != null) {
+						for (Mercadoria merc : mercList) {
+							if (cbId.getSelectedItem().equals(merc.getId())) {
+								modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 1);
+								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 2);
+								modelo.setValueAt(String.format("R$ %.2f", merc.getPrecoVenda()), table.getSelectedRow(), 3);
+								modelo.setValueAt(String.format("%.2f", merc.getEstoque()), table.getSelectedRow(), 4);
+								table.setModel(modelo);
+							}
+						}
+					} else {
+						modelo.setValueAt("", table.getSelectedRow(), 1);
+						modelo.setValueAt("", table.getSelectedRow(), 2);
+						table.setModel(modelo);
+						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
+								JOptionPane.WARNING_MESSAGE);
+					}
+				}
+			}
+
+		});
+		
 		cbMercRef.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -312,13 +349,16 @@ public class AjusteEstoque extends JDialog {
 					if (cbMercRef.getSelectedItem() != null) {
 						for (Mercadoria merc : mercList) {
 							if (cbMercRef.getSelectedItem().equals(String.valueOf(merc.getCodBarras()))) {
-								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 1);
-								modelo.setValueAt(merc.getPrecoVenda(), table.getSelectedRow(), 2);
+								modelo.setValueAt(merc.getId(), table.getSelectedRow(), 0);
+								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 2);
+								modelo.setValueAt(String.format("R$ %.2f", merc.getPrecoVenda()), table.getSelectedRow(), 3);
+								modelo.setValueAt(String.format("%.2f", merc.getEstoque()), table.getSelectedRow(), 4);
 								table.setModel(modelo);
 							}
 						}
 					} else {
-						modelo.setValueAt("", table.getSelectedRow(), 1);
+						modelo.setValueAt("", table.getSelectedRow(), 0);
+						modelo.setValueAt("", table.getSelectedRow(), 2);
 						table.setModel(modelo);
 						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
 								JOptionPane.WARNING_MESSAGE);
@@ -335,13 +375,16 @@ public class AjusteEstoque extends JDialog {
 					if (cbMercDesc.getSelectedItem() != "") {
 						for (Mercadoria merc : mercList) {
 							if (cbMercDesc.getSelectedItem().equals(merc.getMercadoria())) {
-								modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 0);
-								modelo.setValueAt(merc.getPrecoVenda(), table.getSelectedRow(), 2);
+								modelo.setValueAt(merc.getId(), table.getSelectedRow(), 0);
+								modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 1);
+								modelo.setValueAt(String.format("R$ %.2f", merc.getPrecoVenda()), table.getSelectedRow(), 3);
+								modelo.setValueAt(String.format("%.2f", merc.getEstoque()), table.getSelectedRow(), 4);
 								table.setModel(modelo);
 							}
 						}
 					} else {
 						modelo.setValueAt("", table.getSelectedRow(), 0);
+						modelo.setValueAt("", table.getSelectedRow(), 1);
 						table.setModel(modelo);
 						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
 								JOptionPane.WARNING_MESSAGE);
@@ -360,10 +403,11 @@ public class AjusteEstoque extends JDialog {
 		}
 		for (int i = 0; i < table.getRowCount(); i++) {
 			merc = new Mercadoria();
-			merc.setCodBarras(Long.parseLong(table.getValueAt(i, 0).toString()));
-			merc.setMercadoria(table.getValueAt(i, 1).toString());
-			merc.setPrecoVenda(Float.parseFloat(table.getValueAt(i, 2).toString().replace(",", ".")));
-			merc.setEstoque(Float.parseFloat(table.getValueAt(i, 3).toString()));
+			merc.setId(Integer.parseInt(table.getValueAt(i, 0).toString()));
+			merc.setCodBarras(Long.parseLong(table.getValueAt(i, 1).toString()));
+			merc.setMercadoria(table.getValueAt(i, 2).toString());
+			merc.setPrecoVenda(Float.parseFloat(table.getValueAt(i, 3).toString().replace(",", ".").replace("R$", "")));
+			merc.setEstoque(Float.parseFloat(table.getValueAt(i, 4).toString()));
 			mercList.add(merc);
 		}
 

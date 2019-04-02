@@ -21,7 +21,7 @@ public class JDateField {
 	public String getDateHora(){
 		return formatadorDateHora.format(data);
 	}
-	
+		
 	public static String getDateHoraStatic(){
 		return formatadorDateHoraStatic.format(dataStatic);
 	}

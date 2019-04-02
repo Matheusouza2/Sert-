@@ -30,6 +30,7 @@ import ca.odell.glazedlists.swing.AdvancedTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
@@ -79,7 +80,7 @@ public class ListarMercadorias extends JDialog {
 		setLocationRelativeTo(null);
 		setModal(true);
 		contentPanel.setBackground(new Color(0, 0, 128));
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPanel.setBorder(new LineBorder(Color.YELLOW, 1, true));
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
 
@@ -259,8 +260,22 @@ public class ListarMercadorias extends JDialog {
 		JRootPane escback = getRootPane();
 		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				"ESCAPE");
+		escback.getRootPane().getActionMap().put("ESCAPE", new AbstractAction("ESCAPE") {
+			private static final long serialVersionUID = 1L;
 
-		JRootPane enterMerc = getRootPane();
-		enterMerc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "DELETE");
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+
+		JRootPane delete = getRootPane();
+		delete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "DELETE");
+		delete.getRootPane().getActionMap().put("DELETE", new AbstractAction("DELETE") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				btnExcluir.doClick();
+			}
+		});
 	}
 }

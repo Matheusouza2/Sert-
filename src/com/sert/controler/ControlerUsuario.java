@@ -8,6 +8,7 @@ import com.sert.dao.IUsuDao;
 import com.sert.dao.UsuDao;
 import com.sert.entidades.Usuario;
 import com.sert.exceptions.NenhumUsuCadException;
+import com.sert.exceptions.UsuarioJaCadastradoException;
 import com.sert.exceptions.UsuarioNaoCadastradoException;
 
 public class ControlerUsuario {
@@ -17,7 +18,9 @@ public class ControlerUsuario {
 		usuDao = new UsuDao();
 	}
 
-	public void cadastrarUsuario(Usuario usu) throws SQLException {
+	public void cadastrarUsuario(Usuario usu) throws SQLException, UsuarioJaCadastradoException {
+		Usuario usuario = usuDao.consultaCad(usu.getNome());
+		if(usuario.getNome() != null) throw new UsuarioJaCadastradoException();
 		usuDao.cadastrar(usu);
 	}
 
@@ -29,7 +32,7 @@ public class ControlerUsuario {
 		}
 	}
 
-	public void atualizarUsuario(Usuario usu) throws SQLException {
+	public void atualizarUsuario(Usuario usu) throws SQLException{
 		usuDao.atualizar(usu);
 	}
 
@@ -45,5 +48,9 @@ public class ControlerUsuario {
 		if(usuDao.consulta(login, senha) == null) throw new UsuarioNaoCadastradoException();
 		
 		return usuDao.consulta(login, senha);
+	}
+	
+	public Usuario consultaUsuEdit(int id) throws SQLException {
+		return usuDao.consultaAlter(id);
 	}
 }
