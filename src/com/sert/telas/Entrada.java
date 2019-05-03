@@ -23,10 +23,13 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import java.awt.Font;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -102,7 +105,7 @@ public class Entrada extends JFrame {
 		panelLogin.setBounds(210, 0, 340, 400);
 		contentPane.add(panelLogin);
 		panelLogin.setLayout(null);
-		
+
 		txtUser = new JComboBox<String>();
 		txtUser.setEditable(true);
 		txtUser.setVisible(true);
@@ -118,17 +121,19 @@ public class Entrada extends JFrame {
 			}
 			AutoCompletion.enable(txtUser);
 		} catch (ClassNotFoundException e2) {
-			JOptionPane.showMessageDialog(null,"Classe não encontrada, veja o log para mais detalhes", "Usuario", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| ENTRADA |"+e2.getMessage());
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Usuário",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ENTRADA |" + e2.getMessage());
 		} catch (SQLException e2) {
 			JOptionPane.showMessageDialog(null,
 					"O banco de dados encontrou um problema ao ser aberto \n" + e2.getMessage(),
 					"ERRO DE BANCO DE DADOS", JOptionPane.ERROR_MESSAGE);
 		} catch (NenhumUsuCadException e2) {
-			JOptionPane.showMessageDialog(null,e2.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e2.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
 		} catch (IOException e2) {
-			JOptionPane.showMessageDialog(null,"Erro de arquivo, veja o log para mais detalhes", "Usuario", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| ENTRADA |"+e2.getMessage());
+			JOptionPane.showMessageDialog(null, "Erro de arquivo, veja o log para mais detalhes", "Usuário",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ENTRADA |" + e2.getMessage());
 		}
 
 		lblUsuario = new JLabel("Usuario");
@@ -153,17 +158,20 @@ public class Entrada extends JFrame {
 				try {
 					entrada();
 				} catch (ClassNotFoundException e1) {
-					JOptionPane.showMessageDialog(null,"Classe não encontrada, veja o log para mais detalhes", "Sistema", JOptionPane.ERROR_MESSAGE);
-					Log.gravaLog("| ENTRADA |"+e1.getMessage());
+					JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes",
+							"Sistema", JOptionPane.ERROR_MESSAGE);
+					Log.gravaLog("| ENTRADA |" + e1.getMessage());
 				} catch (UsuarioNaoCadastradoException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
-					Log.gravaLog("| ENTRADA |"+e1.getMessage());
+					Log.gravaLog("| ENTRADA |" + e1.getMessage());
 				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null,"Erro de banco de dados, veja o log para mais detalhes", "Banco de dados", JOptionPane.ERROR_MESSAGE);
-					Log.gravaLog("| ENTRADA |"+e1.getMessage());
+					JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+							"Banco de dados", JOptionPane.ERROR_MESSAGE);
+					Log.gravaLog("| ENTRADA |" + e1.getMessage());
 				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null,"Erro de escrita de arquivo, veja o log para mais detalhes", "Arquivo", JOptionPane.ERROR_MESSAGE);
-					Log.gravaLog("| ENTRADA |"+e1.getMessage());
+					JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes",
+							"Arquivo", JOptionPane.ERROR_MESSAGE);
+					Log.gravaLog("| ENTRADA |" + e1.getMessage());
 				}
 			}
 		});
@@ -210,27 +218,27 @@ public class Entrada extends JFrame {
 				"ESC");
 		escback.getRootPane().getActionMap().put("ESC", new AbstractAction("ESC") {
 			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 			}
-			
+
 		});
-		
+
 		JRootPane enter = getRootPane();
-		enter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0),
-				"ENTER");
+		enter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "ENTER");
 		enter.getRootPane().getActionMap().put("ENTER", new AbstractAction("ENTER") {
-			
+
 			private static final long serialVersionUID = 1L;
 
 			public void actionPerformed(ActionEvent e) {
 				try {
-					if(txtUser.hasFocus()) {
+					if (txtUser.hasFocus()) {
 						txtUser.transferFocus();
-					}else if(pwdUsu.hasFocus()){
+					} else if (pwdUsu.hasFocus()) {
 						entrada();
-					}	
+					}
 				} catch (ClassNotFoundException | UsuarioNaoCadastradoException | SQLException | IOException e1) {
 					JOptionPane.showMessageDialog(null, e1.getMessage(), "ERRO", JOptionPane.ERROR_MESSAGE);
 				}
@@ -244,11 +252,11 @@ public class Entrada extends JFrame {
 		if (senha.equals("s3rtc0nfig")) {
 			new ConfigEmpresa().setVisible(true);
 			dispose();
-		} else if(senha.equals("s3rtt3st")){
+		} else if (senha.equals("s3rtt3st")) {
 			UsuLogado.setId(0);
 			UsuLogado.setNome("ADMIN");
 			new Banner().setVisible(true);
-		}else {
+		} else {
 			String login = txtUser.getSelectedItem().toString();
 			senha = Seguranca.criptografar(senha);
 			Usuario usu = new ControlerUsuario().login(login, senha);
@@ -264,8 +272,10 @@ public class Entrada extends JFrame {
 		}
 	}
 
-//	public final Image getIconImage(){
-//		Image icone = Toolkit.getDefaultToolkit().getImage(Entrada.class.getResource("/com/sert/img/logo2.png"));
-//		return icone;
-//	}
+	public Image getIconImage() {
+		URL url = this.getClass().getResource("/com/sert/img/Logo2.png");
+		Image icone = Toolkit.getDefaultToolkit().getImage(url);
+
+		return icone;
+	}
 }

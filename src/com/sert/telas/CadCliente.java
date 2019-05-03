@@ -8,31 +8,42 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JTextArea;
 import javax.swing.border.LineBorder;
 
 import com.sert.controler.ConsultaCep;
+import com.sert.controler.ControlerCliente;
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.JDateField;
+import com.sert.controler.Log;
+import com.sert.controler.Seguranca;
 import com.sert.controler.UsuLogado;
+import com.sert.controler.ValidaCNP;
 import com.sert.editableFields.JDocumentFormatedField;
+import com.sert.entidades.Cliente;
+import com.sert.exceptions.ClienteJaCadastradoException;
 
 import javax.swing.SwingConstants;
 import java.awt.Font;
 
+import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -41,7 +52,7 @@ import javax.swing.JTable;
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * 
  * @author Matheus Souza
- * @version 1.0.0
+ * @version 1.0.5
  * 
  */
 public class CadCliente extends JDialog {
@@ -62,7 +73,6 @@ public class CadCliente extends JDialog {
 	private JLabel lblCidade;
 	private JLabel lblEstado;
 	private JLabel lblContato;
-	private JLabel lblComplemento;
 	private JLabel lblObservacoes;
 	private JLabel lblDataDeInclusao;
 	private JLabel lblUsuario;
@@ -78,9 +88,8 @@ public class CadCliente extends JDialog {
 	private JTextField txtCidade;
 	private JComboBox<String> txtEstado;
 	private JTextField txtNumero;
-	private JTextField txtComplemento;
 	private JTextField txtContato;
-	private JTextArea textArea;
+	private JTextArea txtAreaObs;
 
 	private JButton btnX;
 	private JButton btnSalvar;
@@ -93,8 +102,13 @@ public class CadCliente extends JDialog {
 	private JPanel panelDebito;
 	private JTextField txtFiltrar;
 	private JTable tableDebitos;
+	private JTabbedPane tabbedPane;
+	private JLabel lblFiltrar;
+	private JScrollPane scrollPane;
+	private int opcao;
+	private JButton btnGerarCpf;
 
-	public CadCliente() {
+	public CadCliente(int opcao) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 834, 618);
 		setUndecorated(true);
@@ -104,40 +118,10 @@ public class CadCliente extends JDialog {
 		contentPane.setBackground(new Color(0, 0, 128));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-
-		panelBtn = new JPanel();
-		panelBtn.setBackground(new Color(255, 255, 0));
-		panelBtn.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
-		panelBtn.setBounds(10, 34, 814, 113);
-		contentPane.add(panelBtn);
-		panelBtn.setLayout(null);
-
-		btnSalvar = new JButton();
-		btnSalvar.setBackground(new Color(0, 255, 0));
-		btnSalvar.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/BtnSalvar.png")));
-		btnSalvar.setBounds(10, 11, 89, 91);
-		panelBtn.add(btnSalvar);
-
-		JButton button_1 = new JButton("");
-		button_1.setBounds(109, 11, 89, 91);
-		panelBtn.add(button_1);
-
-		try {
-			id = new ControlerUsuario().confereId();
-		} catch (ClassNotFoundException e1) {
-			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (SQLException e1) {
-			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro SQL",
-					JOptionPane.ERROR_MESSAGE);
-		}
-
-		txtCpf = new JDocumentFormatedField().getCpf();
-		txtCpf.setBounds(406, 14, 115, 20);
-		txtCpf.setColumns(10);
+		
+		listen();
+		
+		this.opcao = opcao;
 
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);
@@ -155,10 +139,52 @@ public class CadCliente extends JDialog {
 		lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
 		lblCadastroDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 17));
 		lblCadastroDeClientes.setHorizontalAlignment(SwingConstants.CENTER);
-		lblCadastroDeClientes.setBounds(33, -4, 768, 30);
+		lblCadastroDeClientes.setBounds(33, 0, 768, 33);
 		contentPane.add(lblCadastroDeClientes);
 
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		panelBtn = new JPanel();
+		panelBtn.setBackground(new Color(255, 255, 0));
+		panelBtn.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
+		panelBtn.setBounds(10, 34, 814, 113);
+		contentPane.add(panelBtn);
+		panelBtn.setLayout(null);
+
+		btnSalvar = new JButton();
+		btnSalvar.setBackground(new Color(0, 255, 0));
+		btnSalvar.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/BtnSalvar.png")));
+		btnSalvar.setBounds(10, 11, 89, 91);
+		panelBtn.add(btnSalvar);
+
+		btnGerarCpf = new JButton();
+		btnGerarCpf.setBackground(Color.PINK);
+		btnGerarCpf.setBounds(109, 11, 89, 91);
+		panelBtn.add(btnGerarCpf);
+		btnGerarCpf.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				rdbtnCpf.setSelected(true);
+				txtCpf.setText(ValidaCNP.geraCPF());
+			}
+		});
+
+		try {
+			id = new ControlerCliente().confereId();
+		} catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro SQL",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
+		txtCpf = new JDocumentFormatedField().getCpf();
+		txtCpf.setBounds(406, 14, 115, 20);
+		txtCpf.setColumns(10);
+
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(10, 158, 814, 449);
 		contentPane.add(tabbedPane);
 
@@ -173,7 +199,7 @@ public class CadCliente extends JDialog {
 		tabbedPane.addTab("Cadastro", null, panelForm, null);
 		tabbedPane.addTab("Débitos", null, panelDebito, null);
 
-		JLabel lblFiltrar = new JLabel("Filtrar:");
+		lblFiltrar = new JLabel("Filtrar:");
 		lblFiltrar.setBounds(10, 11, 48, 14);
 		panelDebito.add(lblFiltrar);
 
@@ -182,7 +208,7 @@ public class CadCliente extends JDialog {
 		panelDebito.add(txtFiltrar);
 		txtFiltrar.setColumns(10);
 
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 40, 789, 370);
 		panelDebito.add(scrollPane);
 
@@ -227,7 +253,7 @@ public class CadCliente extends JDialog {
 		lblCep.setBounds(549, 62, 30, 14);
 		panelForm.add(lblCep);
 
-		txtCep = new JTextField();
+		txtCep = new JDocumentFormatedField().getCep();
 		txtCep.setBounds(589, 59, 115, 20);
 		panelForm.add(txtCep);
 		txtCep.setColumns(10);
@@ -296,21 +322,12 @@ public class CadCliente extends JDialog {
 						"PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO" }));
 		panelForm.add(txtEstado);
 
-		lblComplemento = new JLabel("Complemento:");
-		lblComplemento.setBounds(10, 212, 85, 14);
-		panelForm.add(lblComplemento);
-
-		txtComplemento = new JTextField();
-		txtComplemento.setBounds(105, 209, 115, 20);
-		panelForm.add(txtComplemento);
-		txtComplemento.setColumns(10);
-
 		lblContato = new JLabel("Contato:");
-		lblContato.setBounds(266, 212, 61, 14);
+		lblContato.setBounds(10, 198, 61, 14);
 		panelForm.add(lblContato);
 
-		txtContato = new JTextField();
-		txtContato.setBounds(337, 209, 115, 20);
+		txtContato = new JDocumentFormatedField().getTel();
+		txtContato.setBounds(81, 195, 115, 20);
 		panelForm.add(txtContato);
 		txtContato.setColumns(10);
 
@@ -326,9 +343,9 @@ public class CadCliente extends JDialog {
 		lblObservacoes.setBounds(10, 297, 95, 14);
 		panelForm.add(lblObservacoes);
 
-		textArea = new JTextArea();
-		textArea.setBounds(10, 322, 794, 88);
-		panelForm.add(textArea);
+		txtAreaObs = new JTextArea();
+		txtAreaObs.setBounds(10, 322, 794, 88);
+		panelForm.add(txtAreaObs);
 
 		rdbtnCpf = new JRadioButton("CPF");
 		rdbtnCpf.setBounds(209, 11, 58, 23);
@@ -352,6 +369,31 @@ public class CadCliente extends JDialog {
 				txtCpf.setColumns(10);
 				panelForm.add(txtCpf);
 				lblRg.setText("IE: ");
+				txtCpf.addFocusListener(new FocusListener() {
+					@Override
+					public void focusLost(FocusEvent arg0) {
+						if (rdbtnCnpj.isSelected()) { // Validação do CNPJ
+							String cnpj = txtCpf.getText().replace(".", "").replace("-", "").replace("/", "")
+									.replace(" ", "");
+							if (!cnpj.isEmpty()) {
+								if (cnpj.length() == 14) {
+									if (!ValidaCNP.isValidCNPJ(cnpj)) {
+										JOptionPane.showMessageDialog(null, "O CNPJ digitado é invalido");
+										cnpj = null;
+										txtCpf.setText(null);
+									}
+								} else {
+									cnpj = null;
+									txtCpf.setText(null);
+								}
+							}
+						}
+					}
+
+					@Override
+					public void focusGained(FocusEvent arg0) {
+					}
+				});
 			}
 		});
 
@@ -365,12 +407,126 @@ public class CadCliente extends JDialog {
 				txtCpf.setColumns(10);
 				panelForm.add(txtCpf);
 				lblRg.setText("RG: ");
+				txtCpf.addFocusListener(new FocusListener() {
+					@Override
+					public void focusLost(FocusEvent arg0) {
+						if (rdbtnCpf.isSelected()) { // Validação do CPF
+							String cpf = txtCpf.getText().replace(".", "").replace("-", "").replace(" ", "");
+							if (!cpf.isEmpty()) {
+								if (cpf.length() == 11) {
+									if (!ValidaCNP.isValidCPF(cpf)) {
+										JOptionPane.showMessageDialog(null, "O CPF digitado é invalido");
+										cpf = null;
+										txtCpf.setText(null);
+									}
+								} else {
+									cpf = null;
+									txtCpf.setText(null);
+								}
+							}
+						}
+					}
+
+					@Override
+					public void focusGained(FocusEvent arg0) {
+					}
+				});
+			}
+		});
+
+		txtNome.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent arg0) {
+				if (txtNome.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(null, "O cliente deve ter um nome", "Advertência",
+							JOptionPane.WARNING_MESSAGE);
+					txtNome.requestFocus();
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent arg0) {
 			}
 		});
 
 		btnSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				cadastrarCliente();
+			}
+		});
+	}
 
+	private void cadastrarCliente() {
+		Cliente cliente = new Cliente();
+
+		cliente.setId(Integer.parseInt(txtCodCliente.getText()));
+		if (!txtCpf.getText().replace(".", "").replace("-", "").replace(" ", "").replace("/", "").isEmpty()) {
+			cliente.setCpf(Long
+					.parseLong(txtCpf.getText().replace(".", "").replace("-", "").replace(" ", "").replace("/", "")));
+		}
+		if (!txtRg.getText().isEmpty()) {
+			cliente.setRg(Integer.parseInt(txtRg.getText()));
+		}
+		cliente.setNome(txtNome.getText());
+		if (!txtCep.getText().replace("-", "").replace(" ", "").isEmpty()) {
+			cliente.setCep(Integer.parseInt(txtCep.getText().replace("-", "").replace(" ", "")));
+		}
+		cliente.setRua(txtEndereco.getText());
+		if (!txtNumero.getText().isEmpty()) {
+			cliente.setNumero(Integer.parseInt(txtNumero.getText()));
+		}
+		cliente.setBairro(txtBairro.getText());
+		cliente.setCidade(txtCidade.getText());
+		cliente.setUf(txtEstado.getSelectedItem().toString());
+		cliente.setObs(txtAreaObs.getText());
+		if (!txtContato.getText().replace("(", "").replace(")", "").replace("-", "").replace(" ", "").isEmpty()) {
+			cliente.setContato(Long.parseLong(
+					txtContato.getText().replace("(", "").replace(")", "").replace("-", "").replace(" ", "")));
+		}
+
+		try {
+			if (opcao == 0) {
+				new ControlerCliente().cadastrarCliente(cliente);
+				JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
+				limparTela();
+			} else if (opcao == 1) {
+				new ControlerCliente().atualizarCliente(cliente);
+				JOptionPane.showMessageDialog(null, "Atualização realizada com sucesso!");
+				dispose();
+			}
+		} catch (ClassNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, ver o log para mais detalhes",
+					"Class not found", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog(e.getMessage());
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+					"Banco de dados", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+			Log.gravaLog(e.getMessage());
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "Erro na escrita do arquivo, veja o log para mais detalhes", "Arquivo",
+					JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog(e.getMessage());
+		} catch (ClienteJaCadastradoException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Arquivo", JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog(e.getMessage());
+		}
+	}
+
+	private void limparTela() {
+		dispose();
+		new CadCliente(0).setVisible(true);
+	}
+
+	private void listen() {
+		JRootPane escback = getRootPane();
+		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				"ESCAPE");
+		escback.getRootPane().getActionMap().put("ESCAPE", new AbstractAction("ESCAPE") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				dispose();
 			}
 		});
 	}

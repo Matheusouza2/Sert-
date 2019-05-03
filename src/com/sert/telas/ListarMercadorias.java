@@ -1,6 +1,7 @@
 package com.sert.telas;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -15,7 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
 import com.sert.controler.ControlerMercadoria;
@@ -38,9 +38,11 @@ import javax.swing.ListSelectionModel;
 import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
+import javax.swing.JProgressBar;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -70,6 +72,7 @@ public class ListarMercadorias extends JDialog {
 	private JLabel lblProcurar;
 	private FilterList<Mercadoria> textFilteredIssues;
 	private JSeparator separator_1;
+	private JButton btnAtualizar;
 	private static BasicEventList<Mercadoria> mercadorias;
 	private static List<Mercadoria> preencheTable;
 
@@ -125,7 +128,7 @@ public class ListarMercadorias extends JDialog {
 
 		btnExcluir = new JButton();
 		btnExcluir.setIcon(new ImageIcon(ListarMercadorias.class.getResource("/com/sert/img/btnExcluir.png")));
-		btnExcluir.setBounds(109, 11, 89, 91);
+		btnExcluir.setBounds(208, 11, 89, 91);
 		btnExcluir.setBackground(new Color(255, 0, 0));
 		btnExcluir.setBorderPainted(false);
 		panelBtn.add(btnExcluir);
@@ -165,7 +168,6 @@ public class ListarMercadorias extends JDialog {
 							int idExcluir = (int) tabMerc.getValueAt(tabMerc.getSelectedRow(), 0);
 							mercadorias.remove(tabMerc.getSelectedRow());
 							new ControlerMercadoria().excluirMercadoria(idExcluir);
-							repagina();
 						}
 					} else {
 						JOptionPane.showMessageDialog(null, "Selecione uma mercadoria a ser excluida", "Aviso",
@@ -214,6 +216,51 @@ public class ListarMercadorias extends JDialog {
 		separator_1.setBackground(new Color(0, 0, 128));
 		separator_1.setBounds(607, 65, 197, 2);
 		panelBtn.add(separator_1);
+		
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setBounds(73, 30, 224, 35);
+		progressBar.setVisible(false);
+		progressBar.setStringPainted(true);
+		progressBar.setString("Aguarde...");
+		progressBar.setIndeterminate(true);
+		panelBtn.add(progressBar);
+		
+		btnAtualizar = new JButton();
+		btnAtualizar.setIcon(new ImageIcon(ListarMercadorias.class.getResource("/com/sert/img/btnAtualizar.png")));
+		btnAtualizar.setBorderPainted(false);
+		btnAtualizar.setBackground(Color.LIGHT_GRAY);
+		btnAtualizar.setBounds(109, 11, 89, 91);
+		panelBtn.add(btnAtualizar);
+		
+		btnAtualizar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				btnEditar.setVisible(false);
+				btnExcluir.setVisible(false);
+				btnAtualizar.setVisible(false);
+				progressBar.setVisible(true);
+				
+				new SwingWorker<Object, Object>() {
+					@Override
+					protected Object doInBackground() throws Exception {
+						repagina();
+						return null;
+					}
+					
+					@Override
+					protected void done() {
+						progressBar.setVisible(false);
+						btnEditar.setVisible(true);
+						btnExcluir.setVisible(true);
+						btnAtualizar.setVisible(true);
+						contentPanel.setCursor(Cursor.getDefaultCursor());
+						JOptionPane.showMessageDialog(panelBtn, "Lista de mercadoria atualizada com sucesso");
+						super.done();
+					}
+				}.execute();		
+			}
+		});
 
 		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
 		AdvancedTableModel<Mercadoria> mercTableModel = GlazedListsSwing
@@ -225,7 +272,6 @@ public class ListarMercadorias extends JDialog {
 		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(790);
 		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(100);
 
-		repagina();
 	}
 
 	public static void repagina() {
@@ -269,7 +315,8 @@ public class ListarMercadorias extends JDialog {
 		});
 
 		JRootPane delete = getRootPane();
-		delete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "DELETE");
+		delete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
+				"DELETE");
 		delete.getRootPane().getActionMap().put("DELETE", new AbstractAction("DELETE") {
 			private static final long serialVersionUID = 1L;
 

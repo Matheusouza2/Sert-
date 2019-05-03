@@ -9,8 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -21,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -33,15 +33,20 @@ import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Mercadoria;
+import com.sert.exceptions.MercadoriaNaoEncontradaException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
+import javax.swing.JRootPane;
 import javax.swing.SwingConstants;
+import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -62,17 +67,12 @@ public class AjusteEstoque extends JDialog {
 	private JLabel lblUsuario;
 	private JLabel lblTipo;
 	private JLabel lblDataDeIncluso;
-	private JLabel lblAddRow;
-	private JLabel lblRemoveRow;
 
 	private JRadioButton rdbtnEntrada;
 	private JRadioButton rdbtnSaida;
 
 	private JButton btnSalvar;
-	private JButton btnListar;
 	private JButton btnX;
-	private JButton btnAddRow;
-	private JButton btnRemoveRow;
 
 	private JTable table;
 	private ButtonGroup bg = new ButtonGroup();
@@ -83,6 +83,12 @@ public class AjusteEstoque extends JDialog {
 	private JComboBox<String> cbMercRef;
 	private JLabel lblCadastroDeMercadoria;
 	private JComboBox<Integer> cbId;
+	private JLabel lblCodDeBarras;
+	private JLabel lblMercadoria;
+	private JLabel lblQuant;
+	private JTextField txtQuant;
+	private JLabel lblCod;
+	private JLabel lblSelecioneOTipo;
 
 	public AjusteEstoque() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -96,7 +102,15 @@ public class AjusteEstoque extends JDialog {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		modelo = new DefaultTableModel();
+		listen();
+
+		modelo = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
+
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
 
 		lblCadastroDeMercadoria = new JLabel("movimentacao de estoque");
 		lblCadastroDeMercadoria.setHorizontalAlignment(SwingConstants.CENTER);
@@ -134,13 +148,14 @@ public class AjusteEstoque extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					movEstoque();
-					JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",JOptionPane.INFORMATION_MESSAGE);
-					
+					JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",
+							JOptionPane.INFORMATION_MESSAGE);
+
 					while (table.getRowCount() > 0) {
 						modelo.removeRow(0);
 					}
 					table.setModel(modelo);
-					
+
 				} catch (ClassNotFoundException e1) {
 					e1.printStackTrace();
 				} catch (SQLException e1) {
@@ -151,9 +166,12 @@ public class AjusteEstoque extends JDialog {
 			}
 		});
 
-		btnListar = new JButton("");
-		btnListar.setBounds(109, 11, 89, 91);
-		panelBtn.add(btnListar);
+		lblSelecioneOTipo = new JLabel(
+				"<html><ul><li>Selecione o tipo de movimentação</li><li>Selecione a mercadoria</li><li>Coloque a quantidade e aperte ENTER</li><br><li>DELETE remove a mercadoria da lista de ajuste</li></ul></html>");
+		lblSelecioneOTipo.setForeground(Color.RED);
+		lblSelecioneOTipo.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblSelecioneOTipo.setBounds(475, 0, 329, 113);
+		panelBtn.add(lblSelecioneOTipo);
 
 		panelForm = new JPanel();
 		panelForm.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
@@ -161,87 +179,12 @@ public class AjusteEstoque extends JDialog {
 		contentPane.add(panelForm);
 		panelForm.setLayout(null);
 
-		lblTipo = new JLabel("Tipo:");
-		lblTipo.setBounds(10, 14, 58, 14);
-		panelForm.add(lblTipo);
-
-		rdbtnEntrada = new JRadioButton("Entrada");
-		rdbtnEntrada.setBounds(74, 10, 109, 23);
-		rdbtnEntrada.setSelected(true);
-		panelForm.add(rdbtnEntrada);
-
-		bg.add(rdbtnEntrada);
-
-		rdbtnSaida = new JRadioButton("Saída");
-		rdbtnSaida.setBounds(185, 10, 109, 23);
-		panelForm.add(rdbtnSaida);
-		bg.add(rdbtnSaida);
-
-		lblAddRow = new JLabel("Adicionar Mercadoria:");
-		lblAddRow.setBounds(405, 16, 135, 14);
-		panelForm.add(lblAddRow);
-		btnAddRow = new JButton("");
-		btnAddRow.setIcon(new ImageIcon(CadNotas.class.getResource("/com/sert/img/btnAddRow.png")));
-		btnAddRow.setFont(new Font("Tahoma", Font.BOLD, 12));
-		btnAddRow.setBackground(new Color(0, 255, 0));
-		btnAddRow.setBorderPainted(false);
-		btnAddRow.setBounds(543, 10, 38, 27);
-		btnAddRow.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				modelo.addRow(new Object[] { "", "", "", "" });
-				table.setModel(modelo);
-				table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
-			}
-		});
-		panelForm.add(btnAddRow);
-
-		lblRemoveRow = new JLabel("Remover mercadoria:");
-		lblRemoveRow.setBounds(632, 16, 124, 14);
-		panelForm.add(lblRemoveRow);
-
-		btnRemoveRow = new JButton("");
-		btnRemoveRow.setIcon(new ImageIcon(CadNotas.class.getResource("/com/sert/img/btnRemoveRow.png")));
-		btnRemoveRow.setBackground(new Color(255, 0, 0));
-		btnRemoveRow.setBounds(766, 10, 38, 27);
-		btnRemoveRow.setBorderPainted(false);
-		btnRemoveRow.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (table.getSelectedRow() >= 0) {
-					modelo.removeRow(table.getSelectedRow());
-					table.setModel(modelo);
-					table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
-				} else {
-					JOptionPane.showMessageDialog(null, "Não há nenhuma linha selecionada", "AVISO",
-							JOptionPane.WARNING_MESSAGE);
-				}
-			}
-		});
-		panelForm.add(btnRemoveRow);
-
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 39, 794, 356);
+		scrollPane.setBounds(10, 75, 794, 320);
 		panelForm.add(scrollPane);
 		table = new JTable();
 		scrollPane.setViewportView(table);
 		table.setModel(modelo);
-		table.addPropertyChangeListener(new PropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				if (table.getSelectedRow() >= 0 && modelo.getValueAt(table.getSelectedRow(), 2) != ""
-						&& modelo.getValueAt(table.getSelectedRow(), 3) != "") {
-					int linha = table.getSelectedRow();
-					double preco = Double.parseDouble(modelo.getValueAt(linha, 3).toString().replace(",", ".").replace("R$", ""));
-					float qtd = Float.parseFloat(modelo.getValueAt(linha, 4).toString().replace(",", "."));
-					double total = qtd * preco;
-					String valor = String.valueOf(total);
-					String convert = String.format(valor, "%.2f");
-					modelo.setValueAt(convert, linha, 5);
-				}
-
-			}
-		});
 
 		lblDataDeIncluso = new JLabel("Data de inclusão: " + JDateField.getDate());
 		lblDataDeIncluso.setBounds(10, 406, 215, 14);
@@ -249,29 +192,32 @@ public class AjusteEstoque extends JDialog {
 
 		lblUsuario = new JLabel("Usuario: " + UsuLogado.getNome());
 		lblUsuario.setBounds(605, 406, 174, 14);
-		
+
 		cbId = new JComboBox<Integer>();
 		cbId.setEditable(true);
 		cbId.setVisible(true);
-		cbId.setBounds(107, 160, 146, 28);
-		
+		cbId.setBounds(38, 44, 58, 20);
+		panelForm.add(cbId);
+
 		cbMercDesc = new JComboBox<String>();
 		cbMercDesc.setEditable(true);
 		cbMercDesc.setVisible(true);
-		cbMercDesc.setBounds(107, 160, 146, 28);
+		cbMercDesc.setBounds(380, 44, 272, 20);
+		panelForm.add(cbMercDesc);
 
 		cbMercRef = new JComboBox<String>();
 		cbMercRef.setEditable(true);
 		cbMercRef.setVisible(true);
-		cbMercRef.setBounds(107, 160, 146, 28);
+		cbMercRef.setBounds(197, 44, 102, 20);
+		panelForm.add(cbMercRef);
 
 		try {
 			mercList = new ControlerMercadoria().listarMercadorias();
 			for (int i = 0; i < mercList.size(); i++) {
-				
+
 				cbId.addItem(mercList.get(i).getId());
 				cbId.setSelectedItem(null);
-				
+
 				cbMercDesc.addItem(mercList.get(i).getMercadoria());
 				cbMercDesc.setSelectedItem(null);
 
@@ -294,17 +240,53 @@ public class AjusteEstoque extends JDialog {
 		escutaComboMerc();
 
 		panelForm.add(lblUsuario);
-		modelo.addColumn("ID");
+		modelo.addColumn("Cod");
 		modelo.addColumn("Cod. barras");
 		modelo.addColumn("Descrição");
 		modelo.addColumn("Preço Venda");
 		modelo.addColumn("Quant.");
 		modelo.addColumn("Preço Total");
-		modelo.addRow(new Object[] { "","", "", "", "" });
 		table.setModel(modelo);
-		table.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(cbId));
-		table.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(cbMercRef));
-		table.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(cbMercDesc));
+
+		lblCod = new JLabel("Cod:");
+		lblCod.setBounds(10, 47, 38, 14);
+		panelForm.add(lblCod);
+
+		lblCodDeBarras = new JLabel("Cod. de Barras:");
+		lblCodDeBarras.setBounds(106, 47, 89, 14);
+		panelForm.add(lblCodDeBarras);
+
+		lblMercadoria = new JLabel("Mercadoria:");
+		lblMercadoria.setBounds(309, 47, 73, 14);
+		panelForm.add(lblMercadoria);
+
+		lblQuant = new JLabel("Quant.");
+		lblQuant.setBounds(662, 47, 46, 14);
+		panelForm.add(lblQuant);
+
+		txtQuant = new JTextField();
+		txtQuant.setBounds(718, 44, 51, 20);
+		panelForm.add(txtQuant);
+		txtQuant.setColumns(10);
+
+		rdbtnSaida = new JRadioButton("Saída");
+		rdbtnSaida.setBounds(472, 7, 109, 23);
+		panelForm.add(rdbtnSaida);
+		rdbtnSaida.setBackground(new Color(240, 240, 240));
+		bg.add(rdbtnSaida);
+
+		rdbtnEntrada = new JRadioButton("Entrada");
+		rdbtnEntrada.setBounds(361, 7, 109, 23);
+		panelForm.add(rdbtnEntrada);
+		rdbtnEntrada.setBackground(new Color(240, 240, 240));
+		rdbtnEntrada.setSelected(true);
+
+		bg.add(rdbtnEntrada);
+
+		lblTipo = new JLabel("Tipo:");
+		lblTipo.setBounds(297, 11, 38, 14);
+		panelForm.add(lblTipo);
+		table.getColumnModel().getColumn(0).setPreferredWidth(50);
 		table.getColumnModel().getColumn(2).setPreferredWidth(300);
 		table.getColumnModel().getColumn(3)
 				.setCellEditor(new DefaultCellEditor(new JNumberFormatField(new DecimalFormat("0.00"))));
@@ -322,17 +304,13 @@ public class AjusteEstoque extends JDialog {
 					if (cbId.getSelectedItem() != null) {
 						for (Mercadoria merc : mercList) {
 							if (cbId.getSelectedItem().equals(merc.getId())) {
-								modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 1);
-								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 2);
-								modelo.setValueAt(String.format("R$ %.2f", merc.getPrecoVenda()), table.getSelectedRow(), 3);
-								modelo.setValueAt(String.format("%.2f", merc.getEstoque()), table.getSelectedRow(), 4);
-								table.setModel(modelo);
+								cbMercRef.setSelectedItem(merc.getCodBarras());
+								cbMercDesc.setSelectedItem(merc.getMercadoria());
 							}
 						}
 					} else {
-						modelo.setValueAt("", table.getSelectedRow(), 1);
-						modelo.setValueAt("", table.getSelectedRow(), 2);
-						table.setModel(modelo);
+						cbMercRef.setSelectedItem("");
+						cbMercDesc.setSelectedItem("");
 						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -340,7 +318,7 @@ public class AjusteEstoque extends JDialog {
 			}
 
 		});
-		
+
 		cbMercRef.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -349,17 +327,13 @@ public class AjusteEstoque extends JDialog {
 					if (cbMercRef.getSelectedItem() != null) {
 						for (Mercadoria merc : mercList) {
 							if (cbMercRef.getSelectedItem().equals(String.valueOf(merc.getCodBarras()))) {
-								modelo.setValueAt(merc.getId(), table.getSelectedRow(), 0);
-								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 2);
-								modelo.setValueAt(String.format("R$ %.2f", merc.getPrecoVenda()), table.getSelectedRow(), 3);
-								modelo.setValueAt(String.format("%.2f", merc.getEstoque()), table.getSelectedRow(), 4);
-								table.setModel(modelo);
+								cbId.setSelectedItem(merc.getId());
+								cbMercDesc.setSelectedItem(merc.getMercadoria());
 							}
 						}
 					} else {
-						modelo.setValueAt("", table.getSelectedRow(), 0);
-						modelo.setValueAt("", table.getSelectedRow(), 2);
-						table.setModel(modelo);
+						cbId.setSelectedItem("");
+						cbMercDesc.setSelectedItem("");
 						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -375,17 +349,13 @@ public class AjusteEstoque extends JDialog {
 					if (cbMercDesc.getSelectedItem() != "") {
 						for (Mercadoria merc : mercList) {
 							if (cbMercDesc.getSelectedItem().equals(merc.getMercadoria())) {
-								modelo.setValueAt(merc.getId(), table.getSelectedRow(), 0);
-								modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 1);
-								modelo.setValueAt(String.format("R$ %.2f", merc.getPrecoVenda()), table.getSelectedRow(), 3);
-								modelo.setValueAt(String.format("%.2f", merc.getEstoque()), table.getSelectedRow(), 4);
-								table.setModel(modelo);
+								cbId.setSelectedItem(merc.getId());
+								cbMercRef.setSelectedItem(merc.getCodBarras());
 							}
 						}
 					} else {
-						modelo.setValueAt("", table.getSelectedRow(), 0);
-						modelo.setValueAt("", table.getSelectedRow(), 1);
-						table.setModel(modelo);
+						cbId.setSelectedItem("");
+						cbMercRef.setSelectedItem("");
 						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
 								JOptionPane.WARNING_MESSAGE);
 					}
@@ -412,5 +382,82 @@ public class AjusteEstoque extends JDialog {
 		}
 
 		new ControlerAjusteEstoque().movEstoque(mercList, operacao);
+	}
+
+	private void listen() {
+		JRootPane escback = getRootPane();
+		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				"ESCAPE");
+		escback.getRootPane().getActionMap().put("ESCAPE", new AbstractAction("ESCAPE") {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+
+		JRootPane enter = getRootPane();
+		enter.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "ENTER");
+		enter.getRootPane().getActionMap().put("ENTER", new AbstractAction("ENTER") {
+			private static final long serialVersionUID = 4394565308739162374L;
+
+			public void actionPerformed(ActionEvent e) {
+				if (txtQuant.hasFocus()) {
+					try {
+						if (cbMercRef.getSelectedItem().toString().equals(null) || txtQuant.getText().equals("")) {
+							JOptionPane.showMessageDialog(null, "Selecione uma mercadoria e/ou coloque a quantidade");
+						} else {
+							long codBarras = Long.parseLong(cbMercRef.getSelectedItem().toString());
+							Mercadoria mercadoria = new ControlerMercadoria().consultaMercadoria(codBarras);
+							float quant = Float.parseFloat(txtQuant.getText());
+
+							modelo.addRow(new Object[] { mercadoria.getId(), mercadoria.getCodBarras(),
+									mercadoria.getMercadoria(), mercadoria.getPrecoVenda(), quant,
+									mercadoria.getPrecoVenda() * quant });
+
+							table.setModel(modelo);
+
+							table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
+
+							cbId.setSelectedItem("");
+							cbMercDesc.setSelectedItem("");
+							cbMercRef.setSelectedItem("");
+							txtQuant.setText("");
+						}
+					} catch (NumberFormatException e1) {
+						e1.printStackTrace();
+					} catch (ClassNotFoundException e1) {
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					} catch (MercadoriaNaoEncontradaException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "Selecione a mercadoria e depois coloque uma quantidade!");
+				}
+			}
+		});
+
+		JRootPane delete = getRootPane();
+		delete.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
+				"DELETE");
+		delete.getRootPane().getActionMap().put("DELETE", new AbstractAction("DELETE") {
+			private static final long serialVersionUID = 4394565308739162374L;
+
+			public void actionPerformed(ActionEvent e) {
+				if (table.getSelectedRow() >= 0) {
+					modelo.removeRow(table.getSelectedRow());
+					table.setModel(modelo);
+					table.setRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
+				} else {
+					JOptionPane.showMessageDialog(null, "Não há nenhuma linha selecionada", "AVISO",
+							JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
+
 	}
 }

@@ -26,6 +26,7 @@ import com.sert.controler.ConsultaCep;
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.Log;
 import com.sert.controler.Seguranca;
+import com.sert.controler.ValidaCNP;
 import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.entidades.Usuario;
 import com.sert.exceptions.UsuarioJaCadastradoException;
@@ -42,7 +43,7 @@ public class CadUsu extends JDialog {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7626473167341779666L;
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel panelBtn;
 	private JButton btnSalvar;
@@ -356,6 +357,28 @@ public class CadUsu extends JDialog {
 		txtCpf.setBounds(406, 14, 115, 20);
 		txtCpf.setColumns(10);
 		panelForm.add(txtCpf);
+		txtCpf.addFocusListener(new FocusListener() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				String cpf = txtCpf.getText().replace(".", "").replace("-", "").replace(" ", "");
+				if (!cpf.isEmpty()) {
+					if (cpf.length() == 11) {
+						if (!ValidaCNP.isValidCPF(cpf)) {
+							JOptionPane.showMessageDialog(null, "O CPF digitado é invalido");
+							cpf = null;
+							txtCpf.setText(null);
+						}
+					}else {
+						cpf = null;
+						txtCpf.setText(null);
+					}
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+		});
 
 		lblRg = new JLabel("RG:");
 		lblRg.setBounds(573, 17, 38, 14);
@@ -529,7 +552,7 @@ public class CadUsu extends JDialog {
 						new ControlerUsuario().cadastrarUsuario(usu);
 						JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
 						dispose();
-					}else{
+					} else {
 						new ControlerUsuario().atualizarUsuario(usu);
 						JOptionPane.showMessageDialog(null, "Atualização realizada com sucesso!");
 						dispose();

@@ -13,6 +13,7 @@ import javax.swing.border.LineBorder;
 
 import com.sert.telas.CadCliente;
 import com.sert.telas.CadFornecedor;
+import com.sert.telas.ListarCliente;
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * @author Matheus Souza
@@ -53,7 +54,7 @@ public class OpcClientes extends JDialog {
 		btnCadastrarNovoCliente.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new CadCliente().setVisible(true);				
+				new CadCliente(0).setVisible(true);				
 			}
 		});
 		
@@ -75,6 +76,12 @@ public class OpcClientes extends JDialog {
 		btnListaDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
 		btnListaDeClientes.setBounds(10, 92, 248, 21);
 		getContentPane().add(btnListaDeClientes);
+		btnListaDeClientes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ListarCliente().setVisible(true);
+			}
+		});
 		
 		JButton btnListaDeFornecedores = new JButton("listar fornecedores");
 		btnListaDeFornecedores.setBackground(new Color(255, 255, 0));

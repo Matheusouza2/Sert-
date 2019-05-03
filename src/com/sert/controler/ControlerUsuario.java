@@ -13,13 +13,13 @@ import com.sert.exceptions.UsuarioNaoCadastradoException;
 
 public class ControlerUsuario {
 	private IUsuDao usuDao;
-
+	private Usuario usuario;
 	public ControlerUsuario() throws ClassNotFoundException, SQLException, IOException {
 		usuDao = new UsuDao();
 	}
 
 	public void cadastrarUsuario(Usuario usu) throws SQLException, UsuarioJaCadastradoException {
-		Usuario usuario = usuDao.consultaCad(usu.getNome());
+		usuario = usuDao.consultaCad(usu.getNome());
 		if(usuario.getNome() != null) throw new UsuarioJaCadastradoException();
 		usuDao.cadastrar(usu);
 	}
@@ -33,6 +33,10 @@ public class ControlerUsuario {
 	}
 
 	public void atualizarUsuario(Usuario usu) throws SQLException{
+		usuario = usuDao.consultaCad(usu.getNome());
+		if(usu.getSenha().equals("D41D8CD98F00B204E9800998ECF8427E")) {
+			usu.setSenha(usuario.getSenha());
+		}
 		usuDao.atualizar(usu);
 	}
 
@@ -45,7 +49,7 @@ public class ControlerUsuario {
 	}
 
 	public Usuario login(String login, String senha) throws UsuarioNaoCadastradoException, SQLException {
-		if(usuDao.consulta(login, senha) == null) throw new UsuarioNaoCadastradoException();
+		if(usuDao.consulta(login, senha).getNome() == null) throw new UsuarioNaoCadastradoException();
 		
 		return usuDao.consulta(login, senha);
 	}

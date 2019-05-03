@@ -1,9 +1,8 @@
 package com.sert.entidades;
 
-public class Usuario {
+public class Cliente {
 	private int id;
 	private String nome;
-	private String senha;
 	private long cpf;
 	private int rg;
 	private int cep;
@@ -13,16 +12,15 @@ public class Usuario {
 	private String cidade;
 	private String uf;
 	private String obs;
+	private long contato;
 
-	public Usuario() {
+	public Cliente() {
 	}
 
-	public Usuario(int id, String nome, String senha, long cpf, int rg, int cep, String rua, int numero, String bairro,
-			String cidade, String uf, String obs) {
-		super();
+	public Cliente(int id, String nome, long cpf, int rg, int cep, String rua, int numero, String bairro, String cidade,
+			String uf, String obs, long contato) {
 		this.id = id;
 		this.nome = nome;
-		this.senha = senha;
 		this.cpf = cpf;
 		this.rg = rg;
 		this.cep = cep;
@@ -32,6 +30,7 @@ public class Usuario {
 		this.cidade = cidade;
 		this.uf = uf;
 		this.obs = obs;
+		this.contato = contato;
 	}
 
 	public int getId() {
@@ -48,14 +47,6 @@ public class Usuario {
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
 	}
 
 	public long getCpf() {
@@ -87,7 +78,7 @@ public class Usuario {
 	}
 
 	public void setRua(String rua) {
-		this.rua = (rua == null)? "":rua;
+		this.rua = rua;
 	}
 
 	public int getNumero() {
@@ -128,5 +119,13 @@ public class Usuario {
 
 	public void setObs(String obs) {
 		this.obs = obs;
+	}
+
+	public long getContato() {
+		return contato;
+	}
+
+	public void setContato(long contato) {
+		this.contato = contato;
 	}
 }

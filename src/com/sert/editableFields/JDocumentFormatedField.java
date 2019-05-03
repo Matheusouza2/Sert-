@@ -20,6 +20,18 @@ public class JDocumentFormatedField {
 		return tfcep;
 	}
 	
+	public JTextField getTel(){
+		MaskFormatter format_textField3;
+		JTextField tfcep = null;
+		try {
+			format_textField3 = new MaskFormatter("(##)#####-####");
+			tfcep = new JFormattedTextField(format_textField3);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return tfcep;
+	}
+	
 	public JTextField getCpf(){
 		JTextField tfcpf = null;
 		MaskFormatter format_textField3;

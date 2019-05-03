@@ -56,6 +56,9 @@ public class RelatorioEstoque extends JDialog {
 	private JLabel lblValTotalItens;
 	private JLabel lblValTotalVolumes;
 	private float valTotalVolume;
+	private JLabel lblPrecoVenda;
+	private JLabel lblPreoVenda;
+	private float totalVenda;
 
 	public RelatorioEstoque() {
 		setBounds(100, 100, 1020, 700);
@@ -145,6 +148,7 @@ public class RelatorioEstoque extends JDialog {
 			for (Mercadoria mercadoria : new ControlerMercadoria().listarMercadorias()) {
 				mercadorias.add(mercadoria);
 				valTotalVolume += mercadoria.getEstoque();
+				totalVenda += mercadoria.getPrecoVenda();
 			}
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
@@ -185,32 +189,44 @@ public class RelatorioEstoque extends JDialog {
 		panelValores.setLayout(null);
 
 		lblTotalDeItens = new JLabel("Total de Itens:");
-		lblTotalDeItens.setForeground(new Color(0, 0, 128));
+		lblTotalDeItens.setForeground(new Color(255, 255, 255));
 		lblTotalDeItens.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTotalDeItens.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblTotalDeItens.setBounds(10, 11, 95, 14);
 		panelValores.add(lblTotalDeItens);
 
 		lblTotalDeVolumes = new JLabel("Total de Volumes:");
-		lblTotalDeVolumes.setForeground(new Color(0, 0, 128));
+		lblTotalDeVolumes.setForeground(new Color(255, 255, 255));
 		lblTotalDeVolumes.setHorizontalAlignment(SwingConstants.LEFT);
 		lblTotalDeVolumes.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblTotalDeVolumes.setBounds(10, 36, 111, 14);
 		panelValores.add(lblTotalDeVolumes);
 		
 		lblValTotalItens = new JLabel(String.valueOf(tabMerc.getRowCount()));
-		lblValTotalItens.setForeground(new Color(0, 0, 128));
+		lblValTotalItens.setForeground(new Color(255, 255, 255));
 		lblValTotalItens.setHorizontalAlignment(SwingConstants.LEFT);
 		lblValTotalItens.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblValTotalItens.setBounds(97, 11, 136, 14);
 		panelValores.add(lblValTotalItens);
 		
 		lblValTotalVolumes = new JLabel(String.format("%.2f", valTotalVolume));
-		lblValTotalVolumes.setForeground(new Color(0, 0, 128));
+		lblValTotalVolumes.setForeground(new Color(255, 255, 255));
 		lblValTotalVolumes.setHorizontalAlignment(SwingConstants.LEFT);
 		lblValTotalVolumes.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblValTotalVolumes.setBounds(115, 36, 136, 14);
 		panelValores.add(lblValTotalVolumes);
+		
+		lblPreoVenda = new JLabel("Preço venda:");
+		lblPreoVenda.setForeground(new Color(255, 255, 255));
+		lblPreoVenda.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblPreoVenda.setBounds(766, 12, 95, 14);
+		panelValores.add(lblPreoVenda);
+										
+		lblPrecoVenda = new JLabel(String.format("R$ %.2f",totalVenda));
+		lblPrecoVenda.setForeground(new Color(255, 255, 255));
+		lblPrecoVenda.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblPrecoVenda.setBounds(846, 11, 95, 14);
+		panelValores.add(lblPrecoVenda);
 
 		tabMerc.getColumnModel().getColumn(0).setPreferredWidth(58);
 		tabMerc.getColumnModel().getColumn(1).setPreferredWidth(140);

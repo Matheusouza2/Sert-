@@ -17,33 +17,32 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.sert.controler.ControlerCliente;
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.Log;
-import com.sert.entidades.Usuario;
-import com.sert.exceptions.NenhumUsuCadException;
+import com.sert.entidades.Cliente;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-
-public class ListarUsu extends JDialog {
+public class ListarCliente extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
+	private JScrollPane scrollPane;
+	private DefaultTableModel modelo;
+	private List<Cliente> clientes;
 	private JButton btnX;
 	private JPanel panelBtn;
 	private JButton btnEditar;
-	private JTable tabUsu;
 	private JButton btnNovoUsuario;
-	private JScrollPane scrollPane;
-	private DefaultTableModel modelo;
-	private List<Usuario> usuarios;
 	private JButton btnExcluir;
+	private JTable tabCliente;
 
-	public ListarUsu() {
+	public ListarCliente() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 834, 590);
 		setUndecorated(true);
@@ -83,8 +82,9 @@ public class ListarUsu extends JDialog {
 		panelBtn.add(btnEditar);
 		btnEditar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				if (tabUsu.getSelectedRow() >= 0) {
-					int idEditar = Integer.parseInt(String.valueOf(tabUsu.getValueAt(tabUsu.getSelectedRow(), 0)));
+				if (tabCliente.getSelectedRow() >= 0) {
+					int idEditar = Integer
+							.parseInt(String.valueOf(tabCliente.getValueAt(tabCliente.getSelectedRow(), 0)));
 					if (idEditar == 0) {
 						JOptionPane.showMessageDialog(null, "O usuário SertSoft não pode ser editado", "Advertência",
 								JOptionPane.WARNING_MESSAGE);
@@ -121,8 +121,8 @@ public class ListarUsu extends JDialog {
 		btnExcluir.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (tabUsu.getSelectedRow() >= 0) {
-					int idUsu = Integer.parseInt(String.valueOf(tabUsu.getValueAt(tabUsu.getSelectedRow(), 0)));
+				if (tabCliente.getSelectedRow() >= 0) {
+					int idUsu = Integer.parseInt(String.valueOf(tabCliente.getValueAt(tabCliente.getSelectedRow(), 0)));
 					if (idUsu == 0) {
 						JOptionPane.showMessageDialog(null, "O usuário SertSoft não pode ser excluido", "Advertência",
 								JOptionPane.WARNING_MESSAGE);
@@ -167,60 +167,54 @@ public class ListarUsu extends JDialog {
 		modelo.addColumn("Nome");
 
 		try {
-			usuarios = new ControlerUsuario().listarUsuario();
-			for (Usuario usu : usuarios) {
-				modelo.addRow(new Object[] { usu.getId(), usu.getNome() });
+			clientes = new ControlerCliente().listCliente();
+			for (Cliente cliente : clientes) {
+				modelo.addRow(new Object[] { cliente.getId(), cliente.getNome() });
 			}
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
 					JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
-		} catch (NenhumUsuCadException e1) {
-			JOptionPane.showMessageDialog(null, e1.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+			Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 		} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
 					"Banco de dados", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+			Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes", "Arquivo",
 					JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+			Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 		}
-		tabUsu = new JTable();
-		tabUsu.setModel(modelo);
-		scrollPane.setViewportView(tabUsu);
+		tabCliente = new JTable();
+		tabCliente.setModel(modelo);
+		scrollPane.setViewportView(tabCliente);
 	}
 
 	private void repagina() {
 		try {
-			while (tabUsu.getRowCount() > 0) {
+			while (tabCliente.getRowCount() > 0) {
 				modelo.removeRow(0);
 			}
-			tabUsu.setModel(modelo);
-			usuarios.clear();
-			usuarios = new ControlerUsuario().listarUsuario();
-			for (Usuario usu : usuarios) {
-				modelo.addRow(new Object[] { usu.getId(), usu.getNome() });
+			tabCliente.setModel(modelo);
+			clientes.clear();
+			clientes = new ControlerCliente().listCliente();
+			for (Cliente cliente : clientes) {
+				modelo.addRow(new Object[] { cliente.getId(), cliente.getNome() });
 			}
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
 					JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
-		} catch (NenhumUsuCadException e1) {
-			JOptionPane.showMessageDialog(null, e1.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+			Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 		} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
 					"Banco de dados", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+			Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 		} catch (IOException e1) {
 			JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes", "Arquivo",
 					JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+			Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 		}
 
-		tabUsu.revalidate();
+		tabCliente.revalidate();
 
 	}
 

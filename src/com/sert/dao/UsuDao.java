@@ -29,10 +29,19 @@ public class UsuDao implements IUsuDao {
 
 	@Override
 	public void cadastrar(Usuario usu) throws SQLException {
-		String sql = "INSERT INTO funcionario(nome, senha) VALUES (?,?)";
+		String sql = "INSERT INTO public.funcionario(nome, senha, rg, cpf, cep, endereco, numero, bairro, cidade, estado, observacoes)	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		preparador.setString(1, usu.getNome());
 		preparador.setString(2, usu.getSenha());
+		preparador.setInt(3, usu.getRg());
+		preparador.setLong(4, usu.getCpf());
+		preparador.setInt(5, usu.getCep());
+		preparador.setString(6, usu.getRua());
+		preparador.setInt(7, usu.getNumero());
+		preparador.setString(8, usu.getBairro());
+		preparador.setString(9, usu.getCidade());
+		preparador.setString(10, usu.getUf());
+		preparador.setString(11, usu.getObs());
 		preparador.execute();
 		preparador.close();
 	}

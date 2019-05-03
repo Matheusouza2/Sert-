@@ -26,11 +26,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.SQLException;
 
 /**
@@ -76,6 +78,7 @@ public class Inicio extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		setIconImage(getIconImage());
 
 		listen();
 
@@ -237,7 +240,7 @@ public class Inicio extends JDialog {
 		btnTrocaUsu.setBackground(new Color(41, 171, 226));
 		btnTrocaUsu.setBorderPainted(false);
 		btnTrocaUsu.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnTrocaUsuario.png")));
-		btnTrocaUsu.setBounds(1163, 509, 181, 81);
+		btnTrocaUsu.setBounds(1081, 530, 231, 81);
 		panelUsados.add(btnTrocaUsu);
 		btnTrocaUsu.addActionListener(new ActionListener() {
 			@Override
@@ -249,8 +252,8 @@ public class Inicio extends JDialog {
 
 		lblBemVindoa = new JLabel("Bem vindo (a): " + UsuLogado.getNome());
 		lblBemVindoa.setForeground(Color.WHITE);
-		lblBemVindoa.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblBemVindoa.setBounds(1066, 484, 268, 14);
+		lblBemVindoa.setFont(new Font("Tahoma", Font.BOLD, 18));
+		lblBemVindoa.setBounds(629, 552, 442, 14);
 		panelUsados.add(lblBemVindoa);
 
 		lblBanner = new JLabel("");
@@ -274,5 +277,12 @@ public class Inicio extends JDialog {
 				new PesqMercVenda().setVisible(true);
 			}
 		});
+	}
+
+	public Image getIconImage() {
+		URL url = this.getClass().getResource("/com/sert/img/Logo2.png");
+		Image icone = Toolkit.getDefaultToolkit().getImage(url);
+
+		return icone;
 	}
 }

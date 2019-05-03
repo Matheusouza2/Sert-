@@ -32,6 +32,7 @@ import com.sert.entidades.Venda;
 import com.sert.exceptions.MercadoriaSemEstoqueException;
 import com.sert.exceptions.MercadoriaSemPrecoException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
+import com.sert.relatorios.RelatorioVendas;
 
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
@@ -96,7 +97,7 @@ public class PontoDeVenda extends JDialog {
 		setUndecorated(true);
 
 		contentPane = new JPanel();
-		setBounds(0, 0, screenSize.width-10, screenSize.height-40);
+		setBounds(0, 0, screenSize.width - 10, screenSize.height - 40);
 		setLocationRelativeTo(null);
 		contentPane.setBackground(new Color(255, 255, 0));
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 255), 1, true));
@@ -256,11 +257,11 @@ public class PontoDeVenda extends JDialog {
 		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblNewLabel.setBounds(1146, 0, 184, 14);
 		panelMother.add(lblNewLabel);
-		
+
 		JSeparator separator = new JSeparator();
 		separator.setBounds(176, 44, 139, 5);
 		panelMother.add(separator);
-		
+
 		separator_1 = new JSeparator();
 		separator_1.setBounds(475, 47, 86, 2);
 		panelMother.add(separator_1);
@@ -292,18 +293,7 @@ public class PontoDeVenda extends JDialog {
 					fecharVenda();
 					break;
 				case (KeyEvent.VK_F6):
-					try {
-						new ControlerVenda().atualizarCadastros();
-					} catch (ClassNotFoundException e) {
-						e.printStackTrace();
-					} catch (NenhumaMercadoriaCadastradaException e) {
-						e.printStackTrace();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					JOptionPane.showMessageDialog(null, "Cadastro atualizado com sucesso");
+					new RelatorioVendas().setVisible(true);
 					break;
 				case (KeyEvent.VK_F7):
 					liberarCaixa();
@@ -315,8 +305,12 @@ public class PontoDeVenda extends JDialog {
 					cancelarVenda();
 					break;
 				case (KeyEvent.VK_MULTIPLY):
-					txtQuant.setText(txtCodBarras.getText());
-					txtCodBarras.setText("");
+					if (txtCodBarras.getText().equals("")) {
+						txtQuant.setText("1");
+					} else {
+						txtQuant.setText(txtCodBarras.getText());
+						txtCodBarras.setText("");
+					}
 					break;
 				case (KeyEvent.VK_ENTER):
 					adicionarItem();
@@ -344,7 +338,8 @@ public class PontoDeVenda extends JDialog {
 				item = Integer.parseInt(prodVenda.getValueAt(i, 0).toString()) - 1;
 				prodVenda.setValueAt(item, i, 0);
 			}
-			total = total - Float.parseFloat(prodVenda.getValueAt(prodVenda.getSelectedRow(), 5).toString().replace(",", "."));
+			total = total - Float
+					.parseFloat(prodVenda.getValueAt(prodVenda.getSelectedRow(), 6).toString().replace(",", "."));
 			lblTotal.setText("TOTAL: R$ " + String.format("%.2f", total));
 			repor();
 			modelo.removeRow(prodVenda.getSelectedRow());
@@ -375,7 +370,8 @@ public class PontoDeVenda extends JDialog {
 				precoTotal = quantidade * precoMerc;
 
 				modelo.addRow(new Object[] { ++item, merc.getId(), merc.getCodBarras(), merc.getMercadoria(),
-						quantidade, String.format("%.2f", precoMerc), String.format("%.2f", precoTotal), merc.getPrecoCompra()});
+						quantidade, String.format("%.2f", precoMerc), String.format("%.2f", precoTotal),
+						merc.getPrecoCompra() });
 				txtCodBarras.setText(null);
 				txtQuant.setText("1");
 				lblStatus.setText("Status: Venda em andamento");
@@ -444,11 +440,12 @@ public class PontoDeVenda extends JDialog {
 					merc.setMercadoria(prodVenda.getValueAt(i, 3).toString());
 					merc.setEstoque(Float.parseFloat(prodVenda.getValueAt(i, 4).toString()));
 					merc.setPrecoVenda(Float.parseFloat(prodVenda.getValueAt(i, 5).toString().replace(",", ".")));
-					merc.setPrecoCompra(Float.parseFloat(prodVenda.getValueAt(i, 7).toString().replace(",", ".")) * merc.getEstoque());
+					merc.setPrecoCompra(Float.parseFloat(prodVenda.getValueAt(i, 7).toString().replace(",", "."))
+							* merc.getEstoque());
 					mercFech.add(merc);
 				}
-				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), UsuLogado.getNome(), idCliente, lblCliente.getText().replace("Cliente: ", ""),
-						JDateField.getDateHoraStatic(), mercFech,
+				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), UsuLogado.getNome(), idCliente,
+						lblCliente.getText().replace("Cliente: ", ""), JDateField.getDateHoraStatic(), mercFech,
 						Float.parseFloat(String.format("%.2f", total).replace(",", ".")), 0, 0, 0, 0, 0, 0);
 				new PontoDeVendaFecharVenda(venda).setVisible(true);
 			} catch (ClassNotFoundException e) {
@@ -504,8 +501,8 @@ public class PontoDeVenda extends JDialog {
 			total = 0;
 		}
 	}
-	
-	public static void addMercPesq(long codBarras){
+
+	public static void addMercPesq(long codBarras) {
 		txtCodBarras.setText(String.valueOf(codBarras));
 		adicionarItem();
 	}

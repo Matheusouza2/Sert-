@@ -11,6 +11,10 @@ import com.sert.dao.ConexaoDao;
 
 import javax.swing.JProgressBar;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.net.URL;
+
 import javax.swing.JLabel;
 
 import javax.swing.ImageIcon;
@@ -39,6 +43,7 @@ public class Banner extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		setIconImage(getIconImage());
 
 		JProgressBar progressBar = new JProgressBar(0, 100);
 		progressBar.setForeground(new Color(0, 0, 255));
@@ -72,5 +77,12 @@ public class Banner extends JFrame {
 				dispose();
 			}
 		}.execute();
+	}
+
+	public Image getIconImage() {
+		URL url = this.getClass().getResource("/com/sert/img/Logo2.png");
+		Image icone = Toolkit.getDefaultToolkit().getImage(url);
+
+		return icone;
 	}
 }

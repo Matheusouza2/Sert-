@@ -159,7 +159,6 @@ public class CadMercadoria extends JDialog {
 							controlerMercadoria.alterarMercadoria(mercadoria);
 							JOptionPane.showMessageDialog(null, "Mercadoria alterada com sucesso", "Sucesso!",
 									JOptionPane.INFORMATION_MESSAGE);
-							ListarMercadorias.repagina();
 							dispose();
 							
 						}
