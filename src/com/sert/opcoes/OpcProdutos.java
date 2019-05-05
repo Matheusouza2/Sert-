@@ -39,7 +39,7 @@ public class OpcProdutos extends JDialog {
 		setModal(true);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(0, 0, 128));
-		contentPane.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 						

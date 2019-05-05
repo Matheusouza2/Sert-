@@ -23,8 +23,11 @@ public class Venda implements TextFilterator<Venda> {
 	// Formas de pagamento
 	private int dinheiro;
 	private int cartao;
+	private int duplicata;
 	private float valDInheiro;
 	private float valCartao;
+	private float valDuplicata;
+	private int parcelasDuplicata;
 	private float acrescimo;
 	private float desconto;
 	// Fim formas de pagamento
@@ -35,7 +38,7 @@ public class Venda implements TextFilterator<Venda> {
 
 	public Venda(int id, int vendedorCad, String vendedor, int clienteCad, String cliente, String dataVenda,
 			List<Mercadoria> mercadorias, float valTotal, int dinheiro, int cartao, float valDInheiro, float valCartao,
-			float acrescimo, float desconto) {
+			float acrescimo, float desconto, int duplicata, float valDuplicata, int parcelasDuplicata) {
 		super();
 		this.id = id;
 		this.vendedorCad = vendedorCad;
@@ -51,6 +54,9 @@ public class Venda implements TextFilterator<Venda> {
 		this.valCartao = valCartao;
 		this.acrescimo = acrescimo;
 		this.desconto = desconto;
+		this.valDuplicata = valDuplicata;
+		this.duplicata = duplicata;
+		this.parcelasDuplicata = parcelasDuplicata;
 	}
 
 	public int getId() {
@@ -163,6 +169,30 @@ public class Venda implements TextFilterator<Venda> {
 
 	public void setDesconto(float desconto) {
 		this.desconto = desconto;
+	}
+
+	public int getDuplicata() {
+		return duplicata;
+	}
+
+	public void setDuplicata(int duplicata) {
+		this.duplicata = duplicata;
+	}
+
+	public float getValDuplicata() {
+		return valDuplicata;
+	}
+
+	public void setValDuplicata(float valDuplicata) {
+		this.valDuplicata = valDuplicata;
+	}
+
+	public int getParcelasDuplicata() {
+		return parcelasDuplicata;
+	}
+
+	public void setParcelasDuplicata(int parcelasDuplicata) {
+		this.parcelasDuplicata = parcelasDuplicata;
 	}
 
 	@Override

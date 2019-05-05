@@ -14,6 +14,7 @@ import java.sql.SQLException;
 
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
@@ -25,20 +26,27 @@ import javax.swing.border.LineBorder;
 
 import com.sert.controler.ConsultaCep;
 import com.sert.controler.ControlerCliente;
-import com.sert.controler.ControlerUsuario;
+import com.sert.controler.ControlerDuplicata;
 import com.sert.controler.JDateField;
 import com.sert.controler.Log;
-import com.sert.controler.Seguranca;
 import com.sert.controler.UsuLogado;
 import com.sert.controler.ValidaCNP;
 import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.entidades.Cliente;
+import com.sert.entidades.DuplicataCliente;
 import com.sert.exceptions.ClienteJaCadastradoException;
+import com.sert.tables.TableModelContasAReceber;
+
+import ca.odell.glazedlists.BasicEventList;
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.matchers.MatcherEditor;
+import ca.odell.glazedlists.swing.AdvancedTableModel;
+import ca.odell.glazedlists.swing.GlazedListsSwing;
+import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
 
 import javax.swing.SwingConstants;
 import java.awt.Font;
 
-import javax.swing.AbstractAction;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -47,6 +55,7 @@ import javax.swing.JRootPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JSeparator;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -97,31 +106,43 @@ public class CadCliente extends JDialog {
 	private JRadioButton rdbtnCnpj;
 
 	private int id;
+	private int idEdit;
 
 	private ButtonGroup bg = new ButtonGroup();
 	private JPanel panelDebito;
 	private JTextField txtFiltrar;
-	private JTable tableDebitos;
+	private static JTable tableDebitos;
 	private JTabbedPane tabbedPane;
 	private JLabel lblFiltrar;
 	private JScrollPane scrollPane;
 	private int opcao;
 	private JButton btnGerarCpf;
+	private static BasicEventList<DuplicataCliente> duplicatas;
+	private FilterList<DuplicataCliente> textFilteredIssues;
+	private JSeparator separator;
+	private JButton btnBaixarDuplicata;
+	private JButton btnVerDuplicata;
+	private JLabel lblFiltrar_1;
+	private JComboBox<String> cbFiltro;
 
-	public CadCliente(int opcao) {
+	// Quando a opçao for 0 será chamado o cadastro, quando a opção for 1 será
+	// chamado o editar
+	public CadCliente(int opcao, int idEdit) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 834, 618);
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		setModal(true);
 		contentPane = new JPanel();
+		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		contentPane.setBackground(new Color(0, 0, 128));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		listen();
-		
+
 		this.opcao = opcao;
+		this.idEdit = idEdit;
 
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);
@@ -135,12 +156,17 @@ public class CadCliente extends JDialog {
 			}
 		});
 
-		lblCadastroDeClientes = new JLabel("cadastro de clientes");
+		lblCadastroDeClientes = new JLabel();
 		lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
 		lblCadastroDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 17));
 		lblCadastroDeClientes.setHorizontalAlignment(SwingConstants.CENTER);
 		lblCadastroDeClientes.setBounds(33, 0, 768, 33);
 		contentPane.add(lblCadastroDeClientes);
+		if (opcao == 0) {
+			lblCadastroDeClientes.setText("cadastrar cliente");
+		} else {
+			lblCadastroDeClientes.setText("editar cliente");
+		}
 
 		panelBtn = new JPanel();
 		panelBtn.setBackground(new Color(255, 255, 0));
@@ -156,8 +182,11 @@ public class CadCliente extends JDialog {
 		panelBtn.add(btnSalvar);
 
 		btnGerarCpf = new JButton();
+		btnGerarCpf.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/btnGerarCpf.png")));
 		btnGerarCpf.setBackground(Color.PINK);
 		btnGerarCpf.setBounds(109, 11, 89, 91);
+		btnGerarCpf
+				.setToolTipText("Quando não tiver o CFP real do cliente clique aqui que o sistema gerará um para você");
 		panelBtn.add(btnGerarCpf);
 		btnGerarCpf.addActionListener(new ActionListener() {
 			@Override
@@ -166,7 +195,26 @@ public class CadCliente extends JDialog {
 				txtCpf.setText(ValidaCNP.geraCPF());
 			}
 		});
-
+		
+		lblFiltrar_1 = new JLabel("Filtrar:");
+		lblFiltrar_1.setForeground(new Color(0, 0, 128));
+		lblFiltrar_1.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblFiltrar_1.setBounds(545, 75, 57, 27);
+		panelBtn.add(lblFiltrar_1);
+		
+		cbFiltro = new JComboBox<String>();
+		cbFiltro.setBounds(596, 79, 102, 20);
+		cbFiltro.setModel(new DefaultComboBoxModel<String>(
+				new String[] { "", "A vencer", "Baixado", "Atrasado"}));
+		panelBtn.add(cbFiltro);
+		cbFiltro.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				atualizarLista(String.valueOf(cbFiltro.getSelectedItem()));				
+			}
+		});
+		
+		
 		try {
 			id = new ControlerCliente().confereId();
 		} catch (ClassNotFoundException e1) {
@@ -192,28 +240,11 @@ public class CadCliente extends JDialog {
 		panelForm.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
 		panelForm.setLayout(null);
 
-		panelDebito = new JPanel();
-		panelDebito.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
-		panelDebito.setLayout(null);
-
 		tabbedPane.addTab("Cadastro", null, panelForm, null);
-		tabbedPane.addTab("Débitos", null, panelDebito, null);
 
-		lblFiltrar = new JLabel("Filtrar:");
-		lblFiltrar.setBounds(10, 11, 48, 14);
-		panelDebito.add(lblFiltrar);
-
-		txtFiltrar = new JTextField();
-		txtFiltrar.setBounds(68, 8, 107, 20);
-		panelDebito.add(txtFiltrar);
-		txtFiltrar.setColumns(10);
-
-		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 40, 789, 370);
-		panelDebito.add(scrollPane);
-
-		tableDebitos = new JTable();
-		scrollPane.setViewportView(tableDebitos);
+		if (opcao == 1) {
+			chamaDebitos();
+		}
 
 		lblCodigoCliente = new JLabel("Codigo Cliente:");
 		lblCodigoCliente.setBounds(10, 14, 97, 14);
@@ -454,6 +485,10 @@ public class CadCliente extends JDialog {
 				cadastrarCliente();
 			}
 		});
+
+		if (opcao == 1) {
+			atualizarCliente();
+		}
 	}
 
 	private void cadastrarCliente() {
@@ -514,20 +549,195 @@ public class CadCliente extends JDialog {
 	}
 
 	private void limparTela() {
-		dispose();
-		new CadCliente(0).setVisible(true);
+		try {
+			id = new ControlerCliente().confereId();
+			txtCodCliente.setText(String.valueOf(id));
+			txtNome.setText(null);
+			txtAreaObs.setText(null);
+			txtBairro.setText(null);
+			txtCep.setText(null);
+			txtCidade.setText(null);
+			txtContato.setText(null);
+			txtCpf.setText(null);
+			txtEndereco.setText(null);
+			txtEstado.setSelectedIndex(0);
+			txtNumero.setText(null);
+			txtRg.setText(null);
+		} catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CAD CLIENTE |" + e1.getMessage());
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+					"Banco de dados", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CAD CLIENTE |" + e1.getMessage());
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes", "Arquivo",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CAD CLIENTE |" + e1.getMessage());
+		}
+	}
+
+	private void atualizarCliente() {
+		try {
+			Cliente cliente = new ControlerCliente().consultaClienteAlter(idEdit);
+			txtCodCliente.setText(String.valueOf(cliente.getId()));
+			txtNome.setText(cliente.getNome());
+			txtCpf.setText(String.valueOf(cliente.getCpf()));
+
+		} catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ALT CLIENTE |" + e1.getMessage());
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+					"Banco de dados", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ALT CLIENTE |" + e1.getMessage());
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes", "Arquivo",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ALT CLIENTE |" + e1.getMessage());
+		}
+	}
+
+	private void chamaDebitos() {
+
+		btnBaixarDuplicata = new JButton();
+		btnBaixarDuplicata.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/btnBaixarConta.png")));
+		btnBaixarDuplicata.setToolTipText("Selecione uma duplicata para dar baixa");
+		btnBaixarDuplicata.setBackground(new Color(173, 255, 47));
+		btnBaixarDuplicata.setBounds(208, 11, 89, 91);
+		panelBtn.add(btnBaixarDuplicata);
+		btnBaixarDuplicata.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if (tableDebitos.getSelectedRow() >= 0) {
+					if (tableDebitos.getValueAt(tableDebitos.getSelectedRow(), 1).equals("Baixado")) {
+						JOptionPane.showMessageDialog(null, "Parcela já baixada");
+						return;
+					}
+					int idParcela = duplicatas.get(tableDebitos.getSelectedRow()).getId();
+					new BaixarParcela(idParcela, 0, false).setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "Selecione uma duplicata para baixar");
+				}
+			}
+		});
+
+		btnVerDuplicata = new JButton();
+		btnVerDuplicata.setIcon(new ImageIcon(ContasAReceber.class.getResource("/com/sert/img/btnVerDuplicata.png")));
+		btnVerDuplicata.setBackground(new Color(255, 99, 71));
+		btnVerDuplicata.setBounds(307, 11, 89, 91);
+		panelBtn.add(btnVerDuplicata);
+		btnVerDuplicata.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (tableDebitos.getSelectedRow() >= 0) {
+					int idParcela = (int) tableDebitos.getValueAt(tableDebitos.getSelectedRow(), 6);
+					new BaixarParcela(idParcela, 1, true).setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "Selecione uma duplicata para ser vizualizada");
+				}
+			}
+		});
+
+		panelDebito = new JPanel();
+		panelDebito.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
+		panelDebito.setLayout(null);
+		tabbedPane.addTab("Débitos", null, panelDebito, null);
+		lblFiltrar = new JLabel("filtrar");
+		lblFiltrar.setForeground(new Color(0, 0, 128));
+		lblFiltrar.setFont(new Font("Gtek Technology", Font.BOLD, 11));
+		lblFiltrar.setBounds(10, 11, 77, 14);
+		panelDebito.add(lblFiltrar);
+
+		txtFiltrar = new JTextField();
+		txtFiltrar.setBackground(new Color(240, 240, 240));
+		txtFiltrar.setFont(new Font("Tahoma", Font.BOLD, 13));
+		txtFiltrar.setBorder(null);
+		txtFiltrar.setBounds(97, 7, 126, 20);
+		panelDebito.add(txtFiltrar);
+		txtFiltrar.setColumns(10);
+
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 40, 789, 370);
+		panelDebito.add(scrollPane);
+
+		tableDebitos = new JTable();
+		tableDebitos.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		tableDebitos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		scrollPane.setViewportView(tableDebitos);
+
+		duplicatas = new BasicEventList<DuplicataCliente>();
+
+		try {
+			for (DuplicataCliente duplicata : new ControlerDuplicata().listDuplicata()) {
+				if (duplicata.getCliente().getId() == idEdit) {
+					duplicatas.add(duplicata);
+				}
+			}
+
+			MatcherEditor<DuplicataCliente> textMatcherEditor = new TextComponentMatcherEditor<DuplicataCliente>(
+					txtFiltrar, new DuplicataCliente());
+			textFilteredIssues = new FilterList<DuplicataCliente>(duplicatas, textMatcherEditor);
+			AdvancedTableModel<DuplicataCliente> mercTableModel = GlazedListsSwing
+					.eventTableModelWithThreadProxyList(textFilteredIssues, new TableModelContasAReceber());
+			tableDebitos.setModel(mercTableModel);
+
+			tableDebitos.getColumnModel().getColumn(2).setPreferredWidth(400);
+			tableDebitos.getColumnModel().getColumn(6).setMaxWidth(0);
+			tableDebitos.getColumnModel().getColumn(6).setMinWidth(0);
+			tableDebitos.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(0);
+			tableDebitos.getTableHeader().getColumnModel().getColumn(6).setMinWidth(0);
+
+			separator = new JSeparator();
+			separator.setBackground(new Color(0, 0, 128));
+			separator.setBounds(96, 27, 127, 2);
+			panelDebito.add(separator);
+
+		} catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CONTAS A RECEBER |" + e1.getMessage());
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+					"Banco de dados", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CONTAS A RECEBER |" + e1.getMessage());
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes", "Arquivo",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CONTAS A RECEBER |" + e1.getMessage());
+		}
+
+	}
+
+	public static void atualizarLista(String filtro) {
+		try {
+			duplicatas.clear();
+			for (DuplicataCliente duplicata : new ControlerDuplicata().listDuplicata()) {
+				duplicatas.add(duplicata);
+			}
+
+			tableDebitos.revalidate();
+
+		} catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CONTAS A RECEBER |" + e1.getMessage());
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+					"Banco de dados", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CONTAS A RECEBER |" + e1.getMessage());
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes", "Arquivo",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| CONTAS A RECEBER |" + e1.getMessage());
+		}
 	}
 
 	private void listen() {
 		JRootPane escback = getRootPane();
 		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				"ESCAPE");
-		escback.getRootPane().getActionMap().put("ESCAPE", new AbstractAction("ESCAPE") {
-			private static final long serialVersionUID = 1L;
-
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
 	}
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.sert.dao.IVendasDao;
 import com.sert.dao.VendaDao;
+import com.sert.entidades.Caixa;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.Venda;
 import com.sert.exceptions.MercadoriaNaoEncontradaException;
@@ -42,6 +43,28 @@ public class ControlerVenda {
 				}
 			}
 		}
+
+		if (venda.getDuplicata() == 1) {
+			new ControlerDuplicata().lancarDuplicataVenda(venda);
+		}
+		
+		if(venda.getCartao() == 1 || venda.getDinheiro() == 1) {
+			Caixa caixa = new Caixa();
+			caixa.setHistorico("Venda número: "+venda.getId());
+			caixa.setIdUsuario(venda.getVendedorCad());
+			caixa.setDataOperacao(venda.getDataVenda());
+			caixa.setRetirada(false);
+			caixa.setIdOperador(venda.getId());
+			if (venda.getCartao() == 1) {
+				caixa.setCartao(1);
+				caixa.setValorCartao(venda.getValCartao());
+			}
+			if (venda.getDinheiro() == 1) {
+				caixa.setDinheiro(1);
+				caixa.setValorDinheiro(venda.getValDInheiro());
+			}
+			new ControlerCaixa().lancamentoCaixa(caixa);
+		}		
 	}
 
 	public List<Venda> listarVendas() throws SQLException, NenhumaVendaRalizadaException {

@@ -24,7 +24,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerCliente;
-import com.sert.controler.ControlerUsuario;
 import com.sert.controler.Log;
 import com.sert.entidades.Cliente;
 
@@ -38,11 +37,13 @@ public class ListarCliente extends JDialog {
 	private JButton btnX;
 	private JPanel panelBtn;
 	private JButton btnEditar;
-	private JButton btnNovoUsuario;
 	private JButton btnExcluir;
 	private JTable tabCliente;
+	private int opcao;
+	private JButton btnSelecionar;
+	private Cliente cliente;
 
-	public ListarCliente() {
+	public ListarCliente(int opcao) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 834, 590);
 		setUndecorated(true);
@@ -54,6 +55,8 @@ public class ListarCliente extends JDialog {
 		contentPanel.setLayout(null);
 
 		listen();
+
+		this.opcao = opcao;
 
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);
@@ -75,8 +78,8 @@ public class ListarCliente extends JDialog {
 		panelBtn.setLayout(null);
 
 		btnEditar = new JButton();
-		btnEditar.setIcon(new ImageIcon(ListarUsu.class.getResource("/com/sert/img/btnEditarUsuario.png")));
-		btnEditar.setBounds(109, 11, 89, 91);
+		btnEditar.setIcon(new ImageIcon(ListarCliente.class.getResource("/com/sert/img/btnEditarCliente.png")));
+		btnEditar.setBounds(10, 11, 89, 91);
 		btnEditar.setBackground(Color.ORANGE);
 		btnEditar.setBorderPainted(false);
 		panelBtn.add(btnEditar);
@@ -86,29 +89,16 @@ public class ListarCliente extends JDialog {
 					int idEditar = Integer
 							.parseInt(String.valueOf(tabCliente.getValueAt(tabCliente.getSelectedRow(), 0)));
 					if (idEditar == 0) {
-						JOptionPane.showMessageDialog(null, "O usuário SertSoft não pode ser editado", "Advertência",
+						JOptionPane.showMessageDialog(null, "O cliente Consumidor não pode ser editado", "Advertência",
 								JOptionPane.WARNING_MESSAGE);
 						return;
 					}
-					new CadUsu(1, idEditar).setVisible(true);
+					new CadCliente(1, idEditar).setVisible(true);
 
 				} else {
-					JOptionPane.showMessageDialog(null, "Selecione um usuário a ser editado", "Aviso",
+					JOptionPane.showMessageDialog(null, "Selecione um cliente a ser editado", "Aviso",
 							JOptionPane.WARNING_MESSAGE);
 				}
-			}
-		});
-
-		btnNovoUsuario = new JButton();
-		btnNovoUsuario.setIcon(new ImageIcon(ListarUsu.class.getResource("/com/sert/img/btnNovoUsu.png")));
-		btnNovoUsuario.setBorderPainted(false);
-		btnNovoUsuario.setBackground(Color.GREEN);
-		btnNovoUsuario.setBounds(10, 11, 89, 91);
-		panelBtn.add(btnNovoUsuario);
-		btnNovoUsuario.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new CadUsu(0, 0).setVisible(true);
 			}
 		});
 
@@ -116,42 +106,52 @@ public class ListarCliente extends JDialog {
 		btnExcluir.setIcon(new ImageIcon(ListarUsu.class.getResource("/com/sert/img/btnExcluir.png")));
 		btnExcluir.setBorderPainted(false);
 		btnExcluir.setBackground(Color.RED);
-		btnExcluir.setBounds(208, 11, 89, 91);
+		btnExcluir.setBounds(109, 11, 89, 91);
 		panelBtn.add(btnExcluir);
 		btnExcluir.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (tabCliente.getSelectedRow() >= 0) {
-					int idUsu = Integer.parseInt(String.valueOf(tabCliente.getValueAt(tabCliente.getSelectedRow(), 0)));
-					if (idUsu == 0) {
-						JOptionPane.showMessageDialog(null, "O usuário SertSoft não pode ser excluido", "Advertência",
+					int idCliente = Integer
+							.parseInt(String.valueOf(tabCliente.getValueAt(tabCliente.getSelectedRow(), 0)));
+					if (idCliente == 0) {
+						JOptionPane.showMessageDialog(null, "O cliente Consumidor não pode ser excluido", "Advertência",
 								JOptionPane.WARNING_MESSAGE);
 						return;
 					}
 
 					try {
-						new ControlerUsuario().excluirUsuario(idUsu);
+						new ControlerCliente().excluirCliente(idCliente);
 						repagina();
 					} catch (ClassNotFoundException e1) {
 						JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes",
 								"Sistema", JOptionPane.ERROR_MESSAGE);
-						Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+						Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 					} catch (SQLException e1) {
 						JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
 								"Banco de dados", JOptionPane.ERROR_MESSAGE);
-						Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+						Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 					} catch (IOException e1) {
 						JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes",
 								"Arquivo", JOptionPane.ERROR_MESSAGE);
-						Log.gravaLog("| LISTAR USU |" + e1.getMessage());
+						Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 					}
 				} else {
-					JOptionPane.showMessageDialog(null, "Selecione um usuário a ser excluido", "Aviso",
+					JOptionPane.showMessageDialog(null, "Selecione um cliente a ser excluido", "Aviso",
 							JOptionPane.WARNING_MESSAGE);
 				}
 			}
 		});
 
+		btnSelecionar = new JButton();
+		btnSelecionar.setIcon(new ImageIcon(ListarCliente.class.getResource("/com/sert/img/btnSelecionarCliente.png")));
+		btnSelecionar.setBorderPainted(false);
+		btnSelecionar.setBackground(Color.GREEN);
+		btnSelecionar.setBounds(10, 11, 89, 91);
+		panelBtn.add(btnSelecionar);
+		
+		selecionarCliente();
+		
 		scrollPane = new JScrollPane();
 		scrollPane.setBounds(10, 156, 814, 423);
 		contentPanel.add(scrollPane);
@@ -216,6 +216,44 @@ public class ListarCliente extends JDialog {
 
 		tabCliente.revalidate();
 
+	}
+
+	public Cliente selecionarCliente() {
+		if (opcao == 1) {
+			btnEditar.setVisible(false);
+			btnExcluir.setVisible(false);
+
+			btnSelecionar.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					if(tabCliente.getSelectedRow() < 0) {
+						JOptionPane.showMessageDialog(null, "Selecione um cliente para continuar");
+						return;
+					}
+					int id = Integer.parseInt(String.valueOf(tabCliente.getValueAt(tabCliente.getSelectedRow(), 0)));
+					
+					try {
+						cliente = new ControlerCliente().consultaClienteAlter(id);
+						dispose();
+					} catch (ClassNotFoundException e1) {
+						JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
+								JOptionPane.ERROR_MESSAGE);
+						Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
+					} catch (SQLException e1) {
+						JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+								"Banco de dados", JOptionPane.ERROR_MESSAGE);
+						Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
+					} catch (IOException e1) {
+						JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes", "Arquivo",
+								JOptionPane.ERROR_MESSAGE);
+						Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
+					}
+				}
+			});
+		} else {
+			btnSelecionar.setVisible(false);
+		}	
+		return cliente;
 	}
 
 	private void listen() {

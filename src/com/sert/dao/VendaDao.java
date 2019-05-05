@@ -26,7 +26,7 @@ public class VendaDao implements IVendasDao {
 	@Override
 	public void cadastrarVenda(Venda venda) throws SQLException {
 		String sql = "INSERT INTO venda_merc(id, id_merc, quantidade, valor_un, valor_compra) VALUES (?, ?, ?, ?, ?);";
-		String sql2 = "INSERT INTO vendas(id, vendedor, cliente, data_venda, val_total, dinheiro, val_dinheiro, cartao, val_cartao, gera_id, desconto, acrescimo)	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		String sql2 = "INSERT INTO vendas(id, vendedor, cliente, data_venda, val_total, dinheiro, val_dinheiro, cartao, val_cartao, gera_id, desconto, acrescimo, duplicata, val_duplicata)	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		String seq = "ALTER SEQUENCE vendas_gera_id_seq RESTART WITH " + venda.getId();
 
 		PreparedStatement statement = con.prepareStatement(sql2);
@@ -42,6 +42,8 @@ public class VendaDao implements IVendasDao {
 		statement.setFloat(10, venda.getId());
 		statement.setFloat(11, venda.getDesconto());
 		statement.setFloat(12, venda.getAcrescimo());
+		statement.setInt(13, venda.getDuplicata());
+		statement.setFloat(14, venda.getValDuplicata());
 		statement.execute();
 
 		statement = con.prepareStatement(seq);

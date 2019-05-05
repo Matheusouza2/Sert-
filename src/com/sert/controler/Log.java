@@ -22,7 +22,7 @@ public class Log {
 		sdf.format(date);
 
 		int dia = calendar.get(GregorianCalendar.DAY_OF_MONTH);
-		int mes = calendar.get(GregorianCalendar.MONTH);
+		int mes = calendar.get(GregorianCalendar.MONTH + 1);
 		int ano = calendar.get(GregorianCalendar.YEAR);
 		int hora = calendar.get(GregorianCalendar.HOUR_OF_DAY);
 		int minuto = calendar.get(GregorianCalendar.MINUTE);
@@ -33,6 +33,7 @@ public class Log {
 		File file = new File(caminho);
 
 		FileWriter arq;
+
 		try {
 			arq = new FileWriter(file.getAbsoluteFile(), true);
 

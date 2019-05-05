@@ -2,112 +2,112 @@ package com.sert.entidades;
 
 public class Caixa {
 
-	private String dataCaixaAbertura;
-	private float valorAbertura;
-	private float totalCaixa;
-	private int usuAbertura;
-	private String usuAberturaNome;
-	private String dataCaixaFechamento;
-	private float valorFechamento;
-	private int usuFechamento;
-	private String usuFechamentoNome;
-	private int situacao;
-	
-	public Caixa() {}
-	
-	public Caixa(String dataCaixaAbertura, float valorAbertura, float totalCaixa, int usuAbertura,
-			String usuAberturaNome, String dataCaixaFechamento, float valorFechamento, int usuFechamento,
-			String usuFechamentoNome, int situacao) {
+	private String historico;
+	private int cartao;
+	private int dinheiro;
+	private float valorDinheiro;
+	private float valorCartao;
+	private int duplicata;
+	private int idOperador;
+	private int idUsuario;
+	private String dataOperacao;
+	private boolean retirada;
+
+	public Caixa() {
+	}
+
+	public Caixa(String historico, int cartao, int dinheiro, float valorDinheiro, float valorCartao, int duplicata,
+			int idOperador, int idUsuario, String dataOperacao, boolean retirada) {
 		super();
-		this.dataCaixaAbertura = dataCaixaAbertura;
-		this.valorAbertura = valorAbertura;
-		this.totalCaixa = totalCaixa;
-		this.usuAbertura = usuAbertura;
-		this.usuAberturaNome = usuAberturaNome;
-		this.dataCaixaFechamento = dataCaixaFechamento;
-		this.valorFechamento = valorFechamento;
-		this.usuFechamento = usuFechamento;
-		this.usuFechamentoNome = usuFechamentoNome;
-		this.situacao = situacao;
+		this.historico = historico;
+		this.cartao = cartao;
+		this.dinheiro = dinheiro;
+		this.valorDinheiro = valorDinheiro;
+		this.valorCartao = valorCartao;
+		this.duplicata = duplicata;
+		this.idOperador = idOperador;
+		this.idUsuario = idUsuario;
+		this.dataOperacao = dataOperacao;
+		this.retirada = retirada;
 	}
 
-	public String getDataCaixaAbertura() {
-		return dataCaixaAbertura;
+	public String getHistorico() {
+		return historico;
 	}
 
-	public void setDataCaixaAbertura(String dataCaixaAbertura) {
-		this.dataCaixaAbertura = dataCaixaAbertura;
+	public void setHistorico(String historico) {
+		this.historico = historico;
 	}
 
-	public float getValorAbertura() {
-		return valorAbertura;
+	public int getCartao() {
+		return cartao;
 	}
 
-	public void setValorAbertura(float valorAbertura) {
-		this.valorAbertura = valorAbertura;
+	public void setCartao(int cartao) {
+		this.cartao = cartao;
 	}
 
-	public float getTotalCaixa() {
-		return totalCaixa;
+	public int getDinheiro() {
+		return dinheiro;
 	}
 
-	public void setTotalCaixa(float totalCaixa) {
-		this.totalCaixa = totalCaixa;
+	public void setDinheiro(int dinheiro) {
+		this.dinheiro = dinheiro;
 	}
 
-	public int getUsuAbertura() {
-		return usuAbertura;
+	public float getValorDinheiro() {
+		return valorDinheiro;
 	}
 
-	public void setUsuAbertura(int usuAbertura) {
-		this.usuAbertura = usuAbertura;
+	public void setValorDinheiro(float valorDinheiro) {
+		this.valorDinheiro = valorDinheiro;
 	}
 
-	public String getUsuAberturaNome() {
-		return usuAberturaNome;
+	public float getValorCartao() {
+		return valorCartao;
 	}
 
-	public void setUsuAberturaNome(String usuAberturaNome) {
-		this.usuAberturaNome = usuAberturaNome;
+	public void setValorCartao(float valorCartao) {
+		this.valorCartao = valorCartao;
 	}
 
-	public String getDataCaixaFechamento() {
-		return dataCaixaFechamento;
+	public int getDuplicata() {
+		return duplicata;
 	}
 
-	public void setDataCaixaFechamento(String dataCaixaFechamento) {
-		this.dataCaixaFechamento = dataCaixaFechamento;
+	public void setDuplicata(int duplicata) {
+		this.duplicata = duplicata;
 	}
 
-	public float getValorFechamento() {
-		return valorFechamento;
+	public int getIdOperador() {
+		return idOperador;
 	}
 
-	public void setValorFechamento(float valorFechamento) {
-		this.valorFechamento = valorFechamento;
+	public void setIdOperador(int idOperador) {
+		this.idOperador = idOperador;
 	}
 
-	public int getUsuFechamento() {
-		return usuFechamento;
+	public int getIdUsuario() {
+		return idUsuario;
 	}
 
-	public void setUsuFechamento(int usuFechamento) {
-		this.usuFechamento = usuFechamento;
+	public void setIdUsuario(int idUsuario) {
+		this.idUsuario = idUsuario;
 	}
 
-	public String getUsuFechamentoNome() {
-		return usuFechamentoNome;
+	public String getDataOperacao() {
+		return dataOperacao;
 	}
 
-	public void setUsuFechamentoNome(String usuFechamentoNome) {
-		this.usuFechamentoNome = usuFechamentoNome;
+	public void setDataOperacao(String dataOperacao) {
+		this.dataOperacao = dataOperacao;
 	}
 
-	public int getSituacao() {
-		return situacao;
+	public boolean isRetirada() {
+		return retirada;
 	}
 
-	public void setSituacao(int situacao) {
-		this.situacao = situacao;
+	public void setRetirada(boolean retirada) {
+		this.retirada = retirada;
 	}
 }

@@ -143,12 +143,12 @@ public class ClienteDao implements IClienteDao {
 			cliente.setRg(result.getInt("rg"));
 			cliente.setCpf(result.getLong("cpf"));
 			cliente.setCep(result.getInt("cep"));
-			cliente.setRua(result.getString("endereco").trim());
+			cliente.setRua(result.getString("rua").trim());
 			cliente.setNumero(result.getInt("numero"));
 			cliente.setBairro(result.getString("bairro").trim());
 			cliente.setCidade(result.getString("cidade").trim());
-			cliente.setUf(result.getString("estado"));
-			cliente.setObs(result.getString("observacoes").trim());
+			cliente.setUf(result.getString("uf"));
+			cliente.setObs(result.getString("observacao").trim());
 			cliente.setContato(result.getLong("contato"));
 		}
 		return cliente;

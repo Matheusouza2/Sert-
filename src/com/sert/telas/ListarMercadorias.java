@@ -19,6 +19,7 @@ import javax.swing.JRootPane;
 import javax.swing.border.LineBorder;
 
 import com.sert.controler.ControlerMercadoria;
+import com.sert.controler.Log;
 import com.sert.entidades.Mercadoria;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.tables.TableModelMerc;
@@ -282,17 +283,21 @@ public class ListarMercadorias extends JDialog {
 			for (Mercadoria merc : preencheTable) {
 				mercadorias.add(merc);
 			}
-		} catch (ClassNotFoundException e1) {
-			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
-					JOptionPane.ERROR_MESSAGE);
+		}catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes",
+					"Sistema", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| LISTAR MERCADORIAS |" + e1.getMessage());
 		} catch (SQLException e1) {
-			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+					"Banco de dados", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| LISTAR MERCADORIAS |" + e1.getMessage());
 		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro LOG",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes",
+					"Arquivo", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| LISTAR MERCADORIAS |" + e1.getMessage());
 		} catch (NenhumaMercadoriaCadastradaException e1) {
 			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| LISTAR MERCADORIAS |"+e1.getMessage());
 		}
 
 		tabMerc.revalidate();

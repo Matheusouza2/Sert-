@@ -27,6 +27,7 @@ import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JNumberField;
+import com.sert.entidades.Cliente;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.Venda;
 import com.sert.exceptions.MercadoriaSemEstoqueException;
@@ -85,8 +86,10 @@ public class PontoDeVenda extends JDialog {
 
 	private static int item;
 	private static int idCliente = 0;
+	private static String nomeCliente;
 	private JLabel lblNewLabel;
 	private JSeparator separator_1;
+	private Cliente cliente;
 
 	public PontoDeVenda() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -95,7 +98,9 @@ public class PontoDeVenda extends JDialog {
 		setBounds(0, 0, screenSize.width, screenSize.height);
 		setModal(true);
 		setUndecorated(true);
-
+		
+		idCliente = 0;
+		
 		contentPane = new JPanel();
 		setBounds(0, 0, screenSize.width - 10, screenSize.height - 40);
 		setLocationRelativeTo(null);
@@ -226,12 +231,12 @@ public class PontoDeVenda extends JDialog {
 		panelMother.add(panelId);
 		panelId.setLayout(null);
 
-		lblCliente = new JLabel("Cliente: Consumidor");
+		lblCliente = new JLabel("Cliente: CONSUMIDOR");
 		lblCliente.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblCliente.setBounds(10, 11, 260, 14);
 		panelId.add(lblCliente);
 
-		lblCpf = new JLabel("CPF:");
+		lblCpf = new JLabel("CPF: 0");
 		lblCpf.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		lblCpf.setBounds(10, 47, 260, 14);
 		panelId.add(lblCpf);
@@ -280,11 +285,18 @@ public class PontoDeVenda extends JDialog {
 		prodVenda.getColumnModel().getColumn(7).setMaxWidth(0);
 
 		txtCodBarras.addKeyListener(new KeyAdapter() {
+
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				switch (arg0.getKeyCode()) {
 				case (KeyEvent.VK_F1):
-					// Selecionar o cliente
+					ListarCliente list = new ListarCliente(1);
+					list.setVisible(true);
+					cliente = list.selecionarCliente();
+					idCliente = cliente.getId();
+					nomeCliente = cliente.getNome();
+					lblCliente.setText("Cliente: " + cliente.getNome());
+					lblCpf.setText("CPF: " + cliente.getCpf());
 					break;
 				case (KeyEvent.VK_F2):
 					new PesqMercVenda().setVisible(true);
@@ -380,10 +392,8 @@ public class PontoDeVenda extends JDialog {
 
 			}
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MercadoriaSemEstoqueException e) {
 			JOptionPane.showMessageDialog(null, "A quantidade a ser vendida está maior do que o estoque", "AVISO",
@@ -445,8 +455,8 @@ public class PontoDeVenda extends JDialog {
 					mercFech.add(merc);
 				}
 				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), UsuLogado.getNome(), idCliente,
-						lblCliente.getText().replace("Cliente: ", ""), JDateField.getDateHoraStatic(), mercFech,
-						Float.parseFloat(String.format("%.2f", total).replace(",", ".")), 0, 0, 0, 0, 0, 0);
+						nomeCliente, JDateField.getDateHoraStatic(), mercFech,
+						Float.parseFloat(String.format("%.2f", total).replace(",", ".")), 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				new PontoDeVendaFecharVenda(venda).setVisible(true);
 			} catch (ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, e.getMessage());

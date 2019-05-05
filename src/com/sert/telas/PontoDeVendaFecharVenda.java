@@ -6,9 +6,12 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import java.awt.Color;
+import java.awt.Cursor;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
@@ -24,6 +27,8 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 
 import com.sert.controler.ControlerVenda;
+import com.sert.controler.Log;
+import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Venda;
 import com.sert.exceptions.MercadoriaNaoEncontradaException;
@@ -74,6 +79,14 @@ public class PontoDeVendaFecharVenda extends JDialog {
 	private float descVal;
 	private float desconto = 0;
 	private float acrescimo = 0;
+
+	private JLabel lblDuplicata;
+
+	private JNumberFormatField txtDuplicata;
+
+	private JTextField txtParcelas;
+
+	private JLabel lblParcelas;
 
 	public PontoDeVendaFecharVenda(Venda venda) {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -142,7 +155,7 @@ public class PontoDeVendaFecharVenda extends JDialog {
 		lblCartao = new JLabel("cartao");
 		lblCartao.setFont(new Font("Gtek Technology", Font.PLAIN, 16));
 		lblCartao.setForeground(new Color(255, 255, 0));
-		lblCartao.setBounds(173, 249, 109, 32);
+		lblCartao.setBounds(173, 235, 109, 32);
 		panelPrincipal.add(lblCartao);
 
 		txtDinheiro = new JNumberFormatField(new DecimalFormat("0.00"));
@@ -154,7 +167,7 @@ public class PontoDeVendaFecharVenda extends JDialog {
 
 		txtCartao = new JNumberFormatField(new DecimalFormat("0.00"));
 		txtCartao.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		txtCartao.setBounds(292, 254, 86, 20);
+		txtCartao.setBounds(292, 240, 86, 20);
 		panelPrincipal.add(txtCartao);
 		txtCartao.setColumns(10);
 
@@ -259,6 +272,11 @@ public class PontoDeVendaFecharVenda extends JDialog {
 			}
 		};
 
+		if (venda.getClienteCad() != 0) {
+			duplicataActive();
+			txtDuplicata.addFocusListener(focusPag);
+		}
+
 		txtCartao.addFocusListener(focusPag);
 		txtDinheiro.addFocusListener(focusPag);
 	}
@@ -290,9 +308,12 @@ public class PontoDeVendaFecharVenda extends JDialog {
 	private void pagamento() {
 		valor = Float.parseFloat(txtDinheiro.getText().replace(",", "."));
 		valorCartao = Float.parseFloat(txtCartao.getText().replace(",", "."));
+		float valorDuplicata = 0;
+		if (vendaFinal.getClienteCad() > 0)
+			valorDuplicata = Float.parseFloat(txtDuplicata.getText().replace(",", "."));
 		valorTotal = Float.parseFloat(lblValTotal.getText().replace("R$", "").replace(",", "."));
-		cartaoDinheiro = valor + valorCartao;
-		
+		cartaoDinheiro = valor + valorCartao + valorDuplicata;
+
 		if (cartaoDinheiro >= valorTotal) {
 			float troco = cartaoDinheiro - valorTotal;
 			lblValAPagar.setText("R$ 0,00");
@@ -356,22 +377,42 @@ public class PontoDeVendaFecharVenda extends JDialog {
 	}
 
 	private void finalizarVenda() {
+		float valorDuplicata = 0;
+
+		if (vendaFinal.getClienteCad() > 0) {
+			valorDuplicata = Float.parseFloat(txtDuplicata.getText().replace(",", "."));
+			if (valorDuplicata > 0 && Integer.parseInt(txtParcelas.getText().replace("", "0")) == 0) {
+				JOptionPane.showMessageDialog(null, "A quantidade de parcelas deve ser informada!", "Advertência",
+						JOptionPane.WARNING_MESSAGE);
+				return;
+			}
+		}
+
 		if ((Float.parseFloat(txtDinheiro.getText().replace(",", "."))
-				+ Float.parseFloat(txtCartao.getText().replace(",", "."))) >= valorAPagar) {
+				+ Float.parseFloat(txtCartao.getText().replace(",", "."))) + valorDuplicata >= valorAPagar) {
 			if (Float.parseFloat(txtDinheiro.getText().replace(",", ".")) > 0) {
 				vendaFinal.setDinheiro(1);
 				vendaFinal.setValDInheiro(Float.parseFloat(txtDinheiro.getText().replace(",", ".")));
 			}
 			if (Float.parseFloat(txtCartao.getText().replace(",", ".")) > 0) {
 				valorCartao = Float.parseFloat(txtCartao.getText().replace(",", "."));
-				if(valorCartao <= valorTotal) {
+				if (valorCartao <= valorAPagar) {
 					vendaFinal.setCartao(1);
 					vendaFinal.setValCartao(valorCartao);
-				}else {
+				} else {
 					JOptionPane.showMessageDialog(null, "Pagamento em cartão não permite troco");
 					return;
 				}
-				
+			}
+			if (valorDuplicata > 0) {
+				if (valorDuplicata <= valorAPagar) {
+					vendaFinal.setDuplicata(1);
+					vendaFinal.setValDuplicata(Float.parseFloat(txtDuplicata.getText().replace(",", ".")));
+					vendaFinal.setParcelasDuplicata(Integer.parseInt(txtParcelas.getText().replace(",", ".")));
+				} else {
+					JOptionPane.showMessageDialog(null, "O valor da duplicata não pode ser maior que o valor da venda");
+					return;
+				}
 			}
 			try {
 				int opcao = JOptionPane.showConfirmDialog(null, "Deseja imprimir a venda? ", "Impressão",
@@ -381,25 +422,65 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				}
 				vendaFinal.setAcrescimo(acrescimo);
 				vendaFinal.setDesconto(desconto);
+
+				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
 				new ControlerVenda().finalizarVenda(vendaFinal);
+
+				contentPanel.setCursor(Cursor.getDefaultCursor());
 				JOptionPane.showMessageDialog(null, "Venda realizada com sucesso!", "VENDA FINALIZADA",
 						JOptionPane.WARNING_MESSAGE);
 				this.dispose();
 				PontoDeVenda.liberarCaixaVenda();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (NenhumaMercadoriaCadastradaException e) {
-				e.printStackTrace();
-			} catch (MercadoriaNaoEncontradaException e) {
-				e.printStackTrace();
+			} catch (ClassNotFoundException e1) {
+				JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
+						JOptionPane.ERROR_MESSAGE);
+				Log.gravaLog("| FECHAR VENDA |" + e1.getMessage());
+			} catch (SQLException e1) {
+				JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
+						"Banco de dados", JOptionPane.ERROR_MESSAGE);
+				Log.gravaLog("| FECHAR VENDA |" + e1.getMessage());
+			} catch (IOException e1) {
+				JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes",
+						"Arquivo", JOptionPane.ERROR_MESSAGE);
+				Log.gravaLog("| FECHAR VENDA |" + e1.getMessage());
+			} catch (NenhumaMercadoriaCadastradaException e1) {
+				JOptionPane.showMessageDialog(null, e1.getMessage(), "Arquivo", JOptionPane.ERROR_MESSAGE);
+				Log.gravaLog("| FECHAR VENDA |" + e1.getMessage());
+			} catch (MercadoriaNaoEncontradaException e1) {
+				JOptionPane.showMessageDialog(null, e1.getMessage(), "Arquivo", JOptionPane.ERROR_MESSAGE);
+				Log.gravaLog("| FECHAR VENDA |" + e1.getMessage());
 			}
 		} else {
 			JOptionPane.showMessageDialog(null, "Valor pago menor que o total da venda", "VALOR INCORRETO",
 					JOptionPane.INFORMATION_MESSAGE);
 		}
+	}
+
+	private void duplicataActive() {
+		lblDuplicata = new JLabel("duplicata");
+		lblDuplicata.setForeground(Color.YELLOW);
+		lblDuplicata.setFont(new Font("Gtek Technology", Font.PLAIN, 16));
+		lblDuplicata.setBounds(99, 289, 129, 32);
+		panelPrincipal.add(lblDuplicata);
+
+		txtDuplicata = new JNumberFormatField(new DecimalFormat("0.00"));
+		txtDuplicata.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtDuplicata.setColumns(10);
+		txtDuplicata.setBounds(238, 295, 86, 20);
+		panelPrincipal.add(txtDuplicata);
+
+		txtParcelas = new JNumberField();
+		txtParcelas.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		txtParcelas.setColumns(10);
+		txtParcelas.setBounds(473, 295, 86, 20);
+		panelPrincipal.add(txtParcelas);
+
+		lblParcelas = new JLabel("parcelas");
+		lblParcelas.setForeground(Color.YELLOW);
+		lblParcelas.setFont(new Font("Gtek Technology", Font.PLAIN, 16));
+		lblParcelas.setBounds(334, 289, 129, 32);
+		panelPrincipal.add(lblParcelas);
+
 	}
 }
