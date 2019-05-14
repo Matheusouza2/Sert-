@@ -34,7 +34,7 @@ public class OpcDashBoard extends JDialog {
 	private JButton btnRelaCaixa;
 	private JButton btnListaDeFornecedores;
 	private JButton btnDebitoClientes;
-	private JButton btnContasAPagar;
+	private JButton btnLivroCaixa;
 
 	public OpcDashBoard() {
 		setFocusableWindowState(true);
@@ -95,22 +95,28 @@ public class OpcDashBoard extends JDialog {
 		btnListaDeFornecedores.setBackground(new Color(255, 255, 0));
 		btnListaDeFornecedores.setForeground(new Color(0, 0, 0));
 		btnListaDeFornecedores.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnListaDeFornecedores.setBounds(10, 188, 248, 21);
+		btnListaDeFornecedores.setBounds(10, 220, 248, 21);
 		getContentPane().add(btnListaDeFornecedores);
 
 		btnDebitoClientes = new JButton("contas a receber");
 		btnDebitoClientes.setBackground(new Color(255, 255, 0));
 		btnDebitoClientes.setForeground(new Color(0, 0, 0));
 		btnDebitoClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnDebitoClientes.setBounds(10, 220, 248, 21);
+		btnDebitoClientes.setBounds(10, 252, 248, 21);
 		getContentPane().add(btnDebitoClientes);
 
-		btnContasAPagar = new JButton("contas a pagar");
-		btnContasAPagar.setBackground(new Color(255, 255, 0));
-		btnContasAPagar.setForeground(new Color(0, 0, 0));
-		btnContasAPagar.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnContasAPagar.setBounds(10, 252, 248, 21);
-		getContentPane().add(btnContasAPagar);
+		btnLivroCaixa = new JButton("livro caixa");
+		btnLivroCaixa.setBackground(new Color(255, 255, 0));
+		btnLivroCaixa.setForeground(new Color(0, 0, 0));
+		btnLivroCaixa.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnLivroCaixa.setBounds(10, 188, 248, 21);
+		getContentPane().add(btnLivroCaixa);
+		btnLivroCaixa.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+			}
+		});
 
 		btnX = new JButton("X");
 		btnX.setBackground(Color.RED);
