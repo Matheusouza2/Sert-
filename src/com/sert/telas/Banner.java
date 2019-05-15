@@ -64,11 +64,14 @@ public class Banner extends JFrame {
 			protected Object doInBackground() throws Exception {
 				progressBar.setString("Testando conexão do banco de dados");
 				ConexaoDao.testarCon();
-				progressBar.setString("Carregando modulos internos do sistema");
+				progressBar.setString("Carregando mercadorias");
+				new ControlerVenda().atualizarCadastros();
 				ListarMercadorias.setPreencheTable(new ControlerMercadoria().listarMercadorias());
 				PesqMercVenda.setPreencheTable(new ControlerMercadoria().listarMercadorias());
-				new ControlerVenda().atualizarCadastros();
-
+				ControlerVenda.mercadorias = new ControlerMercadoria().listarMercadorias();
+				progressBar.setString("Carregando clientes");
+				progressBar.setString("Carregando modulos adicionais");
+				
 				return null;
 			}
 

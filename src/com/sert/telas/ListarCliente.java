@@ -185,6 +185,7 @@ public class ListarCliente extends JDialog {
 			Log.gravaLog("| LISTAR CLIENTE |" + e1.getMessage());
 		}
 		tabCliente = new JTable();
+		tabCliente.getTableHeader().setReorderingAllowed(false);
 		tabCliente.setModel(modelo);
 		scrollPane.setViewportView(tabCliente);
 	}

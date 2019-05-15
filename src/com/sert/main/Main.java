@@ -11,7 +11,7 @@ import com.sert.telas.Entrada;
  */
 public class Main {
 	public static void main(String[] args) {
-
+		
 		try {
 			new Entrada().setVisible(true);
 		} catch (Exception e) {

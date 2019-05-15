@@ -136,6 +136,7 @@ public class ListarNFeEntrada extends JDialog {
 		contentPanel.add(scrollPane);
 
 		table = new JTable();
+		table.getTableHeader().setReorderingAllowed(false);
 		table.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		scrollPane.setViewportView(table);

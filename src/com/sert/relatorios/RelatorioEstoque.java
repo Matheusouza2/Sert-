@@ -1,6 +1,7 @@
 package com.sert.relatorios;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,9 +17,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 
 import com.sert.controler.ControlerMercadoria;
+import com.sert.dao.RelatorioInterfaceDao;
 import com.sert.entidades.Mercadoria;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.tables.TableModelMerc;
@@ -175,6 +178,30 @@ public class RelatorioEstoque extends JDialog {
 
 		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(txtProcurar,
 				new Mercadoria());
+		
+		JButton btnImprimir = new JButton();
+		btnImprimir.setBorderPainted(false);
+		btnImprimir.setBackground(new Color(0, 128, 0));
+		btnImprimir.setBounds(109, 11, 89, 91);
+		panelBtn.add(btnImprimir);
+		btnImprimir.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+					contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+					new SwingWorker<Object, Object>(){
+						
+						@Override
+						protected Object doInBackground() throws Exception {
+							new RelatorioInterfaceDao().relEstoque();
+							return null;
+						}
+						@Override
+						protected void done() {
+							contentPanel.setCursor(Cursor.getDefaultCursor());
+						};
+					}.execute();
+			}
+		});
 
 		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
 		AdvancedTableModel<Mercadoria> mercTableModel = GlazedListsSwing

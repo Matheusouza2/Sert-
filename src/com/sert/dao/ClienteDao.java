@@ -39,11 +39,11 @@ public class ClienteDao implements IClienteDao {
 		preparador.setString(12, cliente.getObs());
 		preparador.execute();
 		preparador.close();
-		
+
 		preparador = con.prepareStatement(seq);
 		preparador.execute();
 		preparador.close();
-		
+
 	}
 
 	@Override
@@ -58,7 +58,16 @@ public class ClienteDao implements IClienteDao {
 			cliente = new Cliente();
 			cliente.setId(result.getInt("id"));
 			cliente.setNome(result.getString("nome").trim());
+			cliente.setRg(result.getInt("rg"));
 			cliente.setCpf(result.getLong("cpf"));
+			cliente.setCep(result.getInt("cep"));
+			cliente.setRua(result.getString("rua").trim());
+			cliente.setNumero(result.getInt("numero"));
+			cliente.setBairro(result.getString("bairro").trim());
+			cliente.setCidade(result.getString("cidade").trim());
+			cliente.setUf(result.getString("uf"));
+			cliente.setObs(result.getString("observacao").trim());
+			cliente.setContato(result.getLong("contato"));
 			listCliente.add(cliente);
 		}
 		return listCliente;

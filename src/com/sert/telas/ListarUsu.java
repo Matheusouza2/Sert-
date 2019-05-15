@@ -36,11 +36,11 @@ public class ListarUsu extends JDialog {
 	private JButton btnX;
 	private JPanel panelBtn;
 	private JButton btnEditar;
-	private JTable tabUsu;
+	private static JTable tabUsu;
 	private JButton btnNovoUsuario;
 	private JScrollPane scrollPane;
-	private DefaultTableModel modelo;
-	private List<Usuario> usuarios;
+	private static DefaultTableModel modelo;
+	private static List<Usuario> usuarios;
 	private JButton btnExcluir;
 
 	public ListarUsu() {
@@ -188,11 +188,12 @@ public class ListarUsu extends JDialog {
 			Log.gravaLog("| LISTAR USU |" + e1.getMessage());
 		}
 		tabUsu = new JTable();
+		tabUsu.getTableHeader().setReorderingAllowed(false);
 		tabUsu.setModel(modelo);
 		scrollPane.setViewportView(tabUsu);
 	}
 
-	private void repagina() {
+	public static void repagina() {
 		try {
 			while (tabUsu.getRowCount() > 0) {
 				modelo.removeRow(0);

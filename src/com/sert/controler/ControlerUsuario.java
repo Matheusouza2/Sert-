@@ -33,10 +33,12 @@ public class ControlerUsuario {
 	}
 
 	public void atualizarUsuario(Usuario usu) throws SQLException{
-		usuario = usuDao.consultaCad(usu.getNome());
+		usuario = consultaUsuEdit(usu.getId());
+		System.out.println(usu.getSenha());
 		if(usu.getSenha().equals("D41D8CD98F00B204E9800998ECF8427E")) {
 			usu.setSenha(usuario.getSenha());
 		}
+		System.out.println("AFTER: "+usu.getSenha());
 		usuDao.atualizar(usu);
 	}
 

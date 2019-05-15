@@ -5,10 +5,8 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
-import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
-import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.opcoes.OpcClientes;
 import com.sert.opcoes.OpcDashBoard;
 import com.sert.opcoes.OpcFerramentas;
@@ -31,9 +29,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -64,6 +60,7 @@ public class Inicio extends JDialog {
 	private JLabel lblDataHora;
 	private JLabel lblLegenda;
 	private JButton btnFuncionario;
+	private JButton btnOrcamento;
 
 	public Inicio() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -122,35 +119,19 @@ public class Inicio extends JDialog {
 		btnFiscal.setBackground(new Color(255, 204, 0));
 		btnFiscal.setBorderPainted(false);
 		btnFiscal.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/fiscalBtn.png")));
-		btnFiscal.setBounds(304, 11, 89, 91);
+		btnFiscal.setBounds(403, 11, 89, 91);
 		panelButtons.add(btnFiscal);
 
 		btnVendas = new JButton();
 		btnVendas.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				try {
-					new ControlerVenda().atualizarCadastros();
-					new PontoDeVenda().setVisible(true);
-				} catch (ClassNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (NenhumaMercadoriaCadastradaException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				new PontoDeVenda().setVisible(true);
 			}
 		});
 		btnVendas.setBackground(new Color(255, 102, 0));
 		btnVendas.setBorderPainted(false);
 		btnVendas.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/vendasBtn.png")));
-		btnVendas.setBounds(403, 11, 89, 91);
+		btnVendas.setBounds(502, 11, 89, 91);
 		panelButtons.add(btnVendas);
 
 		btnDashboard = new JButton();
@@ -163,14 +144,14 @@ public class Inicio extends JDialog {
 		btnDashboard.setBackground(new Color(51, 255, 0));
 		btnDashboard.setBorderPainted(false);
 		btnDashboard.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/dashboardBtn.png")));
-		btnDashboard.setBounds(502, 11, 89, 91);
+		btnDashboard.setBounds(601, 11, 89, 91);
 		panelButtons.add(btnDashboard);
 
 		btnSair = new JButton();
 		btnSair.setBackground(new Color(255, 0, 0));
 		btnSair.setBorderPainted(false);
 		btnSair.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/sairBtn.png")));
-		btnSair.setBounds(700, 11, 89, 91);
+		btnSair.setBounds(799, 11, 89, 91);
 		panelButtons.add(btnSair);
 		btnSair.addActionListener(new ActionListener() {
 			@Override
@@ -202,8 +183,14 @@ public class Inicio extends JDialog {
 		btnFerramentas.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFerramentas.png")));
 		btnFerramentas.setBorderPainted(false);
 		btnFerramentas.setBackground(new Color(175, 238, 238));
-		btnFerramentas.setBounds(601, 11, 89, 91);
+		btnFerramentas.setBounds(700, 11, 89, 91);
 		panelButtons.add(btnFerramentas);
+		btnFerramentas.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new OpcFerramentas().setVisible(true);
+			}
+		});
 
 		btnFuncionario = new JButton();
 		btnFuncionario.addActionListener(new ActionListener() {
@@ -216,10 +203,16 @@ public class Inicio extends JDialog {
 		btnFuncionario.setBackground(new Color(255, 245, 238));
 		btnFuncionario.setBounds(106, 11, 89, 91);
 		panelButtons.add(btnFuncionario);
-		btnFerramentas.addActionListener(new ActionListener() {
+
+		btnOrcamento = new JButton();
+		btnOrcamento.setBorderPainted(false);
+		btnOrcamento.setBackground(new Color(160, 82, 45));
+		btnOrcamento.setBounds(304, 11, 89, 91);
+		panelButtons.add(btnOrcamento);
+		btnOrcamento.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new OpcFerramentas().setVisible(true);
+				new TelaOrcamento().setVisible(true);
 			}
 		});
 

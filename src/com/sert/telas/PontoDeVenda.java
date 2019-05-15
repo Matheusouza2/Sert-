@@ -25,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
+import com.sert.controler.Log;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Cliente;
@@ -98,9 +99,9 @@ public class PontoDeVenda extends JDialog {
 		setBounds(0, 0, screenSize.width, screenSize.height);
 		setModal(true);
 		setUndecorated(true);
-		
+
 		idCliente = 0;
-		
+
 		contentPane = new JPanel();
 		setBounds(0, 0, screenSize.width - 10, screenSize.height - 40);
 		setLocationRelativeTo(null);
@@ -246,6 +247,7 @@ public class PontoDeVenda extends JDialog {
 		panelMother.add(spProdutos);
 
 		prodVenda = new JTable();
+		prodVenda.getTableHeader().setReorderingAllowed(false);
 		prodVenda.setBorder(new LineBorder(new Color(41, 171, 226)));
 		spProdutos.setViewportView(prodVenda);
 		modelo = new DefaultTableModel() {
@@ -392,26 +394,36 @@ public class PontoDeVenda extends JDialog {
 
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Valor invalido", "AVISO", JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog("| PONTO DE VENDA| " + e.getMessage());
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "AVISO",
+					JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog("| PONTO DE VENDA| " + e.getMessage());
 		} catch (MercadoriaSemEstoqueException e) {
 			JOptionPane.showMessageDialog(null, "A quantidade a ser vendida está maior do que o estoque", "AVISO",
 					JOptionPane.INFORMATION_MESSAGE);
 			txtCodBarras.setText(null);
 			txtQuant.setText("1");
+			Log.gravaLog("| PONTO DE VENDA| " + e.getMessage());
 		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, contate o suporte para auxilio", "AVISO",
+					JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog("| PONTO DE VENDA| " + e.getMessage());
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erro na escrita do arquivo, contate o suporte para auxilio", "AVISO",
+					JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog("| PONTO DE VENDA| " + e.getMessage());
 		} catch (NenhumaMercadoriaCadastradaException e) {
 			txtCodBarras.setText(null);
 			txtQuant.setText("1");
 			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog("| PONTO DE VENDA| " + e.getMessage());
 		} catch (MercadoriaSemPrecoException e) {
 			txtCodBarras.setText(null);
 			txtQuant.setText("1");
 			JOptionPane.showMessageDialog(null, e.getMessage(), "AVISO", JOptionPane.INFORMATION_MESSAGE);
+			Log.gravaLog("| PONTO DE VENDA| " + e.getMessage());
 		}
 	}
 

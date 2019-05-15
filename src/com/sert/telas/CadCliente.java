@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -36,6 +38,7 @@ import com.sert.entidades.Cliente;
 import com.sert.entidades.DuplicataCliente;
 import com.sert.exceptions.ClienteJaCadastradoException;
 import com.sert.tables.TableModelContasAReceber;
+import com.sert.tables.TableRenderer;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.FilterList;
@@ -106,7 +109,7 @@ public class CadCliente extends JDialog {
 	private JRadioButton rdbtnCnpj;
 
 	private int id;
-	private int idEdit;
+	private static int idEdit;
 
 	private ButtonGroup bg = new ButtonGroup();
 	private JPanel panelDebito;
@@ -122,8 +125,8 @@ public class CadCliente extends JDialog {
 	private JSeparator separator;
 	private JButton btnBaixarDuplicata;
 	private JButton btnVerDuplicata;
-	private JLabel lblFiltrar_1;
 	private JComboBox<String> cbFiltro;
+	private JSeparator separator_1;
 
 	// Quando a opçao for 0 será chamado o cadastro, quando a opção for 1 será
 	// chamado o editar
@@ -142,7 +145,7 @@ public class CadCliente extends JDialog {
 		listen();
 
 		this.opcao = opcao;
-		this.idEdit = idEdit;
+		CadCliente.idEdit = idEdit;
 
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);
@@ -195,26 +198,7 @@ public class CadCliente extends JDialog {
 				txtCpf.setText(ValidaCNP.geraCPF());
 			}
 		});
-		
-		lblFiltrar_1 = new JLabel("Filtrar:");
-		lblFiltrar_1.setForeground(new Color(0, 0, 128));
-		lblFiltrar_1.setFont(new Font("Tahoma", Font.BOLD, 13));
-		lblFiltrar_1.setBounds(545, 75, 57, 27);
-		panelBtn.add(lblFiltrar_1);
-		
-		cbFiltro = new JComboBox<String>();
-		cbFiltro.setBounds(596, 79, 102, 20);
-		cbFiltro.setModel(new DefaultComboBoxModel<String>(
-				new String[] { "", "A vencer", "Baixado", "Atrasado"}));
-		panelBtn.add(cbFiltro);
-		cbFiltro.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				atualizarLista(String.valueOf(cbFiltro.getSelectedItem()));				
-			}
-		});
-		
-		
+
 		try {
 			id = new ControlerCliente().confereId();
 		} catch (ClassNotFoundException e1) {
@@ -241,7 +225,6 @@ public class CadCliente extends JDialog {
 		panelForm.setLayout(null);
 
 		tabbedPane.addTab("Cadastro", null, panelForm, null);
-
 		if (opcao == 1) {
 			chamaDebitos();
 		}
@@ -536,7 +519,6 @@ public class CadCliente extends JDialog {
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
 					"Banco de dados", JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace();
 			Log.gravaLog(e.getMessage());
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, "Erro na escrita do arquivo, veja o log para mais detalhes", "Arquivo",
@@ -584,6 +566,14 @@ public class CadCliente extends JDialog {
 			txtCodCliente.setText(String.valueOf(cliente.getId()));
 			txtNome.setText(cliente.getNome());
 			txtCpf.setText(String.valueOf(cliente.getCpf()));
+			txtBairro.setText(cliente.getBairro());
+			txtCep.setText(String.valueOf(cliente.getCep()));
+			txtAreaObs.append(cliente.getObs());
+			txtCidade.setText(cliente.getCidade());
+			txtContato.setText(String.valueOf(cliente.getContato()));
+			txtEndereco.setText(cliente.getRua());
+			txtEstado.setSelectedItem(cliente.getUf());
+			txtNumero.setText(String.valueOf(cliente.getNumero()));
 
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
@@ -666,6 +656,7 @@ public class CadCliente extends JDialog {
 		tableDebitos = new JTable();
 		tableDebitos.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		tableDebitos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableDebitos.getTableHeader().setReorderingAllowed(false);
 		scrollPane.setViewportView(tableDebitos);
 
 		duplicatas = new BasicEventList<DuplicataCliente>();
@@ -689,11 +680,29 @@ public class CadCliente extends JDialog {
 			tableDebitos.getColumnModel().getColumn(6).setMinWidth(0);
 			tableDebitos.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(0);
 			tableDebitos.getTableHeader().getColumnModel().getColumn(6).setMinWidth(0);
+			tableDebitos.setDefaultRenderer(Object.class, new TableRenderer());
 
 			separator = new JSeparator();
 			separator.setBackground(new Color(0, 0, 128));
 			separator.setBounds(96, 27, 127, 2);
 			panelDebito.add(separator);
+
+			cbFiltro = new JComboBox<String>();
+			cbFiltro.setBounds(257, 7, 102, 20);
+			panelDebito.add(cbFiltro);
+			cbFiltro.setModel(new DefaultComboBoxModel<String>(new String[] { "", "A vencer", "Baixado", "Atrasado" }));
+			cbFiltro.addItemListener(new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					atualizarLista(String.valueOf(cbFiltro.getSelectedItem()));
+				}
+			});
+
+			separator_1 = new JSeparator();
+			separator_1.setOrientation(SwingConstants.VERTICAL);
+			separator_1.setBackground(Color.YELLOW);
+			separator_1.setBounds(233, 1, 1, 41);
+			panelDebito.add(separator_1);
 
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
@@ -715,7 +724,13 @@ public class CadCliente extends JDialog {
 		try {
 			duplicatas.clear();
 			for (DuplicataCliente duplicata : new ControlerDuplicata().listDuplicata()) {
-				duplicatas.add(duplicata);
+				if (duplicata.getCliente().getId() == idEdit) {
+					if (duplicata.getSituacao().equals(filtro)) {
+						duplicatas.add(duplicata);
+					} else if (filtro.equals("")) {
+						duplicatas.add(duplicata);
+					}
+				}
 			}
 
 			tableDebitos.revalidate();

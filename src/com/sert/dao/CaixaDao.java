@@ -20,7 +20,7 @@ public class CaixaDao implements ICaixaDao {
 	
 	@Override
 	public void lancamentoCaixa(Caixa caixa) throws SQLException {
-		String sql = "INSERT INTO caixa(historico, id_operador, id_usuario, data_operacao, retirada, dinheiro, val_dinheiro, cartao, val_cartao, duplicata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
+		String sql = "INSERT INTO caixa(historico, id_operador, id_usuario, data_operacao, retirada, dinheiro, val_dinheiro, cartao, val_cartao, duplicata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement prepare = con.prepareStatement(sql);
 		prepare.setString(1, caixa.getHistorico());
 		prepare.setInt(2, caixa.getIdOperador());
