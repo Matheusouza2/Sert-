@@ -198,9 +198,17 @@ public class TelaOrcamento extends JDialog {
 		});
 
 		gerarConsignacao = new JButton();
-		gerarConsignacao.setBackground(Color.GREEN);
+		gerarConsignacao.setBackground(new Color(169, 169, 169));
 		gerarConsignacao.setBounds(208, 11, 89, 91);
 		panelBtn.add(gerarConsignacao);
+		gerarConsignacao.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				for(int i = 0; i < table.getRowCount(); i++) {
+					
+				}
+			}
+		});
 
 		button_1 = new JButton();
 		button_1.setBackground(Color.GREEN);

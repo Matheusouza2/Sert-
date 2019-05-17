@@ -140,4 +140,14 @@ public class DuplicataDao implements IDuplicataDao {
 		}
 		return duplicata;
 	}
+
+	@Override
+	public void mudarStatusDuplicata(int id, String situacao) throws SQLException {
+		String sql = "UPDATE duplicatas SET situacao=? WHERE id=?;";
+		PreparedStatement statment = con.prepareStatement(sql);
+		statment.setString(1, situacao);
+		statment.setInt(2, id);
+		statment.executeUpdate();
+		statment.close();
+	}
 }

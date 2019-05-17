@@ -12,4 +12,5 @@ public interface IDuplicataDao {
 	public void baixarDuplicata(DuplicataCliente duplicata) throws SQLException;
 	public void cancelarDuplicata(int id) throws SQLException;
 	public DuplicataCliente consultarDuplicata(int id)throws SQLException;
+	public void mudarStatusDuplicata(int id, String situacao) throws SQLException;
 }

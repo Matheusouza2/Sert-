@@ -63,4 +63,8 @@ public class ControlerDuplicata {
 	public DuplicataCliente consultaDuplicata(int idDuplicata) throws SQLException {
 		return duplicataDao.consultarDuplicata(idDuplicata);
 	}
+	
+	public void alterarDuplicataStatus(int idDuplicata, String situacao) throws SQLException {
+		duplicataDao.mudarStatusDuplicata(idDuplicata, situacao);
+	}
 }

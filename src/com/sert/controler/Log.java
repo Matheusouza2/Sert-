@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.swing.JOptionPane;
@@ -15,12 +13,8 @@ public class Log {
 
 	public static void gravaLog(String avsLog) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Calendar calendar = new GregorianCalendar();
-		Date date = new Date();
-		calendar.setTime(date);
-		sdf.format(date);
-
+		
 		int dia = calendar.get(GregorianCalendar.DAY_OF_MONTH);
 		int mes = calendar.get(GregorianCalendar.MONTH + 1);
 		int ano = calendar.get(GregorianCalendar.YEAR);

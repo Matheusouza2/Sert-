@@ -15,15 +15,16 @@ public class TableRenderer extends DefaultTableCellRenderer {
 		Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
 		String status = table.getModel().getValueAt(row, 1).toString();
-		
-		System.out.println(table.getModel().getValueAt(row, 1).toString());
+		String operacao = table.getModel().getValueAt(row, 2).toString();
 
 		if (status.equals("Baixado")) {
 			comp.setBackground(Color.CYAN);
-		} else if (status.equals("Atrasada")) {
+		} else if (status.equals("Atrasada") || operacao.equals("-")) {
 			comp.setBackground(Color.RED);
+		}else if(operacao.equals("+")) {
+			comp.setBackground(Color.GREEN);
 		}else {
-			comp.setBackground(Color.gray);
+			comp.setBackground(Color.WHITE);
 		}
 
 		return comp;

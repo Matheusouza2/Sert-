@@ -690,7 +690,7 @@ public class CadCliente extends JDialog {
 			cbFiltro = new JComboBox<String>();
 			cbFiltro.setBounds(257, 7, 102, 20);
 			panelDebito.add(cbFiltro);
-			cbFiltro.setModel(new DefaultComboBoxModel<String>(new String[] { "", "A vencer", "Baixado", "Atrasado" }));
+			cbFiltro.setModel(new DefaultComboBoxModel<String>(new String[] { "", "A vencer", "Baixado", "Atrasada" }));
 			cbFiltro.addItemListener(new ItemListener() {
 				@Override
 				public void itemStateChanged(ItemEvent e) {

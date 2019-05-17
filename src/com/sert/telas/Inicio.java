@@ -205,6 +205,7 @@ public class Inicio extends JDialog {
 		panelButtons.add(btnFuncionario);
 
 		btnOrcamento = new JButton();
+		btnOrcamento.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnOrcamento.png")));
 		btnOrcamento.setBorderPainted(false);
 		btnOrcamento.setBackground(new Color(160, 82, 45));
 		btnOrcamento.setBounds(304, 11, 89, 91);
