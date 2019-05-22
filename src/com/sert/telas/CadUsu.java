@@ -555,6 +555,7 @@ public class CadUsu extends JDialog {
 					} else {
 						new ControlerUsuario().atualizarUsuario(usu);
 						JOptionPane.showMessageDialog(null, "Atualização realizada com sucesso!");
+						ListarUsu.repagina();
 						dispose();
 					}
 

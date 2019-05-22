@@ -21,7 +21,7 @@ public class ControlerVenda {
 
 	private IVendasDao vendaDao;
 	private List<Venda> vendas;
-	private static List<Mercadoria> mercadorias;
+	public static List<Mercadoria> mercadorias;
 
 	public ControlerVenda()
 			throws ClassNotFoundException, SQLException, IOException, NenhumaMercadoriaCadastradaException {

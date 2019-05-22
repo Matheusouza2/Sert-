@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.Log;
+import com.sert.dao.RelatorioInterfaceDao;
 import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Venda;
@@ -415,11 +416,6 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				}
 			}
 			try {
-				int opcao = JOptionPane.showConfirmDialog(null, "Deseja imprimir a venda? ", "Impressão",
-						JOptionPane.YES_NO_OPTION);
-				if (opcao == JOptionPane.YES_NO_OPTION) {
-					new PrintableVenda(vendaFinal);
-				}
 				vendaFinal.setAcrescimo(acrescimo);
 				vendaFinal.setDesconto(desconto);
 
@@ -428,8 +424,16 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				new ControlerVenda().finalizarVenda(vendaFinal);
 
 				contentPanel.setCursor(Cursor.getDefaultCursor());
+				
+				int opcao = JOptionPane.showConfirmDialog(null, "Deseja imprimir a venda? ", "Impressão",
+						JOptionPane.YES_NO_OPTION);
+				if (opcao == JOptionPane.YES_NO_OPTION) {
+					new RelatorioInterfaceDao().venda(vendaFinal.getId()); 
+				}
+				
 				JOptionPane.showMessageDialog(null, "Venda realizada com sucesso!", "VENDA FINALIZADA",
 						JOptionPane.WARNING_MESSAGE);
+				
 				this.dispose();
 				PontoDeVenda.liberarCaixaVenda();
 			} catch (ClassNotFoundException e1) {

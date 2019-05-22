@@ -4,18 +4,14 @@ import java.awt.BorderLayout;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import java.awt.Color;
-import java.awt.Dialog;
-import java.awt.Window;
 
 import javax.swing.border.LineBorder;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JSeparator;
-import javax.swing.JButton;
 
 public class TelaInfo extends JDialog {
 

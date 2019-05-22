@@ -1,7 +1,9 @@
 package com.sert.controler;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class JDateField {
 
@@ -25,5 +27,14 @@ public class JDateField {
 
 	public static String getDateHoraStatic() {
 		return formatadorDateHoraStatic.format(dataStatic);
+	}
+	
+	public static String getDataAFrente() {
+		Calendar calendar = new GregorianCalendar();
+		int dia = calendar.get(GregorianCalendar.DAY_OF_MONTH + 3);
+		int mes = calendar.get(GregorianCalendar.MONTH + 1);
+		int ano = calendar.get(GregorianCalendar.YEAR);
+		
+		return dia+"/"+mes+"/"+ano+" 23:59:59";
 	}
 }

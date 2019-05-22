@@ -156,6 +156,7 @@ public class Entrada extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
+							
 					entrada();
 				} catch (ClassNotFoundException e1) {
 					JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes",

@@ -195,6 +195,7 @@ public class ListarMercadorias extends JDialog {
 		spListaMerc.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
 		contentPanel.add(spListaMerc);
 		tabMerc = new JTable();
+		tabMerc.getTableHeader().setReorderingAllowed(false);
 		tabMerc.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		tabMerc.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		spListaMerc.setViewportView(tabMerc);
@@ -283,6 +284,7 @@ public class ListarMercadorias extends JDialog {
 			for (Mercadoria merc : preencheTable) {
 				mercadorias.add(merc);
 			}
+			PesqMercVenda.setPreencheTable(new ControlerMercadoria().listarMercadorias());
 		}catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes",
 					"Sistema", JOptionPane.ERROR_MESSAGE);

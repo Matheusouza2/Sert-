@@ -4,11 +4,16 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
 import javax.swing.border.LineBorder;
 
 import com.sert.relatorios.RelatorioEstoque;
@@ -50,6 +55,8 @@ public class OpcDashBoard extends JDialog {
 		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+
+		listen();
 
 		btnEstoque = new JButton("estoque");
 		btnEstoque.setBackground(new Color(255, 255, 0));
@@ -114,7 +121,7 @@ public class OpcDashBoard extends JDialog {
 		btnLivroCaixa.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+
 			}
 		});
 
@@ -141,6 +148,22 @@ public class OpcDashBoard extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				new DataPicker(DataPicker.VENDAS).setVisible(true);
 			}
+		});
+	}
+
+	private void listen() {
+
+		JRootPane escback = getRootPane();
+		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				"ESC");
+		escback.getRootPane().getActionMap().put("ESC", new AbstractAction("ESC") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+
 		});
 	}
 }

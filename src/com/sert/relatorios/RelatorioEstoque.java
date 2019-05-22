@@ -1,11 +1,10 @@
 package com.sert.relatorios;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -16,11 +15,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.LineBorder;
 
-import com.sert.controler.ControlerMercadoria;
+import com.sert.controler.ControlerVenda;
+import com.sert.dao.RelatorioInterfaceDao;
 import com.sert.entidades.Mercadoria;
-import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.tables.TableModelMerc;
 import com.sert.telas.CadMercadoria;
 
@@ -144,23 +144,10 @@ public class RelatorioEstoque extends JDialog {
 
 		mercadorias = new BasicEventList<Mercadoria>();
 
-		try {
-			for (Mercadoria mercadoria : new ControlerMercadoria().listarMercadorias()) {
-				mercadorias.add(mercadoria);
-				valTotalVolume += mercadoria.getEstoque();
-				totalVenda += mercadoria.getPrecoVenda();
-			}
-		} catch (ClassNotFoundException e1) {
-			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (SQLException e1) {
-			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro SQL",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (NenhumaMercadoriaCadastradaException e1) {
-			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+		for (Mercadoria mercadoria : ControlerVenda.mercadorias) {
+			mercadorias.add(mercadoria);
+			valTotalVolume += mercadoria.getEstoque();
+			totalVenda += mercadoria.getPrecoVenda();
 		}
 
 		scrollPane = new JScrollPane();
@@ -175,6 +162,31 @@ public class RelatorioEstoque extends JDialog {
 
 		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(txtProcurar,
 				new Mercadoria());
+
+		JButton btnImprimir = new JButton();
+		btnImprimir.setBorderPainted(false);
+		btnImprimir.setBackground(new Color(0, 128, 0));
+		btnImprimir.setBounds(109, 11, 89, 91);
+		panelBtn.add(btnImprimir);
+		btnImprimir.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+				new SwingWorker<Object, Object>() {
+
+					@Override
+					protected Object doInBackground() throws Exception {
+						new RelatorioInterfaceDao().relEstoque();
+						return null;
+					}
+
+					@Override
+					protected void done() {
+						contentPanel.setCursor(Cursor.getDefaultCursor());
+					};
+				}.execute();
+			}
+		});
 
 		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
 		AdvancedTableModel<Mercadoria> mercTableModel = GlazedListsSwing
@@ -201,28 +213,28 @@ public class RelatorioEstoque extends JDialog {
 		lblTotalDeVolumes.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblTotalDeVolumes.setBounds(10, 36, 111, 14);
 		panelValores.add(lblTotalDeVolumes);
-		
+
 		lblValTotalItens = new JLabel(String.valueOf(tabMerc.getRowCount()));
 		lblValTotalItens.setForeground(new Color(255, 255, 255));
 		lblValTotalItens.setHorizontalAlignment(SwingConstants.LEFT);
 		lblValTotalItens.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblValTotalItens.setBounds(97, 11, 136, 14);
 		panelValores.add(lblValTotalItens);
-		
+
 		lblValTotalVolumes = new JLabel(String.format("%.2f", valTotalVolume));
 		lblValTotalVolumes.setForeground(new Color(255, 255, 255));
 		lblValTotalVolumes.setHorizontalAlignment(SwingConstants.LEFT);
 		lblValTotalVolumes.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblValTotalVolumes.setBounds(115, 36, 136, 14);
 		panelValores.add(lblValTotalVolumes);
-		
+
 		lblPreoVenda = new JLabel("Preço venda:");
 		lblPreoVenda.setForeground(new Color(255, 255, 255));
 		lblPreoVenda.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblPreoVenda.setBounds(766, 12, 95, 14);
 		panelValores.add(lblPreoVenda);
-										
-		lblPrecoVenda = new JLabel(String.format("R$ %.2f",totalVenda));
+
+		lblPrecoVenda = new JLabel(String.format("R$ %.2f", totalVenda));
 		lblPrecoVenda.setForeground(new Color(255, 255, 255));
 		lblPrecoVenda.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblPrecoVenda.setBounds(846, 11, 95, 14);

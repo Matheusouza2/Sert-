@@ -27,6 +27,7 @@ import com.sert.controler.ControlerDuplicata;
 import com.sert.controler.Log;
 import com.sert.entidades.DuplicataCliente;
 import com.sert.tables.TableModelContasAReceber;
+import com.sert.tables.TableRenderer;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.FilterList;
@@ -197,6 +198,7 @@ public class ContasAReceber extends JDialog {
 			table.getColumnModel().getColumn(6).setMinWidth(0);
 			table.getTableHeader().getColumnModel().getColumn(6).setMaxWidth(0);
 			table.getTableHeader().getColumnModel().getColumn(6).setMinWidth(0);
+			table.setDefaultRenderer(Object.class, new TableRenderer());
 
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Sistema",
