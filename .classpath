@@ -10,5 +10,7 @@
 	<classpathentry kind="lib" path="lib/swingx-common-1.6.5-1.jar"/>
 	<classpathentry kind="lib" path="lib/glazedlists_java15-1.9.1.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/gson-2.8.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

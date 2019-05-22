@@ -5,6 +5,6 @@ public class UsuarioJaCadastradoException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	public UsuarioJaCadastradoException() {
-		super("JÃ¡ existe um usuario cadastrado com esse nome");
+		super("Já existe um usuario cadastrado com esse nome");
 	}
 }
