@@ -62,7 +62,7 @@ public class CaixaDao implements ICaixaDao {
 			caixa.setValorCartao(resultado.getFloat("val_cartao"));
 			caixa.setValorDinheiro(resultado.getFloat("val_dinheiro"));
 			usu.setNome(resultado.getString("nome").trim());
-			caixa.setUsuario(usu);
+			caixa.setIdUsuario(usu.getId());
 			caixaList.add(caixa);
 		}
 		return caixaList;
