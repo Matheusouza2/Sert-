@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.sert.dao.IVendasDao;
 import com.sert.dao.VendaDao;
 import com.sert.entidades.Caixa;
 import com.sert.entidades.Mercadoria;
@@ -19,7 +18,7 @@ import com.sert.telas.PesqMercVenda;
 
 public class ControlerVenda {
 
-	private IVendasDao vendaDao;
+	private VendaDao vendaDao;
 	private List<Venda> vendas;
 	public static List<Mercadoria> mercadorias;
 

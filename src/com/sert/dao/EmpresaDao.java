@@ -10,17 +10,15 @@ import java.util.List;
 
 import com.sert.entidades.Empresa;
 
-public class EmpresaDao implements IEmpresaDao{
+public class EmpresaDao {
 	private Connection con;
 	private List<Empresa> listEmpresa;
 	private Empresa empresa;
-	
-	
+
 	public EmpresaDao() throws ClassNotFoundException, SQLException, IOException {
-		con = (Connection) ConexaoDao.getInstacia().getConector(); 
+		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
-	
-	@Override
+
 	public void cadastra(Empresa empresa) throws SQLException {
 		String sql = "INSERT INTO empresa(cnpj, nome, nome_fant, rua, numero_end, bairro, cidade, uf, contato, ie) VALUES (?,?,?,?,?,?,?,?,?,?)";
 		PreparedStatement preparador = con.prepareStatement(sql);
@@ -36,17 +34,16 @@ public class EmpresaDao implements IEmpresaDao{
 		preparador.setInt(10, empresa.getIe());
 		preparador.execute();
 		preparador.close();
-		
+
 	}
 
-	@Override
 	public List<Empresa> listar() throws SQLException {
 		String sql = "SELECT * FROM empresa";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		ResultSet result = preparador.executeQuery();
-		
+
 		listEmpresa = new ArrayList<>();
-		
+
 		while (result.next()) {
 			empresa = new Empresa();
 			empresa.setCnpj(result.getLong("cnpj"));
@@ -64,7 +61,6 @@ public class EmpresaDao implements IEmpresaDao{
 		return listEmpresa;
 	}
 
-	@Override
 	public void alterar(Empresa empresa) throws SQLException {
 		String sql = "UPDATE empresa SET cnpj=?, nome=?, nome_fant=?, rua=?, numero_end=?, bairro=?, cidade=?, uf=?, contato=?, ie=? WHERE cnpj = ?";
 		PreparedStatement preparador = con.prepareStatement(sql);
@@ -82,14 +78,13 @@ public class EmpresaDao implements IEmpresaDao{
 		preparador.close();
 	}
 
-	@Override
 	public Empresa consultar(long cnpj) throws SQLException {
-		
+
 		String sql = "SELECT * FROM empresa WHERE cnpj=?";
 		PreparedStatement preparador = con.prepareStatement(sql);
 		preparador.setLong(1, cnpj);
 		ResultSet result = preparador.executeQuery();
-		
+
 		while (result.next()) {
 			empresa = new Empresa();
 			empresa.setCnpj(result.getLong("cnpj"));

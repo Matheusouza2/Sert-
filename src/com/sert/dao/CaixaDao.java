@@ -12,7 +12,7 @@ import java.util.List;
 import com.sert.entidades.Caixa;
 import com.sert.entidades.Usuario;
 
-public class CaixaDao implements ICaixaDao {
+public class CaixaDao {
 
 	Connection con;
 
@@ -20,7 +20,6 @@ public class CaixaDao implements ICaixaDao {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
 
-	@Override
 	public void lancamentoCaixa(Caixa caixa) throws SQLException {
 		String sql = "INSERT INTO caixa(historico, id_operador, id_usuario, data_operacao, retirada, dinheiro, val_dinheiro, cartao, val_cartao, duplicata) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -38,7 +37,6 @@ public class CaixaDao implements ICaixaDao {
 		prepare.close();
 	}
 
-	@Override
 	public List<Caixa> historicoCaixa(String dataInicial, String dataFinal) throws SQLException {
 		String sql = "SELECT historico, id_operador, f.nome, id_usuario, to_char(data_operacao, 'dd/MM/yyyy HH:mm:SS') data_operacao, retirada, dinheiro, val_dinheiro, cartao, val_cartao, duplicata FROM caixa cx INNER JOIN funcionario f ON f.id = cx.id_usuario WHERE data_operacao BETWEEN '"
 				+ dataInicial + " 00:00:00' AND '" + dataFinal + " 23:59:59';";
@@ -68,7 +66,6 @@ public class CaixaDao implements ICaixaDao {
 		return caixaList;
 	}
 
-	@Override
 	public Caixa confereCaixa() throws SQLException {
 
 		return null;

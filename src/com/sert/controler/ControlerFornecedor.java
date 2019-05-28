@@ -5,13 +5,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.sert.dao.FornecedorDAO;
-import com.sert.dao.IFornecedorDAO;
 import com.sert.entidades.Fornecedor;
 import com.sert.exceptions.FornecedorJaCadastradoException;
 
 public class ControlerFornecedor {
 
-	private IFornecedorDAO dao;
+	private FornecedorDAO dao;
 
 	public ControlerFornecedor() throws ClassNotFoundException, SQLException, IOException {
 		dao = new FornecedorDAO();
@@ -19,7 +18,7 @@ public class ControlerFornecedor {
 
 	public void cadadastrar(Fornecedor fornecedor) throws SQLException, FornecedorJaCadastradoException {
 		fornecedor.setId(getIdForn());
-		if (pesqFornecedor(fornecedor.getCnpjForn()).getCnpjForn() == null) 
+		if (pesqFornecedor(fornecedor.getCnpjForn()).getCnpjForn() == null)
 			dao.cadastrar(fornecedor);
 		else
 			throw new FornecedorJaCadastradoException();
@@ -41,7 +40,7 @@ public class ControlerFornecedor {
 	public Fornecedor pesqFornecedor(String cnpj) throws SQLException {
 		return dao.pesquisar(cnpj);
 	}
-	
+
 	public int getIdForn() throws SQLException {
 		return dao.recuperaId();
 	}

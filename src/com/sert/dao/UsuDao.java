@@ -14,10 +14,10 @@ import com.sert.entidades.Usuario;
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * 
  * @author Matheus Souza
- * @version 1.0.0
+ * @version 1.0.6
  * 
  */
-public class UsuDao implements IUsuDao {
+public class UsuDao{
 
 	private Connection con;
 	private Usuario usu;
@@ -27,7 +27,6 @@ public class UsuDao implements IUsuDao {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
 
-	@Override
 	public void cadastrar(Usuario usu) throws SQLException {
 		String sql = "INSERT INTO public.funcionario(nome, senha, rg, cpf, cep, endereco, numero, bairro, cidade, estado, observacoes)	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement preparador = con.prepareStatement(sql);
@@ -46,7 +45,6 @@ public class UsuDao implements IUsuDao {
 		preparador.close();
 	}
 
-	@Override
 	public List<Usuario> listar() throws SQLException {
 		String sql = "SELECT * FROM funcionario ORDER BY id ASC";
 		PreparedStatement preparador = con.prepareStatement(sql);
@@ -64,7 +62,6 @@ public class UsuDao implements IUsuDao {
 		return listUsu;
 	}
 
-	@Override
 	public void atualizar(Usuario usu) throws SQLException {
 		String sql = "UPDATE funcionario SET nome=?, senha=?, rg=?, cpf=?, cep=?, endereco=?, numero=?, bairro=?, cidade=?, estado=?, observacoes=? WHERE id=?";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -84,7 +81,6 @@ public class UsuDao implements IUsuDao {
 		prepare.close();
 	}
 
-	@Override
 	public void excluir(int id) throws SQLException {
 		String sql = "DELETE FROM funcionario WHERE id=?";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -93,7 +89,6 @@ public class UsuDao implements IUsuDao {
 		prepare.close();
 	}
 
-	@Override
 	public int confereId() throws SQLException {
 		int id = 0;
 		String sql = "SELECT last_value + 1 as id_usuario FROM funcionario_id_seq;";
@@ -106,7 +101,6 @@ public class UsuDao implements IUsuDao {
 		return id;
 	}
 
-	@Override
 	public Usuario consulta(String login, String senha) throws SQLException {
 		String sql = "SELECT * FROM funcionario WHERE nome=? AND senha=?";
 		PreparedStatement preparador = con.prepareStatement(sql);
@@ -124,7 +118,6 @@ public class UsuDao implements IUsuDao {
 		return usuario;
 	}
 
-	@Override
 	public Usuario consultaCad(String login) throws SQLException {
 		String sql = "SELECT * FROM funcionario WHERE nome=?";
 		PreparedStatement preparador = con.prepareStatement(sql);
@@ -141,7 +134,6 @@ public class UsuDao implements IUsuDao {
 		return usu;
 	}
 
-	@Override
 	public Usuario consultaAlter(int id) throws SQLException {
 		String sql = "SELECT * FROM funcionario WHERE id=?";
 		PreparedStatement preparador = con.prepareStatement(sql);

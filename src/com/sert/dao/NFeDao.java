@@ -13,7 +13,7 @@ import com.sert.entidades.Fornecedor;
 import com.sert.entidades.MercadoriaNFe;
 import com.sert.entidades.NFeEntrada;
 
-public class NFeDao implements INFeDao {
+public class NFeDao {
 
 	private Connection con;
 
@@ -21,7 +21,6 @@ public class NFeDao implements INFeDao {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
 
-	@Override
 	public void cadastrar(NFeEntrada nFeEntrada) throws SQLException {
 		String sql = "INSERT INTO nfe_compra(chave, numero, fornecedor, val_nota, data_entrada) VALUES (?, ?, ?, ?, ?)";
 		String sql2 = "INSERT INTO nfe_merc(id_nfe, id_merc, preco_compra, quant_compra) VALUES (?, ?, ?, ?)";
@@ -44,7 +43,6 @@ public class NFeDao implements INFeDao {
 		prepare.close();
 	}
 
-	@Override
 	public List<NFeEntrada> listarNota() throws SQLException {
 		String sql = "SELECT nf.id, nf.numero, nf.chave, f.nome AS nome_forn, to_char(nf.data_entrada, 'dd/MM/yyyy HH:mm:SS') data_entrada FROM nfe_compra nf INNER JOIN fornecedor f ON nf.fornecedor = f.id ORDER BY id ASC";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -66,7 +64,6 @@ public class NFeDao implements INFeDao {
 		return listNota;
 	}
 
-	@Override
 	public NFeEntrada pesq(String chave) throws SQLException {
 		String sql = "SELECT nf.chave, nf.numero, nf.fornecedor, nf.id, f.nome AS nome_forn, f.cnpj, f.ie, f.rua, f.numero_end, f.cidade, f.uf, nfm.preco_compra, nfm.quant_compra, cdm.cod_barras, cdm.nome_mercadoria FROM nfe_compra nf INNER JOIN fornecedor f ON nf.fornecedor = f.id INNER JOIN nfe_merc nfm ON nf.id = nfm.id_nfe INNER JOIN cad_mercadorias cdm ON nfm.id_merc = cdm.cod_fornecedor WHERE chave='"
 				+ chave + "'";
@@ -99,7 +96,6 @@ public class NFeDao implements INFeDao {
 		return nFeEntrada;
 	}
 
-	@Override
 	public int recuperaId() throws SQLException {
 		int id = 0;
 
@@ -114,10 +110,10 @@ public class NFeDao implements INFeDao {
 		return id;
 	}
 
-	@Override
 	public List<NFeEntrada> nfePeriodo(String dtInicial, String dtFinal) throws SQLException {
-		String sql = "SELECT nf.id, nf.numero, nf.val_nota, to_char(nf.data_entrada, 'dd/MM/yyyy') data_entrada, f.nome AS nome_forn FROM nfe_compra nf INNER JOIN fornecedor f ON nf.fornecedor = f.id WHERE data_entrada BETWEEN '"+dtInicial+"' AND '"+dtFinal+"' ORDER BY nf.id ASC;";
-		
+		String sql = "SELECT nf.id, nf.numero, nf.val_nota, to_char(nf.data_entrada, 'dd/MM/yyyy') data_entrada, f.nome AS nome_forn FROM nfe_compra nf INNER JOIN fornecedor f ON nf.fornecedor = f.id WHERE data_entrada BETWEEN '"
+				+ dtInicial + "' AND '" + dtFinal + "' ORDER BY nf.id ASC;";
+
 		List<NFeEntrada> nfeEntrada = new ArrayList<>();
 		Fornecedor fornecedor;
 		NFeEntrada entrada;
@@ -133,7 +129,7 @@ public class NFeDao implements INFeDao {
 			entrada.setFornecedor(fornecedor);
 			entrada.setValNota(resultSet.getFloat("val_nota"));
 			entrada.setDataEntrada(resultSet.getString("data_entrada"));
-			
+
 			nfeEntrada.add(entrada);
 		}
 

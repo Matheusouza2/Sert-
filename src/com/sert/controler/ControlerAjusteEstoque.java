@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.sert.dao.IMercadoriaDao;
 import com.sert.dao.MercadoriaDao;
 import com.sert.entidades.Mercadoria;
 
 public class ControlerAjusteEstoque {
 
-	IMercadoriaDao mercadoriaDao;
+	MercadoriaDao mercadoriaDao;
 
 	public ControlerAjusteEstoque() throws ClassNotFoundException, SQLException, IOException {
 		mercadoriaDao = new MercadoriaDao();

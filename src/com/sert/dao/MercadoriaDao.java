@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.sert.entidades.Mercadoria;
 
-public class MercadoriaDao implements IMercadoriaDao {
+public class MercadoriaDao {
 
 	private Connection con;
 	private List<Mercadoria> listaMercadoria;
@@ -20,7 +20,6 @@ public class MercadoriaDao implements IMercadoriaDao {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
 
-	@Override
 	public void cadastro(Mercadoria mercadoria) throws SQLException {
 		String sql = "INSERT INTO cad_mercadorias(nome_mercadoria, cod_barras, preco_venda, data_cadastro, unidade, preco_compra, usu_cad, estoque, cod_fornecedor) VALUES (?,?,?,?,?,?,?,?,?)";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -38,7 +37,6 @@ public class MercadoriaDao implements IMercadoriaDao {
 
 	}
 
-	@Override
 	public List<Mercadoria> listar() throws SQLException {
 		String sql = "SELECT * FROM cad_mercadorias ORDER BY nome_mercadoria ASC";
 
@@ -60,7 +58,6 @@ public class MercadoriaDao implements IMercadoriaDao {
 		return listaMercadoria;
 	}
 
-	@Override
 	public void alterar(Mercadoria mercadoria) throws SQLException {
 		String sql = "UPDATE cad_mercadorias SET nome_mercadoria=?, cod_barras=?, preco_venda=?, unidade=?, data_alteracao=?, preco_compra=?, usu_edit=? WHERE id=?";
 		PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -75,7 +72,6 @@ public class MercadoriaDao implements IMercadoriaDao {
 		preparedStatement.executeUpdate();
 	}
 
-	@Override
 	public void excluir(int id) throws SQLException {
 		String sql = "DELETE FROM cad_mercadorias WHERE id=?";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -84,7 +80,6 @@ public class MercadoriaDao implements IMercadoriaDao {
 		prepare.close();
 	}
 
-	@Override
 	public Mercadoria procurarMerc(long codBarras) throws SQLException {
 		String sql = "SELECT * FROM cad_mercadorias WHERE cod_barras = ?";
 
@@ -122,16 +117,15 @@ public class MercadoriaDao implements IMercadoriaDao {
 		return id;
 	}
 
-	@Override
 	public void entradaNotaEstoque(float estoque, long codBarras, long codFornecedor) throws SQLException {
-		if(codFornecedor == 0) {
+		if (codFornecedor == 0) {
 			String sql = "UPDATE cad_mercadorias SET estoque=? WHERE cod_barras=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setFloat(1, estoque);
 			preparedStatement.setLong(2, codBarras);
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
-		}else {
+		} else {
 			String sql = "UPDATE cad_mercadorias SET estoque=?, cod_fornecedor=? WHERE cod_barras=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
 			preparedStatement.setFloat(1, estoque);
@@ -141,8 +135,7 @@ public class MercadoriaDao implements IMercadoriaDao {
 			preparedStatement.close();
 		}
 	}
-	
-	@Override
+
 	public void movEstoque(float precoVenda, float estoque, long codBarras) throws SQLException {
 		String sql = "UPDATE cad_mercadorias SET estoque=?, preco_venda=? WHERE cod_barras=?";
 		PreparedStatement preparedStatement = con.prepareStatement(sql);

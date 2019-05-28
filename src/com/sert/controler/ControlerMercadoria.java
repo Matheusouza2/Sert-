@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.sert.dao.IMercadoriaDao;
 import com.sert.dao.MercadoriaDao;
 import com.sert.entidades.Mercadoria;
 import com.sert.exceptions.CodBarrasJaCadastradoException;
@@ -13,7 +12,7 @@ import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 public class ControlerMercadoria {
 
-	IMercadoriaDao mercadoriaDao;
+	MercadoriaDao mercadoriaDao;
 	private static long codBarras;
 	private List<Mercadoria> listMercConfere;
 
@@ -21,7 +20,8 @@ public class ControlerMercadoria {
 		mercadoriaDao = new MercadoriaDao();
 	}
 
-	public void cadastrarMercadoria(Mercadoria mercadoria) throws SQLException, CodBarrasJaCadastradoException, MercadoriaNaoEncontradaException {
+	public void cadastrarMercadoria(Mercadoria mercadoria)
+			throws SQLException, CodBarrasJaCadastradoException, MercadoriaNaoEncontradaException {
 		if (consultaMercadoriaCad(mercadoria.getCodBarras()).getCodBarras() == 0) {
 			mercadoriaDao.cadastro(mercadoria);
 		} else {
@@ -65,30 +65,33 @@ public class ControlerMercadoria {
 
 	public Mercadoria consultaMercadoria(long codBarras) throws SQLException, MercadoriaNaoEncontradaException {
 		ControlerMercadoria.codBarras = codBarras;
-		if(mercadoriaDao.procurarMerc(codBarras) == null)throw new MercadoriaNaoEncontradaException();
-					
+		if (mercadoriaDao.procurarMerc(codBarras) == null)
+			throw new MercadoriaNaoEncontradaException();
+
 		return mercadoriaDao.procurarMerc(codBarras);
 	}
-	
-	public Mercadoria consultaMercadoriaCad(long codBarras) throws SQLException{
-							
+
+	public Mercadoria consultaMercadoriaCad(long codBarras) throws SQLException {
+
 		return mercadoriaDao.procurarMerc(codBarras);
 	}
 
 	public int confereId() throws SQLException {
 		return mercadoriaDao.confereId();
 	}
-	
-	public void entradaMercadoria(float estoque, long codBarras, long codFornecedor) throws SQLException, MercadoriaNaoEncontradaException{
+
+	public void entradaMercadoria(float estoque, long codBarras, long codFornecedor)
+			throws SQLException, MercadoriaNaoEncontradaException {
 		Mercadoria merc = consultaMercadoria(codBarras);
 		estoque += merc.getEstoque();
 		mercadoriaDao.entradaNotaEstoque(estoque, codBarras, codFornecedor);
 	}
-	
-	public void cadastrarMercadoriaNf(Mercadoria mercadoria) throws SQLException{
+
+	public void cadastrarMercadoriaNf(Mercadoria mercadoria) throws SQLException {
 		mercadoriaDao.cadastro(mercadoria);
 	}
-	public void saidaMercadoria(float estoque, long codBarras) throws SQLException{
+
+	public void saidaMercadoria(float estoque, long codBarras) throws SQLException {
 		mercadoriaDao.entradaNotaEstoque(estoque, codBarras, 0);
 	}
 }

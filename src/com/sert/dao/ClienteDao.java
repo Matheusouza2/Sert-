@@ -10,7 +10,7 @@ import java.util.List;
 
 import com.sert.entidades.Cliente;
 
-public class ClienteDao implements IClienteDao {
+public class ClienteDao {
 	private Connection con;
 	private Cliente cliente;
 	private List<Cliente> listCliente;
@@ -18,8 +18,6 @@ public class ClienteDao implements IClienteDao {
 	public ClienteDao() throws ClassNotFoundException, SQLException, IOException {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
-
-	@Override
 
 	public void cadastrar(Cliente cliente) throws SQLException {
 		String sql = "INSERT INTO clientes(id, nome, cpf, rg, cep, rua, numero, bairro, cidade, uf, contato, observacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -46,7 +44,6 @@ public class ClienteDao implements IClienteDao {
 
 	}
 
-	@Override
 	public List<Cliente> listar() throws SQLException {
 		String sql = "SELECT * FROM clientes ORDER BY id ASC";
 		PreparedStatement preparador = con.prepareStatement(sql);
@@ -73,7 +70,6 @@ public class ClienteDao implements IClienteDao {
 		return listCliente;
 	}
 
-	@Override
 	public void atualizar(Cliente cliente) throws SQLException {
 		String sql = "UPDATE clientes SET nome=?, cpf=?, rg=?, cep=?, rua=?, numero=?, bairro=?, cidade=?, uf=?, contato=?, observacao=? WHERE id=?;";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -93,7 +89,6 @@ public class ClienteDao implements IClienteDao {
 		prepare.close();
 	}
 
-	@Override
 	public void excluir(int id) throws SQLException {
 		String sql = "DELETE FROM clientes WHERE id=?";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -102,12 +97,10 @@ public class ClienteDao implements IClienteDao {
 		prepare.close();
 	}
 
-	@Override
 	public Cliente consulta(String id, String cnpj) throws SQLException {
 		return null;
 	}
 
-	@Override
 	public int confereId() throws SQLException {
 		int id = 0;
 		String sql = "SELECT last_value + 1 as id_cliente FROM clientes_id_seq;";
@@ -120,7 +113,6 @@ public class ClienteDao implements IClienteDao {
 		return id;
 	}
 
-	@Override
 	public Cliente consultaCad(long cnpj) throws SQLException {
 		String sql = "SELECT * FROM clientes WHERE cpf=?";
 		PreparedStatement preparador = con.prepareStatement(sql);
@@ -137,7 +129,6 @@ public class ClienteDao implements IClienteDao {
 		return cliente;
 	}
 
-	@Override
 	public Cliente consultaAlter(int id) throws SQLException {
 		String sql = "SELECT * FROM clientes WHERE id=?";
 		PreparedStatement preparador = con.prepareStatement(sql);

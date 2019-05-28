@@ -5,11 +5,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.sert.dao.CaixaDao;
-import com.sert.dao.ICaixaDao;
 import com.sert.entidades.Caixa;
 
 public class ControlerCaixa {
-	ICaixaDao caixaDao;
+	CaixaDao caixaDao;
 
 	public ControlerCaixa() throws ClassNotFoundException, SQLException, IOException {
 		caixaDao = new CaixaDao();

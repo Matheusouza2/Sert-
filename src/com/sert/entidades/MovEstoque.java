@@ -1,23 +1,23 @@
 package com.sert.entidades;
 
+import java.util.List;
+
 public class MovEstoque {
 	private int id;
 	private String tipo;
-	private int funcionario;
-	private int mercadoria;
-	private float quant;
+	private Usuario usuario;
+	private List<Mercadoria> mercadorias;
 	private String data;
 
 	public MovEstoque() {
 	}
 
-	public MovEstoque(int id, String tipo, int funcionario, int mercadoria, float quant, String data) {
+	public MovEstoque(int id, String tipo, Usuario usuario, List<Mercadoria> mercadorias, String data) {
 		super();
 		this.id = id;
 		this.tipo = tipo;
-		this.funcionario = funcionario;
-		this.mercadoria = mercadoria;
-		this.quant = quant;
+		this.usuario = usuario;
+		this.mercadorias = mercadorias;
 		this.data = data;
 	}
 
@@ -37,28 +37,20 @@ public class MovEstoque {
 		this.tipo = tipo;
 	}
 
-	public int getFuncionario() {
-		return funcionario;
+	public Usuario getUsuario() {
+		return usuario;
 	}
 
-	public void setFuncionario(int funcionario) {
-		this.funcionario = funcionario;
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
-	public int getMercadoria() {
-		return mercadoria;
+	public List<Mercadoria> getMercadorias() {
+		return mercadorias;
 	}
 
-	public void setMercadoria(int mercadoria) {
-		this.mercadoria = mercadoria;
-	}
-
-	public float getQuant() {
-		return quant;
-	}
-
-	public void setQuant(float quant) {
-		this.quant = quant;
+	public void setMercadorias(List<Mercadoria> mercadorias) {
+		this.mercadorias = mercadorias;
 	}
 
 	public String getData() {

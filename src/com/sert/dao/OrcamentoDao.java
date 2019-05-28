@@ -9,7 +9,7 @@ import java.util.List;
 
 import com.sert.entidades.Orcamento;
 
-public class OrcamentoDao implements IOrcamentoDAO {
+public class OrcamentoDao {
 
 	Connection con;
 
@@ -17,7 +17,6 @@ public class OrcamentoDao implements IOrcamentoDAO {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
 
-	@Override
 	public void cadastrar(Orcamento orcamento) throws SQLException {
 		String sql = "INSERT INTO public.orcamento(id, cliente, vendedor, val_total) VALUES (?, ?, ?, ?);";
 		String sql2 = "INSERT INTO orcamento_merc(id_orcamento, id_merc, quant, val_un)	VALUES (?, ?, ?, ?);";
@@ -45,31 +44,26 @@ public class OrcamentoDao implements IOrcamentoDAO {
 		prepare.close();
 	}
 
-	@Override
 	public List<Orcamento> listar() throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void alterar(Orcamento orcamento) throws SQLException {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void excluir(int id) throws SQLException {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public Orcamento consultaOrcamentoAlt(int id) throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public int consultaIdOrcamento() throws SQLException {
 		int id = 0;
 		String sql = "SELECT last_value + 1 AS idOrcamento FROM orcamento_id_seq";

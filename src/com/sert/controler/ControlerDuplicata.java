@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.sert.dao.DuplicataDao;
-import com.sert.dao.IDuplicataDao;
 import com.sert.entidades.Caixa;
 import com.sert.entidades.Cliente;
 import com.sert.entidades.DuplicataCliente;
@@ -14,7 +13,7 @@ import com.sert.entidades.Venda;
 
 public class ControlerDuplicata {
 
-	private IDuplicataDao duplicataDao;
+	private DuplicataDao duplicataDao;
 	private Cliente cliente;
 	private Usuario usuario;
 
@@ -50,7 +49,7 @@ public class ControlerDuplicata {
 	public void baixarDuplicata(DuplicataCliente duplicata) throws SQLException, ClassNotFoundException, IOException {
 		duplicataDao.baixarDuplicata(duplicata);
 		Caixa caixa = new Caixa();
-		caixa.setHistorico("Baixa na duplicata número: "+duplicata.getId());
+		caixa.setHistorico("Baixa na duplicata número: " + duplicata.getId());
 		caixa.setDataOperacao(duplicata.getDataBaixa());
 		caixa.setValorDinheiro(duplicata.getValorBaixa());
 		caixa.setDuplicata(1);
@@ -63,7 +62,7 @@ public class ControlerDuplicata {
 	public DuplicataCliente consultaDuplicata(int idDuplicata) throws SQLException {
 		return duplicataDao.consultarDuplicata(idDuplicata);
 	}
-	
+
 	public void alterarDuplicataStatus(int idDuplicata, String situacao) throws SQLException {
 		duplicataDao.mudarStatusDuplicata(idDuplicata, situacao);
 	}

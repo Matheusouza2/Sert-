@@ -18,7 +18,7 @@ import com.sert.entidades.DuplicataCliente;
 import com.sert.entidades.Usuario;
 import com.sert.entidades.Venda;
 
-public class DuplicataDao implements IDuplicataDao {
+public class DuplicataDao {
 
 	private Connection con;
 	private List<DuplicataCliente> listDuplicata;
@@ -31,7 +31,6 @@ public class DuplicataDao implements IDuplicataDao {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
 
-	@Override
 	public void lancarDuplicata(DuplicataCliente duplicata) throws SQLException {
 		String sql = "INSERT INTO duplicatas(cliente, id_venda, valor_duplicata, situacao, data_vencimento, num_parcela, usuario_baixa, valor_baixa) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement prepare = con.prepareStatement(sql);
@@ -59,7 +58,6 @@ public class DuplicataDao implements IDuplicataDao {
 		prepare.close();
 	}
 
-	@Override
 	public List<DuplicataCliente> verDuplicatas() throws SQLException {
 		String sql = "SELECT dp.id, cl.nome as nome_cliente, cl.id as id_cliente, id_venda, valor_duplicata, situacao, to_char(v.data_venda, 'dd/MM/yyyy hh:MM:ss') data_venda, to_char(dp.data_vencimento, 'dd/MM/yyyy') data_vencimento, dp.num_parcela FROM duplicatas dp INNER JOIN clientes cl ON dp.cliente = cl.id INNER JOIN vendas v ON v.id = dp.id_venda ORDER BY data_vencimento ASC;";
 		listDuplicata = new ArrayList<DuplicataCliente>();
@@ -88,7 +86,6 @@ public class DuplicataDao implements IDuplicataDao {
 		return listDuplicata;
 	}
 
-	@Override
 	public void baixarDuplicata(DuplicataCliente duplicata) throws SQLException {
 		String sql = "UPDATE duplicatas SET situacao=?, usuario_baixa=?, data_baixa=?, valor_baixa=? WHERE id=?;";
 		PreparedStatement statment = con.prepareStatement(sql);
@@ -100,12 +97,10 @@ public class DuplicataDao implements IDuplicataDao {
 		statment.executeUpdate();
 	}
 
-	@Override
 	public void cancelarDuplicata(int id) throws SQLException {
 
 	}
 
-	@Override
 	public DuplicataCliente consultarDuplicata(int id) throws SQLException {
 		String sql = "SELECT dp.id, cl.nome as nome_cliente, cl.id as id_cliente, cl.cpf, fc.nome as nome_func, id_venda, valor_duplicata, situacao, to_char(v.data_venda, 'dd/MM/yyyy hh:MM:ss') data_venda, to_char(dp.data_vencimento, 'dd/MM/yyyy') data_vencimento, dp.num_parcela, to_char(dp.data_baixa, 'dd/MM/yyyy') data_baixa, (SELECT nome FROM funcionario WHERE id = dp.usuario_baixa), valor_baixa FROM duplicatas dp INNER JOIN clientes cl ON dp.cliente = cl.id INNER JOIN vendas v ON v.id = dp.id_venda INNER JOIN funcionario fc ON v.vendedor = fc.id WHERE dp.id = "
 				+ id;
@@ -141,7 +136,6 @@ public class DuplicataDao implements IDuplicataDao {
 		return duplicata;
 	}
 
-	@Override
 	public void mudarStatusDuplicata(int id, String situacao) throws SQLException {
 		String sql = "UPDATE duplicatas SET situacao=? WHERE id=?;";
 		PreparedStatement statment = con.prepareStatement(sql);

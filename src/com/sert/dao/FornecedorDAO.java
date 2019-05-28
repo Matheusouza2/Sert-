@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.List;
 import com.sert.entidades.Fornecedor;
 
-public class FornecedorDAO implements IFornecedorDAO {
+public class FornecedorDAO {
 
 	private Connection con;
 
@@ -16,7 +16,6 @@ public class FornecedorDAO implements IFornecedorDAO {
 		con = ConexaoDao.getInstacia().getConector();
 	}
 
-	@Override
 	public void cadastrar(Fornecedor fornecedor) throws SQLException {
 		String sql = "INSERT INTO fornecedor(id, cnpj, ie, nome, nome_fant, rua, numero_end, bairro, cidade, uf, cep, telefone, celular) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 		String seq = "ALTER SEQUENCE fornecedor_id_seq RESTART WITH " + fornecedor.getId();
@@ -37,33 +36,29 @@ public class FornecedorDAO implements IFornecedorDAO {
 		preparedStatement.setLong(13, fornecedor.getCelularForn());
 
 		preparedStatement.execute();
-		
+
 		preparedStatement = con.prepareStatement(seq);
 		preparedStatement.execute();
 		preparedStatement.close();
 	}
 
-	@Override
 	public List<Fornecedor> listar() throws SQLException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void alterar(Fornecedor fornecedor) throws SQLException {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public void excluir(int id) throws SQLException {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public Fornecedor pesquisar(String cnpj) throws SQLException {
-		String sql = "SELECT * FROM fornecedor WHERE cnpj = '" + cnpj+"'";
+		String sql = "SELECT * FROM fornecedor WHERE cnpj = '" + cnpj + "'";
 		PreparedStatement prepare = con.prepareStatement(sql);
 		Fornecedor fornecedor = new Fornecedor();
 
@@ -87,18 +82,16 @@ public class FornecedorDAO implements IFornecedorDAO {
 
 		return fornecedor;
 	}
-	
+
 	public int recuperaId() throws SQLException {
 		int id = 0;
 		String sql = "SELECT last_value + 1 AS idFornecedor FROM fornecedor_id_seq";
 		PreparedStatement preparedStatement = con.prepareStatement(sql);
 		ResultSet resultSet = preparedStatement.executeQuery();
-		while(resultSet.next()) {
+		while (resultSet.next()) {
 			id = resultSet.getInt("idFornecedor");
 		}
-		
-		return id;
-		
-	}
 
+		return id;
+	}
 }

@@ -3,12 +3,11 @@ package com.sert.controler;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import com.sert.dao.IOrcamentoDAO;
 import com.sert.dao.OrcamentoDao;
 import com.sert.entidades.Orcamento;
 
 public class ControlerOrcamento {
-	IOrcamentoDAO orcamentoDao;
+	OrcamentoDao orcamentoDao;
 	
 	public ControlerOrcamento() throws ClassNotFoundException, SQLException, IOException {
 		orcamentoDao = new OrcamentoDao();

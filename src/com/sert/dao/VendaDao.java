@@ -12,7 +12,7 @@ import java.util.List;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.Venda;
 
-public class VendaDao implements IVendasDao {
+public class VendaDao {
 
 	private Connection con;
 	private Venda venda;
@@ -23,7 +23,6 @@ public class VendaDao implements IVendasDao {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
 
-	@Override
 	public void cadastrarVenda(Venda venda) throws SQLException {
 		String sql = "INSERT INTO venda_merc(id, id_merc, quantidade, valor_un, valor_compra) VALUES (?, ?, ?, ?, ?);";
 		String sql2 = "INSERT INTO vendas(id, vendedor, cliente, data_venda, val_total, dinheiro, val_dinheiro, cartao, val_cartao, gera_id, desconto, acrescimo, duplicata, val_duplicata)	VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -63,7 +62,6 @@ public class VendaDao implements IVendasDao {
 		statement2.close();
 	}
 
-	@Override
 	public List<Venda> listarVendas() throws SQLException {
 		String sql = "SELECT v.id, f.nome as func_nome, cl.nome as cliente_nome, to_char(v.data_venda, 'dd/MM/yyyy HH:mm:SS') data_venda, v.val_total, v.acrescimo, v.desconto  FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id INNER JOIN clientes cl ON v.cliente = cl.id ORDER BY v.id DESC";
 		listVenda = new ArrayList<>();
@@ -83,18 +81,15 @@ public class VendaDao implements IVendasDao {
 		return listVenda;
 	}
 
-	@Override
 	public void alterarVenda(Venda venda) throws SQLException {
 
 	}
 
-	@Override
 	public void cancelarVenda(int id) throws SQLException {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
 	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal) throws SQLException {
 		String sql = "SELECT v.id, f.nome as func_nome, to_char(v.data_venda, 'dd/MM/yyyy HH:mm:SS') data_venda, v.val_total, v.val_dinheiro, v.val_cartao, v.acrescimo, v.desconto FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id WHERE data_venda BETWEEN '"
 				+ dtInicial + " 00:00:00' AND '" + dtFinal + " 23:59:59' ORDER BY v.id ASC;";
@@ -139,7 +134,6 @@ public class VendaDao implements IVendasDao {
 		return listVenda;
 	}
 
-	@Override
 	public int getIdVenda() throws SQLException {
 		int id = 0;
 		String sql = "SELECT last_value+1 as id_venda FROM vendas_gera_id_seq";
@@ -152,7 +146,6 @@ public class VendaDao implements IVendasDao {
 		return id;
 	}
 
-	@Override
 	public Venda imprimirVenda(int id) throws SQLException {
 		String sql = "SELECT f.nome as func_nome, cl.nome as cliente_nome, v.id, v.data_venda, v.val_total, v.acrescimo, v.desconto, v.val_dinheiro, v.val_cartao, cm.id as id_merc, cm.cod_barras, cm.nome_mercadoria, vm.valor_un, vm.quantidade FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id INNER JOIN clientes cl ON v.cliente = cl.id INNER JOIN venda_merc vm ON v.id = vm.id INNER JOIN cad_mercadorias cm ON vm.id_merc = cm.id WHERE v.id ="
 				+ id;

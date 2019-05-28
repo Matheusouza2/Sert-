@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.sert.dao.IUsuDao;
 import com.sert.dao.UsuDao;
 import com.sert.entidades.Usuario;
 import com.sert.exceptions.NenhumUsuCadException;
@@ -12,7 +11,7 @@ import com.sert.exceptions.UsuarioJaCadastradoException;
 import com.sert.exceptions.UsuarioNaoCadastradoException;
 
 public class ControlerUsuario {
-	private IUsuDao usuDao;
+	private UsuDao usuDao;
 	private Usuario usuario;
 	public ControlerUsuario() throws ClassNotFoundException, SQLException, IOException {
 		usuDao = new UsuDao();
