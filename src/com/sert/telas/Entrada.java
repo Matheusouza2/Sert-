@@ -10,7 +10,6 @@ import com.sert.controler.ControlerUsuario;
 import com.sert.controler.Log;
 import com.sert.controler.Seguranca;
 import com.sert.controler.UsuLogado;
-import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.Autocomplete;
 import com.sert.entidades.Usuario;
 import com.sert.exceptions.NenhumUsuCadException;
@@ -20,7 +19,6 @@ import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import java.awt.Font;
@@ -41,7 +39,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
-import javax.swing.JList;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -67,6 +64,7 @@ public class Entrada extends JFrame {
 	private JSeparator separator;
 	private JSeparator separator_1;
 	private JTextField txtUser;
+	private JLabel label;
 
 	public Entrada() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -123,6 +121,81 @@ public class Entrada extends JFrame {
 		lblUsuario.setBounds(175, 165, 62, 14);
 		panelLogin.add(lblUsuario);
 
+		txtUser = new JTextField();
+		txtUser.setBounds(243, 160, 132, 28);
+		txtUser.setBackground(new Color(255, 255, 0));
+		txtUser.setBorder(null);
+		panelLogin.add(txtUser);
+		txtUser.setColumns(10);
+		txtUser.setFocusTraversalKeysEnabled(false);
+		
+		List<Usuario> usuList;
+		ArrayList<String> listNomes = new ArrayList<String>();
+		try {
+			usuList = new ControlerUsuario().listarUsuario();
+			for (Usuario usu : usuList) {
+				listNomes.add(usu.getNome());
+			}
+		} catch (ClassNotFoundException e2) {
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Usuário",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ENTRADA |" + e2.getMessage());
+		} catch (SQLException e2) {
+			JOptionPane.showMessageDialog(null,
+					"O banco de dados encontrou um problema ao ser aberto \n" + e2.getMessage(),
+					"ERRO DE BANCO DE DADOS", JOptionPane.ERROR_MESSAGE);
+		} catch (NenhumUsuCadException e2) {
+			JOptionPane.showMessageDialog(null, e2.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e2) {
+			JOptionPane.showMessageDialog(null, "Erro de arquivo, veja o log para mais detalhes", "Usuário",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ENTRADA |" + e2.getMessage());
+		}
+
+		new Autocomplete(txtUser, this, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
+			public boolean wordTyped(String typedWord) {
+				setDictionary(listNomes);
+
+				return super.wordTyped(typedWord);
+			}
+		};
+		separator = new JSeparator();
+		separator.setBackground(new Color(0, 0, 255));
+		separator.setToolTipText("");
+		separator.setForeground(Color.WHITE);
+		separator.setBounds(175, 188, 200, 2);
+		panelLogin.add(separator);
+
+		lblSenha = new JLabel("Senha:");
+		lblSenha.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblSenha.setBounds(175, 257, 54, 14);
+		panelLogin.add(lblSenha);
+
+		pwdUsu = new JPasswordField();
+		pwdUsu.setBackground(Color.YELLOW);
+		pwdUsu.setBounds(227, 250, 148, 28);
+		pwdUsu.setBorder(null);
+		panelLogin.add(pwdUsu);
+
+		separator_1 = new JSeparator();
+		separator_1.setToolTipText("");
+		separator_1.setForeground(Color.WHITE);
+		separator_1.setBackground(new Color(0, 0, 205));
+		separator_1.setBounds(175, 278, 200, 2);
+		panelLogin.add(separator_1);
+
+		btnX = new JButton("X");
+		btnX.setForeground(Color.WHITE);
+		btnX.setBounds(501, 11, 42, 23);
+		btnX.setBackground(Color.RED);
+		panelLogin.add(btnX);
+		btnX.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+
 		btnEntrar = new JButton("Entrar");
 		btnEntrar.setForeground(new Color(0, 0, 0));
 		btnEntrar.setBackground(Color.WHITE);
@@ -154,85 +227,12 @@ public class Entrada extends JFrame {
 			}
 		});
 
-		lblSenha = new JLabel("Senha");
-		lblSenha.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblSenha.setBounds(248, 225, 54, 14);
-		panelLogin.add(lblSenha);
-		separator = new JSeparator();
-		separator.setBackground(new Color(0, 0, 255));
-		separator.setToolTipText("");
-		separator.setForeground(Color.WHITE);
-		separator.setBounds(175, 188, 200, 2);
-		panelLogin.add(separator);
-
-		separator_1 = new JSeparator();
-		separator_1.setToolTipText("");
-		separator_1.setForeground(Color.WHITE);
-		separator_1.setBackground(new Color(0, 0, 205));
-		separator_1.setBounds(202, 278, 146, 2);
-		panelLogin.add(separator_1);
-
-		pwdUsu = new JPasswordField();
-		pwdUsu.setBounds(202, 250, 146, 28);
-		panelLogin.add(pwdUsu);
-
-		btnX = new JButton("X");
-		btnX.setForeground(Color.WHITE);
-		btnX.setBounds(501, 11, 42, 23);
-		btnX.setBackground(Color.RED);
-		panelLogin.add(btnX);
-		btnX.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-
 		lblVersao = new JLabel("Versão 1.0.5");
-		lblVersao.setFont(new Font("Tahoma", Font.PLAIN, 9));
+		lblVersao.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblVersao.setBounds(244, 375, 62, 14);
 		panelLogin.add(lblVersao);
 
-		txtUser = new JTextField();
-		txtUser.setBounds(241, 160, 134, 28);
-		txtUser.setBackground(new Color(255, 255, 0));
-		txtUser.setBorder(null);
-		panelLogin.add(txtUser);
-		txtUser.setColumns(10);
-		txtUser.setFocusTraversalKeysEnabled(false);
-
-		List<Usuario> usuList;
-		ArrayList<String> listNomes = new ArrayList<String>();
-		try {
-			usuList = new ControlerUsuario().listarUsuario();
-			for (Usuario usu : usuList) {
-				listNomes.add(usu.getNome());
-			}
-		} catch (ClassNotFoundException e2) {
-			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Usuário",
-					JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| ENTRADA |" + e2.getMessage());
-		} catch (SQLException e2) {
-			JOptionPane.showMessageDialog(null,
-					"O banco de dados encontrou um problema ao ser aberto \n" + e2.getMessage(),
-					"ERRO DE BANCO DE DADOS", JOptionPane.ERROR_MESSAGE);
-		} catch (NenhumUsuCadException e2) {
-			JOptionPane.showMessageDialog(null, e2.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e2) {
-			JOptionPane.showMessageDialog(null, "Erro de arquivo, veja o log para mais detalhes", "Usuário",
-					JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| ENTRADA |" + e2.getMessage());
-		}
-
-		new Autocomplete(txtUser, this, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
-			public boolean wordTyped(String typedWord) {
-				setDictionary(listNomes);
-
-				return super.wordTyped(typedWord);
-			}
-		};
-
-		JLabel label = new JLabel("");
+		label = new JLabel("");
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/entrada.png")));
 		label.setBounds(0, 0, 550, 400);

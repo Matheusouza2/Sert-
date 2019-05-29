@@ -151,13 +151,13 @@ public class CadUsu extends JDialog {
 		panelPermissoes.setLayout(null);
 
 		tabbedPane.addTab("Cadastro", null, panelForm, null);
-		// tabbedPane.addTab("Permissões", null, panelPermissoes, null);
+		tabbedPane.addTab("Permissões", null, panelPermissoes, null);
 		tabbedPane.setEnabledAt(0, true);
 
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Funcionarios",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel.setBounds(184, 11, 126, 126);
+		panel.setBounds(183, 147, 126, 126);
 		panelPermissoes.add(panel);
 		panel.setLayout(null);
 
@@ -181,7 +181,7 @@ public class CadUsu extends JDialog {
 		panel_1.setLayout(null);
 		panel_1.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Produto",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_1.setBounds(339, 11, 126, 126);
+		panel_1.setBounds(338, 147, 126, 126);
 		panelPermissoes.add(panel_1);
 
 		JCheckBox checkBox = new JCheckBox("Cadastrar");
@@ -204,7 +204,7 @@ public class CadUsu extends JDialog {
 		panel_2.setLayout(null);
 		panel_2.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Clientes",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_2.setBounds(29, 11, 126, 126);
+		panel_2.setBounds(28, 147, 126, 126);
 		panelPermissoes.add(panel_2);
 
 		JCheckBox checkBox_4 = new JCheckBox("Cadastrar");
@@ -227,7 +227,7 @@ public class CadUsu extends JDialog {
 		panel_3.setLayout(null);
 		panel_3.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Fiscal",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_3.setBounds(494, 11, 126, 126);
+		panel_3.setBounds(493, 147, 126, 126);
 		panelPermissoes.add(panel_3);
 
 		JCheckBox checkBox_8 = new JCheckBox("Cadastrar");
@@ -250,7 +250,7 @@ public class CadUsu extends JDialog {
 		panel_4.setLayout(null);
 		panel_4.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Or\u00E7amento",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_4.setBounds(649, 11, 126, 126);
+		panel_4.setBounds(648, 147, 126, 126);
 		panelPermissoes.add(panel_4);
 
 		JCheckBox checkBox_12 = new JCheckBox("Cadastrar");
@@ -273,7 +273,7 @@ public class CadUsu extends JDialog {
 		panel_5.setLayout(null);
 		panel_5.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Vendas",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_5.setBounds(29, 148, 126, 126);
+		panel_5.setBounds(28, 284, 126, 126);
 		panelPermissoes.add(panel_5);
 
 		JCheckBox checkBox_16 = new JCheckBox("Cadastrar");
@@ -296,7 +296,7 @@ public class CadUsu extends JDialog {
 		panel_6.setLayout(null);
 		panel_6.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Dashboard",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_6.setBounds(184, 148, 126, 126);
+		panel_6.setBounds(183, 284, 126, 126);
 		panelPermissoes.add(panel_6);
 
 		JCheckBox checkBox_20 = new JCheckBox("Cadastrar");
@@ -319,7 +319,7 @@ public class CadUsu extends JDialog {
 		panel_7.setLayout(null);
 		panel_7.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Ferramentas",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_7.setBounds(339, 148, 126, 126);
+		panel_7.setBounds(338, 284, 126, 126);
 		panelPermissoes.add(panel_7);
 
 		JCheckBox checkBox_24 = new JCheckBox("Cadastrar");
@@ -337,6 +337,20 @@ public class CadUsu extends JDialog {
 		JCheckBox checkBox_27 = new JCheckBox("Listar");
 		checkBox_27.setBounds(6, 45, 97, 23);
 		panel_7.add(checkBox_27);
+		
+		JPanel panel_8 = new JPanel();
+		panel_8.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Permiss\u00F5es rapidas", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panel_8.setBounds(28, 11, 281, 125);
+		panelPermissoes.add(panel_8);
+		panel_8.setLayout(null);
+		
+		JCheckBox chckbxPdv = new JCheckBox("PDV");
+		chckbxPdv.setBounds(6, 17, 54, 23);
+		panel_8.add(chckbxPdv);
+		
+		JCheckBox chckbxEntradaDeMercadorias = new JCheckBox("Entrada de mercadorias");
+		chckbxEntradaDeMercadorias.setBounds(6, 43, 151, 23);
+		panel_8.add(chckbxEntradaDeMercadorias);
 
 		lblCodigoCliente = new JLabel("Codigo Funcionario:");
 		lblCodigoCliente.setBounds(10, 14, 111, 14);
