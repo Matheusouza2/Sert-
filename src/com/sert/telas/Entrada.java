@@ -11,6 +11,7 @@ import com.sert.controler.Log;
 import com.sert.controler.Seguranca;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.AutoCompletion;
+import com.sert.editableFields.Autocomplete;
 import com.sert.entidades.Usuario;
 import com.sert.exceptions.NenhumUsuCadException;
 import com.sert.exceptions.UsuarioNaoCadastradoException;
@@ -31,6 +32,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JSeparator;
@@ -38,6 +40,8 @@ import javax.swing.KeyStroke;
 import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
 import javax.swing.SwingConstants;
+import javax.swing.JTextField;
+import javax.swing.JList;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -50,13 +54,11 @@ public class Entrada extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private JPanel panelBanner;
 	private JPanel panelLogin;
 	private JLabel lblUsuario;
 	private JLabel lblSenha;
 	private JLabel lblVersao;
 
-	private JComboBox<String> txtUser;
 	private JPasswordField pwdUsu;
 
 	private JButton btnEntrar;
@@ -64,8 +66,7 @@ public class Entrada extends JFrame {
 
 	private JSeparator separator;
 	private JSeparator separator_1;
-	private JLabel lblLogo;
-	private JLabel lblLogo2;
+	private JTextField txtUser;
 
 	public Entrada() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,81 +83,57 @@ public class Entrada extends JFrame {
 
 		listen();
 
-		panelBanner = new JPanel();
-		panelBanner.setBackground(new Color(0, 0, 128));
-		panelBanner.setBounds(0, 0, 210, 400);
-
-		contentPane.add(panelBanner);
-		panelBanner.setLayout(null);
-
-		lblLogo = new JLabel("");
-		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
-		lblLogo.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/Logo.png")));
-		lblLogo.setBounds(10, 11, 190, 168);
-		panelBanner.add(lblLogo);
-
-		lblLogo2 = new JLabel("");
-		lblLogo2.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/Logo2.png")));
-		lblLogo2.setBounds(10, 279, 190, 75);
-		panelBanner.add(lblLogo2);
-
 		panelLogin = new JPanel();
-		panelLogin.setBackground(new Color(255, 255, 0));
-		panelLogin.setBounds(210, 0, 340, 400);
+		panelLogin.setBounds(0, 0, 550, 400);
 		contentPane.add(panelLogin);
 		panelLogin.setLayout(null);
 
-		txtUser = new JComboBox<String>();
-		txtUser.setEditable(true);
-		txtUser.setVisible(true);
-		txtUser.setBounds(107, 160, 146, 28);
-		panelLogin.add(txtUser);
+//		txtUser = new JComboBox<String>();
+//		txtUser.setEditable(true);
+//		txtUser.setVisible(true);
+//		txtUser.setBounds(107, 160, 146, 28);
+//		panelLogin.add(txtUser);
+//
+//		List<Usuario> usuList;
+//		try {
+//			usuList = new ControlerUsuario().listarUsuario();
+//			for (int i = 0; i < usuList.size(); i++) {
+//				txtUser.addItem(usuList.get(i).getNome());
+//				txtUser.setSelectedItem(null);
+//			}
+//			AutoCompletion.enable(txtUser);
+//		} catch (ClassNotFoundException e2) {
+//			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Usuário",
+//					JOptionPane.ERROR_MESSAGE);
+//			Log.gravaLog("| ENTRADA |" + e2.getMessage());
+//		} catch (SQLException e2) {
+//			JOptionPane.showMessageDialog(null,
+//					"O banco de dados encontrou um problema ao ser aberto \n" + e2.getMessage(),
+//					"ERRO DE BANCO DE DADOS", JOptionPane.ERROR_MESSAGE);
+//		} catch (NenhumUsuCadException e2) {
+//			JOptionPane.showMessageDialog(null, e2.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
+//		} catch (IOException e2) {
+//			JOptionPane.showMessageDialog(null, "Erro de arquivo, veja o log para mais detalhes", "Usuário",
+//					JOptionPane.ERROR_MESSAGE);
+//			Log.gravaLog("| ENTRADA |" + e2.getMessage());
+//		}
 
-		List<Usuario> usuList;
-		try {
-			usuList = new ControlerUsuario().listarUsuario();
-			for (int i = 0; i < usuList.size(); i++) {
-				txtUser.addItem(usuList.get(i).getNome());
-				txtUser.setSelectedItem(null);
-			}
-			AutoCompletion.enable(txtUser);
-		} catch (ClassNotFoundException e2) {
-			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Usuário",
-					JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| ENTRADA |" + e2.getMessage());
-		} catch (SQLException e2) {
-			JOptionPane.showMessageDialog(null,
-					"O banco de dados encontrou um problema ao ser aberto \n" + e2.getMessage(),
-					"ERRO DE BANCO DE DADOS", JOptionPane.ERROR_MESSAGE);
-		} catch (NenhumUsuCadException e2) {
-			JOptionPane.showMessageDialog(null, e2.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
-		} catch (IOException e2) {
-			JOptionPane.showMessageDialog(null, "Erro de arquivo, veja o log para mais detalhes", "Usuário",
-					JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| ENTRADA |" + e2.getMessage());
-		}
-
-		lblUsuario = new JLabel("Usuario");
+		lblUsuario = new JLabel("Usuário:");
 		lblUsuario.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblUsuario.setBounds(149, 135, 62, 14);
+		lblUsuario.setBounds(175, 165, 62, 14);
 		panelLogin.add(lblUsuario);
-
-		lblSenha = new JLabel("Senha");
-		lblSenha.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblSenha.setBounds(153, 225, 54, 14);
-		panelLogin.add(lblSenha);
 
 		btnEntrar = new JButton("Entrar");
 		btnEntrar.setForeground(new Color(0, 0, 0));
 		btnEntrar.setBackground(Color.WHITE);
-		btnEntrar.setBounds(136, 325, 89, 23);
+		btnEntrar.setBounds(230, 325, 89, 23);
 		btnEntrar.setRequestFocusEnabled(true);
 		panelLogin.add(btnEntrar);
 		btnEntrar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-							
+
 					entrada();
 				} catch (ClassNotFoundException e1) {
 					JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes",
@@ -176,27 +153,32 @@ public class Entrada extends JFrame {
 				}
 			}
 		});
+
+		lblSenha = new JLabel("Senha");
+		lblSenha.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblSenha.setBounds(248, 225, 54, 14);
+		panelLogin.add(lblSenha);
 		separator = new JSeparator();
 		separator.setBackground(new Color(0, 0, 255));
 		separator.setToolTipText("");
 		separator.setForeground(Color.WHITE);
-		separator.setBounds(107, 188, 146, 2);
+		separator.setBounds(175, 188, 200, 2);
 		panelLogin.add(separator);
 
 		separator_1 = new JSeparator();
 		separator_1.setToolTipText("");
 		separator_1.setForeground(Color.WHITE);
 		separator_1.setBackground(new Color(0, 0, 205));
-		separator_1.setBounds(107, 278, 146, 2);
+		separator_1.setBounds(202, 278, 146, 2);
 		panelLogin.add(separator_1);
 
 		pwdUsu = new JPasswordField();
-		pwdUsu.setBounds(107, 250, 146, 28);
+		pwdUsu.setBounds(202, 250, 146, 28);
 		panelLogin.add(pwdUsu);
 
 		btnX = new JButton("X");
 		btnX.setForeground(Color.WHITE);
-		btnX.setBounds(284, 11, 46, 23);
+		btnX.setBounds(501, 11, 42, 23);
 		btnX.setBackground(Color.RED);
 		panelLogin.add(btnX);
 		btnX.addActionListener(new ActionListener() {
@@ -206,10 +188,55 @@ public class Entrada extends JFrame {
 			}
 		});
 
-		lblVersao = new JLabel("Versão 1.0.4");
+		lblVersao = new JLabel("Versão 1.0.5");
 		lblVersao.setFont(new Font("Tahoma", Font.PLAIN, 9));
-		lblVersao.setBounds(268, 375, 62, 14);
+		lblVersao.setBounds(244, 375, 62, 14);
 		panelLogin.add(lblVersao);
+
+		txtUser = new JTextField();
+		txtUser.setBounds(241, 160, 134, 28);
+		txtUser.setBackground(new Color(255, 255, 0));
+		txtUser.setBorder(null);
+		panelLogin.add(txtUser);
+		txtUser.setColumns(10);
+		txtUser.setFocusTraversalKeysEnabled(false);
+
+		List<Usuario> usuList;
+		ArrayList<String> listNomes = new ArrayList<String>();
+		try {
+			usuList = new ControlerUsuario().listarUsuario();
+			for (Usuario usu : usuList) {
+				listNomes.add(usu.getNome());
+			}
+		} catch (ClassNotFoundException e2) {
+			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes", "Usuário",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ENTRADA |" + e2.getMessage());
+		} catch (SQLException e2) {
+			JOptionPane.showMessageDialog(null,
+					"O banco de dados encontrou um problema ao ser aberto \n" + e2.getMessage(),
+					"ERRO DE BANCO DE DADOS", JOptionPane.ERROR_MESSAGE);
+		} catch (NenhumUsuCadException e2) {
+			JOptionPane.showMessageDialog(null, e2.getMessage(), "Usuario", JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e2) {
+			JOptionPane.showMessageDialog(null, "Erro de arquivo, veja o log para mais detalhes", "Usuário",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("| ENTRADA |" + e2.getMessage());
+		}
+
+		new Autocomplete(txtUser, this, null, Color.WHITE.brighter(), Color.BLUE, Color.RED, 0.75f) {
+			public boolean wordTyped(String typedWord) {
+				setDictionary(listNomes);
+
+				return super.wordTyped(typedWord);
+			}
+		};
+
+		JLabel label = new JLabel("");
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/entrada.png")));
+		label.setBounds(0, 0, 550, 400);
+		panelLogin.add(label);
 	}
 
 	private void listen() {
@@ -258,7 +285,7 @@ public class Entrada extends JFrame {
 			UsuLogado.setNome("ADMIN");
 			new Banner().setVisible(true);
 		} else {
-			String login = txtUser.getSelectedItem().toString();
+			String login = txtUser.getText();
 			senha = Seguranca.criptografar(senha);
 			Usuario usu = new ControlerUsuario().login(login, senha);
 			if (usu.getId() >= 0) {

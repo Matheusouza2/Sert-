@@ -11,7 +11,6 @@ import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,7 @@ import com.sert.controler.DeserializableNfe;
 import com.sert.controler.JDateField;
 import com.sert.controler.Log;
 import com.sert.controler.UsuLogado;
-import com.sert.editableFields.AutoCompleteDecoratorCombo;
+import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Empresa;
@@ -54,7 +53,6 @@ import com.sert.exceptions.MercadoriaNaoEncontradaException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
 import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -120,8 +118,8 @@ public class ImportXml extends JDialog {
 	private JLabel lblIe;
 	private JLabel lblCnpj;
 
-	private JComboBox cbMercRef;
-	private JComboBox cbMercDesc;
+	private JComboBox<Long> cbMercRef;
+	private JComboBox<String> cbMercDesc;
 
 	private List<Mercadoria> mercList;
 	private JLabel lblAtenoAoCadastrar;
@@ -409,25 +407,17 @@ public class ImportXml extends JDialog {
 		lblAtenoAoCadastrar.setBounds(926, 62, 344, 57);
 		panelForm.add(lblAtenoAoCadastrar);
 
-		cbMercDesc = new JComboBox();
-		cbMercRef = new JComboBox();
+		cbMercDesc = new JComboBox<String>();
+		cbMercRef = new JComboBox<Long>();
 
-		AutoCompleteDecoratorCombo.decorate(cbMercDesc);
-		AutoCompleteDecoratorCombo.decorate(cbMercRef);
-		DefaultComboBoxModel model = (DefaultComboBoxModel) cbMercDesc.getModel();
-		DefaultComboBoxModel model1 = (DefaultComboBoxModel) cbMercRef.getModel();
-		model.removeAllElements();
-		model1.removeAllElements();
-		cbMercDesc.addItem("");
-		cbMercRef.addItem("");
 		try {
 			mercList = new ControlerMercadoria().listarMercadorias();
-			for (int i = 0; i < mercList.size(); i++) {
-				model.addElement(mercList.get(i).getMercadoria());
-				model1.addElement(mercList.get(i).getCodBarras());
+			for (Mercadoria merc : mercList) {
+				cbMercDesc.addItem(merc.getMercadoria());
+				cbMercRef.addItem(merc.getCodBarras());
 			}
-			cbMercDesc.setModel(model);
-			cbMercRef.setModel(model1);
+			AutoCompletion.enable(cbMercDesc);
+			AutoCompletion.enable(cbMercRef);
 		} catch (ClassNotFoundException | NenhumaMercadoriaCadastradaException | SQLException | IOException e1) {
 			e1.printStackTrace();
 		}
@@ -509,7 +499,9 @@ public class ImportXml extends JDialog {
 					int resposta = JOptionPane.showConfirmDialog(null,
 							"O destinatario desta nota possui um CNPJ diferente do seu, deseja continuar mesmo assim ?",
 							"CNPJ divergente", JOptionPane.YES_NO_OPTION);
-					if (resposta == JOptionPane.NO_OPTION) {
+					if (resposta == JOptionPane.YES_OPTION) {
+						importaNota();
+					}else {
 						return;
 					}
 				} else {
