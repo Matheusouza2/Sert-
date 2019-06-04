@@ -67,7 +67,7 @@ import javax.swing.JSeparator;
  * @version 1.0.5
  * 
  */
-public class CadCliente extends JDialog {
+public class CadCliente extends JDialog implements ActionListener, FocusListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -271,23 +271,7 @@ public class CadCliente extends JDialog {
 		txtCep.setBounds(589, 59, 115, 20);
 		panelForm.add(txtCep);
 		txtCep.setColumns(10);
-		txtCep.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				if (!txtCep.getText().replace("     -   ", "").isEmpty()) {
-					ConsultaCep consulta = new ConsultaCep(txtCep.getText().replace("-", ""));
-					txtBairro.setText(consulta.getBairro());
-					txtCidade.setText(consulta.getCidade());
-					txtEndereco.setText(consulta.getLogradouro());
-					txtEstado.setSelectedItem(consulta.getEstado());
-				}
-			}
-
-			@Override
-			public void focusGained(FocusEvent arg0) {
-
-			}
-		});
+		txtCep.addFocusListener(this);
 
 		lblEndereco = new JLabel("Endereço:");
 		lblEndereco.setBounds(10, 115, 58, 14);
@@ -373,101 +357,13 @@ public class CadCliente extends JDialog {
 		bg.add(rdbtnCnpj);
 		bg.add(rdbtnCpf);
 
-		rdbtnCnpj.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				panelForm.remove(txtCpf);
-				lblCpf.setText("CNPJ: ");
-				txtCpf = new JDocumentFormatedField().getCnpj();
-				txtCpf.setBounds(406, 14, 115, 20);
-				txtCpf.setColumns(10);
-				panelForm.add(txtCpf);
-				lblRg.setText("IE: ");
-				txtCpf.addFocusListener(new FocusListener() {
-					@Override
-					public void focusLost(FocusEvent arg0) {
-						if (rdbtnCnpj.isSelected()) { // Validação do CNPJ
-							String cnpj = txtCpf.getText().replace(".", "").replace("-", "").replace("/", "")
-									.replace(" ", "");
-							if (!cnpj.isEmpty()) {
-								if (cnpj.length() == 14) {
-									if (!ValidaCNP.isValidCNPJ(cnpj)) {
-										JOptionPane.showMessageDialog(null, "O CNPJ digitado é invalido");
-										cnpj = null;
-										txtCpf.setText(null);
-									}
-								} else {
-									cnpj = null;
-									txtCpf.setText(null);
-								}
-							}
-						}
-					}
+		rdbtnCnpj.addActionListener(this);
 
-					@Override
-					public void focusGained(FocusEvent arg0) {
-					}
-				});
-			}
-		});
+		rdbtnCpf.addActionListener(this);
 
-		rdbtnCpf.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				panelForm.remove(txtCpf);
-				lblCpf.setText("CPF: ");
-				txtCpf = new JDocumentFormatedField().getCpf();
-				txtCpf.setBounds(406, 14, 115, 20);
-				txtCpf.setColumns(10);
-				panelForm.add(txtCpf);
-				lblRg.setText("RG: ");
-				txtCpf.addFocusListener(new FocusListener() {
-					@Override
-					public void focusLost(FocusEvent arg0) {
-						if (rdbtnCpf.isSelected()) { // Validação do CPF
-							String cpf = txtCpf.getText().replace(".", "").replace("-", "").replace(" ", "");
-							if (!cpf.isEmpty()) {
-								if (cpf.length() == 11) {
-									if (!ValidaCNP.isValidCPF(cpf)) {
-										JOptionPane.showMessageDialog(null, "O CPF digitado é invalido");
-										cpf = null;
-										txtCpf.setText(null);
-									}
-								} else {
-									cpf = null;
-									txtCpf.setText(null);
-								}
-							}
-						}
-					}
+		txtNome.addFocusListener(this);
 
-					@Override
-					public void focusGained(FocusEvent arg0) {
-					}
-				});
-			}
-		});
-
-		txtNome.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				if (txtNome.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(null, "O cliente deve ter um nome", "Advertência",
-							JOptionPane.WARNING_MESSAGE);
-					txtNome.requestFocus();
-				}
-			}
-
-			@Override
-			public void focusGained(FocusEvent arg0) {
-			}
-		});
-
-		btnSalvar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				cadastrarCliente();
-			}
-		});
+		btnSalvar.addActionListener(this);
 
 		if (opcao == 1) {
 			atualizarCliente();
@@ -598,38 +494,14 @@ public class CadCliente extends JDialog {
 		btnBaixarDuplicata.setBackground(new Color(173, 255, 47));
 		btnBaixarDuplicata.setBounds(208, 11, 89, 91);
 		panelBtn.add(btnBaixarDuplicata);
-		btnBaixarDuplicata.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				if (tableDebitos.getSelectedRow() >= 0) {
-					if (tableDebitos.getValueAt(tableDebitos.getSelectedRow(), 1).equals("Baixado")) {
-						JOptionPane.showMessageDialog(null, "Parcela já baixada");
-						return;
-					}
-					int idParcela = duplicatas.get(tableDebitos.getSelectedRow()).getId();
-					new BaixarParcela(idParcela, 0, false).setVisible(true);
-				} else {
-					JOptionPane.showMessageDialog(null, "Selecione uma duplicata para baixar");
-				}
-			}
-		});
+		btnBaixarDuplicata.addActionListener(this);
 
 		btnVerDuplicata = new JButton();
 		btnVerDuplicata.setIcon(new ImageIcon(ContasAReceber.class.getResource("/com/sert/img/btnVerDuplicata.png")));
 		btnVerDuplicata.setBackground(new Color(255, 99, 71));
 		btnVerDuplicata.setBounds(307, 11, 89, 91);
 		panelBtn.add(btnVerDuplicata);
-		btnVerDuplicata.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (tableDebitos.getSelectedRow() >= 0) {
-					int idParcela = (int) tableDebitos.getValueAt(tableDebitos.getSelectedRow(), 6);
-					new BaixarParcela(idParcela, 1, true).setVisible(true);
-				} else {
-					JOptionPane.showMessageDialog(null, "Selecione uma duplicata para ser vizualizada");
-				}
-			}
-		});
+		btnVerDuplicata.addActionListener(this);
 
 		panelDebito = new JPanel();
 		panelDebito.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
@@ -754,5 +626,104 @@ public class CadCliente extends JDialog {
 		JRootPane escback = getRootPane();
 		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
 				"ESCAPE");
+	}
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+
+	}
+
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		if (arg0.getSource() == txtCep) {
+			if (!txtCep.getText().replace("     -   ", "").isEmpty()) {
+				ConsultaCep consulta = new ConsultaCep(txtCep.getText().replace("-", ""));
+				txtBairro.setText(consulta.getBairro());
+				txtCidade.setText(consulta.getCidade());
+				txtEndereco.setText(consulta.getLogradouro());
+				txtEstado.setSelectedItem(consulta.getEstado());
+			}
+		} else if (arg0.getSource() == txtCpf) {
+			if (rdbtnCnpj.isSelected()) { // Validação do CNPJ
+				String cnpj = txtCpf.getText().replace(".", "").replace("-", "").replace("/", "").replace(" ", "");
+				if (!cnpj.isEmpty()) {
+					if (cnpj.length() == 14) {
+						if (!ValidaCNP.isValidCNPJ(cnpj)) {
+							JOptionPane.showMessageDialog(null, "O CNPJ digitado é invalido");
+							cnpj = null;
+							txtCpf.setText(null);
+						}
+					} else {
+						cnpj = null;
+						txtCpf.setText(null);
+					}
+				}
+			} // Fim da validação do CNPJ
+			else if (rdbtnCpf.isSelected()) { // Validação do CPF
+				String cpf = txtCpf.getText().replace(".", "").replace("-", "").replace(" ", "");
+				if (!cpf.isEmpty()) {
+					if (cpf.length() == 11) {
+						if (!ValidaCNP.isValidCPF(cpf)) {
+							JOptionPane.showMessageDialog(null, "O CPF digitado é invalido");
+							cpf = null;
+							txtCpf.setText(null);
+						}
+					} else {
+						cpf = null;
+						txtCpf.setText(null);
+					}
+				}
+			} // Fim da validação do CPF
+		} else if (arg0.getSource() == txtNome) {
+			if (txtNome.getText().isEmpty()) {
+				JOptionPane.showMessageDialog(null, "O cliente deve ter um nome", "Advertência",
+						JOptionPane.WARNING_MESSAGE);
+				txtNome.requestFocus();
+			}
+		}
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnVerDuplicata) {
+			if (tableDebitos.getSelectedRow() >= 0) {
+				int idParcela = (int) tableDebitos.getValueAt(tableDebitos.getSelectedRow(), 6);
+				new BaixarParcela(idParcela, 1, true).setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(null, "Selecione uma duplicata para ser vizualizada");
+			}
+		} else if (e.getSource() == btnBaixarDuplicata) {
+			if (tableDebitos.getSelectedRow() >= 0) {
+				if (tableDebitos.getValueAt(tableDebitos.getSelectedRow(), 1).equals("Baixado")) {
+					JOptionPane.showMessageDialog(null, "Parcela já baixada");
+					return;
+				}
+				int idParcela = duplicatas.get(tableDebitos.getSelectedRow()).getId();
+				new BaixarParcela(idParcela, 0, false).setVisible(true);
+			} else {
+				JOptionPane.showMessageDialog(null, "Selecione uma duplicata para baixar");
+			}
+		} else if (e.getSource() == rdbtnCpf) {
+			panelForm.remove(txtCpf);
+			lblCpf.setText("CPF: ");
+			txtCpf = new JDocumentFormatedField().getCpf();
+			txtCpf.setBounds(406, 14, 115, 20);
+			txtCpf.setColumns(10);
+			panelForm.add(txtCpf);
+			lblRg.setText("RG: ");
+			txtCpf.addFocusListener(this);
+		} else if (e.getSource() == rdbtnCnpj) {
+			panelForm.remove(txtCpf);
+			lblCpf.setText("CNPJ: ");
+			txtCpf = new JDocumentFormatedField().getCnpj();
+			txtCpf.setBounds(406, 14, 115, 20);
+			txtCpf.setColumns(10);
+			panelForm.add(txtCpf);
+			lblRg.setText("IE: ");
+			txtCpf.addFocusListener(this);
+		} else if (e.getSource() == btnSalvar) {
+			cadastrarCliente();
+		}
 	}
 }
