@@ -36,6 +36,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerCliente;
+import com.sert.controler.ControlerConsignacao;
 import com.sert.controler.ControlerOrcamento;
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.ControlerVenda;
@@ -198,14 +199,52 @@ public class TelaOrcamento extends JDialog {
 		});
 
 		gerarConsignacao = new JButton();
-		gerarConsignacao.setBackground(new Color(169, 169, 169));
+		gerarConsignacao.setIcon(new ImageIcon(TelaOrcamento.class.getResource("/com/sert/img/btnConsignacao.png")));
+		gerarConsignacao.setBackground(new Color(173, 216, 230));
 		gerarConsignacao.setBounds(208, 11, 89, 91);
 		panelBtn.add(gerarConsignacao);
 		gerarConsignacao.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				for(int i = 0; i < table.getRowCount(); i++) {
-					
+				int opcao = JOptionPane.showConfirmDialog(null, "Deseja gerar uma consignação deste orçamento?",
+						"Consignação", JOptionPane.YES_NO_OPTION);
+				if (opcao == JOptionPane.YES_OPTION) {
+					Orcamento consignacao = new Orcamento();
+					List<Mercadoria> listMerc = new ArrayList<>();
+					Mercadoria merc = new Mercadoria();
+					Cliente cliente = new Cliente();
+					Usuario usu = new Usuario();
+					float valTotal = 0;
+					usu.setId(Integer.parseInt(txtCodVendedor.getText()));
+					cliente.setId(Integer.parseInt(txtCodCliente.getText()));
+					for (int i = 0; i < table.getRowCount(); i++) {
+						merc.setId((int) table.getValueAt(i, 0));
+						merc.setEstoque(Float
+								.parseFloat(table.getValueAt(i, 4).toString().replace("R$", "").replace(",", ".")));
+						merc.setPrecoVenda(Float.parseFloat(table.getValueAt(i, 3).toString().replace("R$", "").replace(",", ".")));
+						listMerc.add(merc);
+						valTotal += Float
+								.parseFloat(table.getValueAt(i, 5).toString().replace("R$", "").replace(",", "."));
+					}
+					try {
+						consignacao.setId(new ControlerConsignacao().retornarId());
+						consignacao.setUsuario(usu);
+						consignacao.setCliente(cliente);
+						consignacao.setMercadorias(listMerc);
+						consignacao.setValTotal(valTotal);
+						new ControlerConsignacao().lancarConsignacao(consignacao);
+						
+						JOptionPane.showMessageDialog(null, "Consignação gerada com sucesso!");
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -671,6 +710,8 @@ public class TelaOrcamento extends JDialog {
 					mercadoria.setPrecoVenda(
 							Float.parseFloat(table.getValueAt(i, 3).toString().replace(",", ".").replace("R$", "")));
 					mercadoria.setEstoque(Float.parseFloat(table.getValueAt(i, 4).toString()));
+					valTotal += Float.parseFloat(table.getValueAt(i, 5).toString());
+
 					mercadorias.add(mercadoria);
 				}
 				orcamento.setId(id);

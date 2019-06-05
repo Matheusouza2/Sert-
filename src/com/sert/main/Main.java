@@ -3,6 +3,7 @@ package com.sert.main;
 import com.sert.telas.CadCliente;
 import com.sert.telas.CadMercadoria;
 import com.sert.telas.Entrada;
+import com.sert.telas.Inicio;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -27,7 +28,7 @@ import com.sert.telas.Entrada;
 public class Main {
 	public static void main(String[] args) {
 		try {
-			new CadCliente(0, 0).setVisible(true);
+			new Entrada().setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -128,7 +128,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 	private JComboBox<String> cbFiltro;
 	private JSeparator separator_1;
 	private JSeparator separatorId;
-	private JSeparator separator_2;
+	private JSeparator separatorEndereco;
 
 	// Quando a opçao for 0 será chamado o cadastro, quando a opção for 1 será
 	// chamado o editar
@@ -232,6 +232,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		}
 
 		lblCodigoCliente = new JLabel("Codigo Cliente:");
+		lblCodigoCliente.setForeground(new Color(128, 128, 128));
 		lblCodigoCliente.setBounds(10, 14, 97, 14);
 		panelForm.add(lblCodigoCliente);
 
@@ -244,11 +245,13 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtCodCliente.setText(String.valueOf(id));
 
 		lblCpf = new JLabel("CPF:");
+		lblCpf.setForeground(new Color(128, 128, 128));
 		lblCpf.setBounds(369, 17, 46, 14);
 		panelForm.add(lblCpf);
 		panelForm.add(txtCpf);
 
 		lblRg = new JLabel("RG:");
+		lblRg.setForeground(new Color(128, 128, 128));
 		lblRg.setBounds(573, 17, 38, 14);
 		panelForm.add(lblRg);
 
@@ -258,22 +261,24 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtRg.setColumns(10);
 
 		lblNome = new JLabel("Nome:");
+		lblNome.setForeground(new Color(128, 128, 128));
 		lblNome.setBounds(10, 62, 38, 14);
 		panelForm.add(lblNome);
 
 		txtNome = new JTextField();
-		txtNome.setBackground(new Color(240,240,240));
+		txtNome.setBackground(new Color(240, 240, 240));
 		txtNome.setBorder(null);
 		txtNome.setBounds(58, 59, 458, 20);
 		panelForm.add(txtNome);
 		txtNome.setColumns(10);
-		
+
 		JSeparator separatorNome = new JSeparator();
 		separatorNome.setBackground(new Color(0, 0, 128));
-		separatorNome.setBounds(58, 80, 458, 2);
+		separatorNome.setBounds(10, 80, 506, 2);
 		panelForm.add(separatorNome);
 
 		lblCep = new JLabel("CEP:");
+		lblCep.setForeground(new Color(128, 128, 128));
 		lblCep.setBounds(549, 62, 30, 14);
 		panelForm.add(lblCep);
 
@@ -284,17 +289,19 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtCep.addFocusListener(this);
 
 		lblEndereco = new JLabel("Endereço:");
+		lblEndereco.setForeground(new Color(128, 128, 128));
 		lblEndereco.setBounds(10, 115, 58, 14);
 		panelForm.add(lblEndereco);
 
 		txtEndereco = new JTextField();
 		txtEndereco.setBounds(78, 112, 434, 20);
 		txtEndereco.setBorder(null);
-		txtEndereco.setBackground(new Color(240,240,240));
+		txtEndereco.setBackground(new Color(240, 240, 240));
 		panelForm.add(txtEndereco);
 		txtEndereco.setColumns(10);
 
 		lblNumero = new JLabel("Numero:");
+		lblNumero.setForeground(new Color(128, 128, 128));
 		lblNumero.setBounds(549, 115, 58, 14);
 		panelForm.add(lblNumero);
 
@@ -304,6 +311,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtNumero.setColumns(10);
 
 		lblBairro = new JLabel("Bairro:");
+		lblBairro.setForeground(new Color(128, 128, 128));
 		lblBairro.setBounds(10, 157, 38, 14);
 		panelForm.add(lblBairro);
 
@@ -313,6 +321,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtBairro.setColumns(10);
 
 		lblCidade = new JLabel("Cidade:");
+		lblCidade.setForeground(new Color(128, 128, 128));
 		lblCidade.setBounds(304, 157, 46, 14);
 		panelForm.add(lblCidade);
 
@@ -322,6 +331,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtCidade.setColumns(10);
 
 		lblEstado = new JLabel("Estado:");
+		lblEstado.setForeground(new Color(128, 128, 128));
 		lblEstado.setBounds(520, 157, 46, 14);
 		panelForm.add(lblEstado);
 
@@ -333,6 +343,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		panelForm.add(txtEstado);
 
 		lblContato = new JLabel("Contato:");
+		lblContato.setForeground(new Color(128, 128, 128));
 		lblContato.setBounds(10, 198, 61, 14);
 		panelForm.add(lblContato);
 
@@ -342,14 +353,17 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtContato.setColumns(10);
 
 		lblUsuario = new JLabel("Usuario:" + UsuLogado.getNome());
+		lblUsuario.setForeground(new Color(128, 128, 128));
 		lblUsuario.setBounds(322, 297, 198, 14);
 		panelForm.add(lblUsuario);
 
 		lblDataDeInclusao = new JLabel("Data de inclusão: " + JDateField.getDate());
+		lblDataDeInclusao.setForeground(new Color(128, 128, 128));
 		lblDataDeInclusao.setBounds(589, 297, 215, 14);
 		panelForm.add(lblDataDeInclusao);
 
 		lblObservacoes = new JLabel("Observações:");
+		lblObservacoes.setForeground(new Color(128, 128, 128));
 		lblObservacoes.setBounds(10, 297, 95, 14);
 		panelForm.add(lblObservacoes);
 
@@ -368,16 +382,16 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 
 		bg.add(rdbtnCnpj);
 		bg.add(rdbtnCpf);
-		
+
 		separatorId = new JSeparator();
 		separatorId.setBackground(new Color(0, 0, 128));
-		separatorId.setBounds(105, 32, 58, 2);
+		separatorId.setBounds(10, 32, 153, 2);
 		panelForm.add(separatorId);
-		
-		separator_2 = new JSeparator();
-		separator_2.setBackground(new Color(0, 0, 128));
-		separator_2.setBounds(78, 132, 434, 2);
-		panelForm.add(separator_2);
+
+		separatorEndereco = new JSeparator();
+		separatorEndereco.setBackground(new Color(0, 0, 128));
+		separatorEndereco.setBounds(10, 132, 502, 2);
+		panelForm.add(separatorEndereco);
 
 		rdbtnCnpj.addActionListener(this);
 
