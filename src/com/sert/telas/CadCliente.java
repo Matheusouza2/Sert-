@@ -127,6 +127,8 @@ public class CadCliente extends JDialog {
 	private JButton btnVerDuplicata;
 	private JComboBox<String> cbFiltro;
 	private JSeparator separator_1;
+	private JSeparator separatorId;
+	private JSeparator separator_2;
 
 	// Quando a opçao for 0 será chamado o cadastro, quando a opção for 1 será
 	// chamado o editar
@@ -235,6 +237,7 @@ public class CadCliente extends JDialog {
 
 		txtCodCliente = new JTextField();
 		txtCodCliente.setEnabled(false);
+		txtCodCliente.setBorder(null);
 		txtCodCliente.setBounds(105, 11, 58, 20);
 		panelForm.add(txtCodCliente);
 		txtCodCliente.setColumns(10);
@@ -259,9 +262,16 @@ public class CadCliente extends JDialog {
 		panelForm.add(lblNome);
 
 		txtNome = new JTextField();
+		txtNome.setBackground(new Color(240,240,240));
+		txtNome.setBorder(null);
 		txtNome.setBounds(58, 59, 458, 20);
 		panelForm.add(txtNome);
 		txtNome.setColumns(10);
+		
+		JSeparator separatorNome = new JSeparator();
+		separatorNome.setBackground(new Color(0, 0, 128));
+		separatorNome.setBounds(58, 80, 458, 2);
+		panelForm.add(separatorNome);
 
 		lblCep = new JLabel("CEP:");
 		lblCep.setBounds(549, 62, 30, 14);
@@ -295,6 +305,8 @@ public class CadCliente extends JDialog {
 
 		txtEndereco = new JTextField();
 		txtEndereco.setBounds(78, 112, 434, 20);
+		txtEndereco.setBorder(null);
+		txtEndereco.setBackground(new Color(240,240,240));
 		panelForm.add(txtEndereco);
 		txtEndereco.setColumns(10);
 
@@ -372,6 +384,16 @@ public class CadCliente extends JDialog {
 
 		bg.add(rdbtnCnpj);
 		bg.add(rdbtnCpf);
+		
+		separatorId = new JSeparator();
+		separatorId.setBackground(new Color(0, 0, 128));
+		separatorId.setBounds(105, 32, 58, 2);
+		panelForm.add(separatorId);
+		
+		separator_2 = new JSeparator();
+		separator_2.setBackground(new Color(0, 0, 128));
+		separator_2.setBounds(78, 132, 434, 2);
+		panelForm.add(separator_2);
 
 		rdbtnCnpj.addActionListener(new ActionListener() {
 			@Override

@@ -35,7 +35,7 @@ import java.net.URL;
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * 
  * @author Matheus Souza
- * @version 1.0.0
+ * @version 1.1.0
  * 
  */
 public class Inicio extends JDialog {
@@ -80,7 +80,7 @@ public class Inicio extends JDialog {
 		listen();
 
 		panelButtons = new JPanel();
-		panelButtons.setBackground(new Color(0, 0, 153));
+		panelButtons.setBackground(new Color(0, 85, 254));
 		panelButtons.setBounds(10, 11, 1344, 113);
 		contentPane.add(panelButtons);
 		panelButtons.setLayout(null);
@@ -88,7 +88,7 @@ public class Inicio extends JDialog {
 		btnClientes = new JButton();
 		btnClientes.setBackground(new Color(255, 0, 102));
 		btnClientes.setBorderPainted(false);
-		btnClientes.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/usersBtn.png")));
+		btnClientes.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnCliente.png")));
 		btnClientes.setBounds(7, 11, 89, 91);
 		panelButtons.add(btnClientes);
 		btnClientes.addActionListener(new ActionListener() {
@@ -218,7 +218,6 @@ public class Inicio extends JDialog {
 		});
 
 		panelUsados = new JPanel();
-		panelUsados.setBackground(new Color(41, 171, 226));
 		panelUsados.setBounds(10, 135, 1344, 622);
 		contentPane.add(panelUsados);
 		panelUsados.setLayout(null);
@@ -231,7 +230,7 @@ public class Inicio extends JDialog {
 		panelUsados.add(lblSert);
 
 		btnTrocaUsu = new JButton();
-		btnTrocaUsu.setBackground(new Color(41, 171, 226));
+		btnTrocaUsu.setBackground(new Color(0, 219, 241));
 		btnTrocaUsu.setBorderPainted(false);
 		btnTrocaUsu.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnTrocaUsuario.png")));
 		btnTrocaUsu.setBounds(1081, 530, 231, 81);
@@ -245,20 +244,26 @@ public class Inicio extends JDialog {
 		});
 
 		lblBemVindoa = new JLabel("Bem vindo (a): " + UsuLogado.getNome());
+		lblBemVindoa.setHorizontalAlignment(SwingConstants.CENTER);
 		lblBemVindoa.setForeground(Color.WHITE);
 		lblBemVindoa.setFont(new Font("Tahoma", Font.BOLD, 18));
-		lblBemVindoa.setBounds(629, 552, 442, 14);
+		lblBemVindoa.setBounds(451, 102, 442, 20);
 		panelUsados.add(lblBemVindoa);
+		
+				lblLegenda = new JLabel("F1 - Empresa | F2 - Pesquisar Preço");
+				lblLegenda.setBounds(10, 11, 564, 14);
+				panelUsados.add(lblLegenda);
 
 		lblBanner = new JLabel("");
 		lblBanner.setHorizontalAlignment(SwingConstants.CENTER);
 		lblBanner.setIcon(new ImageIcon("C:\\Sert+\\img\\BannerInicio.png"));
 		lblBanner.setBounds(0, 0, 1344, 590);
 		panelUsados.add(lblBanner);
-
-		lblLegenda = new JLabel("F2 - Pesquisa preço");
-		lblLegenda.setBounds(10, 11, 258, 14);
-		panelUsados.add(lblLegenda);
+		
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/backEntrada.png")));
+		lblNewLabel.setBounds(0, 0, 1344, 622);
+		panelUsados.add(lblNewLabel);
 	}
 
 	private void listen() {

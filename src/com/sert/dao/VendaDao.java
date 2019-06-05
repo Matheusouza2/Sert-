@@ -70,11 +70,11 @@ public class VendaDao {
 		while (resultSet.next()) {
 			venda = new Venda();
 			venda.setId(resultSet.getInt("id"));
-			venda.setVendedor(resultSet.getString("func_nome"));
-			venda.setCliente(resultSet.getString("cliente_nome"));
+			venda.setVendedor(resultSet.getString("func_nome").trim());
+			venda.setCliente(resultSet.getString("cliente_nome").trim());
 			venda.setAcrescimo(resultSet.getFloat("acrescimo"));
 			venda.setDesconto(resultSet.getFloat("desconto"));
-			venda.setDataVenda(resultSet.getString("data_venda"));
+			venda.setDataVenda(resultSet.getString("data_venda").trim());
 			venda.setValTotal(resultSet.getFloat("val_total"));
 			listVenda.add(venda);
 		}
@@ -157,10 +157,10 @@ public class VendaDao {
 		while (resultado.next()) {
 			venda = new Venda();
 			mercadoria = new Mercadoria();
-			venda.setVendedor(resultado.getString("func_nome"));
-			venda.setCliente(resultado.getString("cliente_nome"));
+			venda.setVendedor(resultado.getString("func_nome").trim());
+			venda.setCliente(resultado.getString("cliente_nome").trim());
 			venda.setId(resultado.getInt("id"));
-			venda.setDataVenda(resultado.getString("data_venda"));
+			venda.setDataVenda(resultado.getString("data_venda").trim());
 			venda.setValTotal(resultado.getFloat("val_total"));
 			venda.setValDInheiro(resultado.getFloat("val_dinheiro"));
 			venda.setValCartao(resultado.getFloat("val_cartao"));
@@ -168,7 +168,7 @@ public class VendaDao {
 			venda.setDesconto(resultado.getFloat("desconto"));
 			mercadoria.setId(resultado.getInt("id_merc"));
 			mercadoria.setCodBarras(resultado.getLong("cod_barras"));
-			mercadoria.setMercadoria(resultado.getString("nome_mercadoria"));
+			mercadoria.setMercadoria(resultado.getString("nome_mercadoria").trim());
 			mercadoria.setPrecoVenda(resultado.getFloat("valor_un"));
 			mercadoria.setEstoque(resultado.getFloat("quantidade"));
 			mercadorias.add(mercadoria);

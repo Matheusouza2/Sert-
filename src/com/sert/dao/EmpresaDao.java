@@ -47,13 +47,13 @@ public class EmpresaDao {
 		while (result.next()) {
 			empresa = new Empresa();
 			empresa.setCnpj(result.getLong("cnpj"));
-			empresa.setNome(result.getString("nome"));
-			empresa.setNomeFant(result.getString("nome_fant"));
-			empresa.setRua(result.getString("rua"));
+			empresa.setNome(result.getString("nome").trim());
+			empresa.setNomeFant(result.getString("nome_fant").trim());
+			empresa.setRua(result.getString("rua").trim());
 			empresa.setNumero(result.getInt("numero_end"));
-			empresa.setBairro(result.getString("bairro"));
-			empresa.setCidade(result.getString("cidade"));
-			empresa.setUf(result.getString("uf"));
+			empresa.setBairro(result.getString("bairro").trim());
+			empresa.setCidade(result.getString("cidade").trim());
+			empresa.setUf(result.getString("uf").trim());
 			empresa.setContato(result.getLong("contato"));
 			empresa.setIe(result.getInt("ie"));
 			listEmpresa.add(empresa);
@@ -88,13 +88,13 @@ public class EmpresaDao {
 		while (result.next()) {
 			empresa = new Empresa();
 			empresa.setCnpj(result.getLong("cnpj"));
-			empresa.setNome(result.getString("nome"));
-			empresa.setNomeFant(result.getString("nome_fant"));
-			empresa.setRua(result.getString("rua"));
+			empresa.setNome(result.getString("nome").trim());
+			empresa.setNomeFant(result.getString("nome_fant").trim());
+			empresa.setRua(result.getString("rua").trim());
 			empresa.setNumero(result.getInt("numero_end"));
-			empresa.setBairro(result.getString("bairro"));
-			empresa.setCidade(result.getString("cidade"));
-			empresa.setUf(result.getString("uf"));
+			empresa.setBairro(result.getString("bairro").trim());
+			empresa.setCidade(result.getString("cidade").trim());
+			empresa.setUf(result.getString("uf").trim());
 			empresa.setContato(result.getLong("contato"));
 			empresa.setIe(result.getInt("ie"));
 		}

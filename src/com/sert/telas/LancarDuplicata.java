@@ -27,6 +27,7 @@ import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerCliente;
 import com.sert.controler.Log;
@@ -36,7 +37,6 @@ import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Cliente;
-import com.sert.entidades.Mercadoria;
 
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
@@ -70,12 +70,15 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 	private JButton btnCadastrarCliente;
 	private JPanel panel;
 	private JLabel lblId;
-	private JButton btnPrlanamento;
+	private JButton btnPrelancamento;
 	private JScrollPane scrollPane;
-	private JSeparator separator_1;
+	private JSeparator separatorValor;
 	private JTable table;
-	private JSeparator separator_2;
+	private JSeparator separatorParcelas;
 	private JSeparator separator_3;
+	private JSeparator separatorVendedor;
+	private JSeparator separatorIdDup;
+	private DefaultTableModel modelo;
 
 	/**
 	 * Launch the application.
@@ -156,7 +159,7 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 		});
 
 		panel = new JPanel();
-		panel.setBackground(Color.LIGHT_GRAY);
+		panel.setBackground(Color.WHITE);
 		panel.setBounds(12, 158, 696, 372);
 		contentPanel.add(panel);
 		panel.setLayout(null);
@@ -166,10 +169,35 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 		panel.add(lblId);
 
 		txtIdDuplicata = new JTextField();
+		txtIdDuplicata.setBackground(Color.WHITE);
 		txtIdDuplicata.setEditable(false);
 		txtIdDuplicata.setBounds(38, 8, 56, 20);
+		txtIdDuplicata.setBorder(null);
 		panel.add(txtIdDuplicata);
 		txtIdDuplicata.setColumns(10);
+
+		separatorIdDup = new JSeparator();
+		separatorIdDup.setBackground(new Color(0, 0, 128));
+		separatorIdDup.setBounds(38, 29, 56, 2);
+		panel.add(separatorIdDup);
+
+		lblVendedor = new JLabel("Vendedor:");
+		lblVendedor.setBounds(427, 11, 61, 14);
+		panel.add(lblVendedor);
+
+		txtVendedor = new JTextField(UsuLogado.getNome());
+		txtVendedor.setBackground(Color.WHITE);
+		txtVendedor.setEditable(false);
+		txtVendedor.setBounds(498, 8, 143, 20);
+		txtVendedor.setText(UsuLogado.getNome());
+		txtVendedor.setBorder(null);
+		panel.add(txtVendedor);
+		txtVendedor.setColumns(10);
+
+		separatorVendedor = new JSeparator();
+		separatorVendedor.setBackground(new Color(0, 0, 128));
+		separatorVendedor.setBounds(498, 29, 143, 2);
+		panel.add(separatorVendedor);
 
 		lblCodCliente = new JLabel("Cod. Cliente:");
 		lblCodCliente.setBounds(10, 52, 76, 14);
@@ -198,17 +226,6 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 
 		escutaComboMerc();
 
-		lblVendedor = new JLabel("Vendedor:");
-		lblVendedor.setBounds(427, 11, 61, 14);
-		panel.add(lblVendedor);
-
-		txtVendedor = new JTextField(UsuLogado.getNome());
-		txtVendedor.setEditable(false);
-		txtVendedor.setBounds(498, 8, 143, 20);
-		txtVendedor.setText(UsuLogado.getNome());
-		panel.add(txtVendedor);
-		txtVendedor.setColumns(10);
-
 		separator = new JSeparator();
 		separator.setBackground(new Color(0, 0, 128));
 		separator.setBounds(10, 83, 631, 2);
@@ -220,10 +237,15 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 
 		txtValor = new JNumberFormatField(new DecimalFormat("0.00"));
 		txtValor.setBorder(null);
-		txtValor.setBackground(Color.LIGHT_GRAY);
+		txtValor.setBackground(Color.WHITE);
 		txtValor.setBounds(55, 95, 99, 20);
 		panel.add(txtValor);
 		txtValor.setColumns(10);
+
+		separatorValor = new JSeparator();
+		separatorValor.setBackground(new Color(0, 0, 128));
+		separatorValor.setBounds(55, 115, 99, 2);
+		panel.add(separatorValor);
 
 		lblParcelas = new JLabel("Parcelas:");
 		lblParcelas.setBounds(178, 98, 56, 14);
@@ -231,10 +253,15 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 
 		txtParcelas = new JNumberField();
 		txtParcelas.setBorder(null);
-		txtParcelas.setBackground(Color.LIGHT_GRAY);
+		txtParcelas.setBackground(Color.WHITE);
 		txtParcelas.setBounds(237, 95, 61, 20);
 		panel.add(txtParcelas);
 		txtParcelas.setColumns(10);
+
+		separatorParcelas = new JSeparator();
+		separatorParcelas.setBackground(new Color(0, 0, 128));
+		separatorParcelas.setBounds(237, 116, 61, 2);
+		panel.add(separatorParcelas);
 
 		lblPrimeiroVencimento = new JLabel("Primeiro vencimento:");
 		lblPrimeiroVencimento.setBounds(320, 98, 136, 14);
@@ -242,47 +269,70 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 
 		txtPrimeiroVencimento = new JDocumentFormatedField().getData();
 		txtPrimeiroVencimento.setBorder(null);
-		txtPrimeiroVencimento.setBackground(Color.LIGHT_GRAY);
+		txtPrimeiroVencimento.setBackground(Color.WHITE);
 		txtPrimeiroVencimento.setBounds(448, 95, 99, 20);
 		panel.add(txtPrimeiroVencimento);
 		txtPrimeiroVencimento.setColumns(10);
-
-		btnPrlanamento = new JButton("");
-		btnPrlanamento.setIcon(new ImageIcon(LancarDuplicata.class.getResource("/com/sert/img/btnPrevia.png")));
-		btnPrlanamento.setFont(new Font("Tahoma", Font.BOLD, 11));
-		btnPrlanamento.setBackground(Color.LIGHT_GRAY);
-		btnPrlanamento.setBorder(null);
-		btnPrlanamento.setBounds(559, 94, 76, 23);
-		panel.add(btnPrlanamento);
-		btnPrlanamento.addActionListener(this);
-		btnPrlanamento.addMouseListener(this);
-
-		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 128, 676, 233);
-		panel.add(scrollPane);
-
-		table = new JTable();
-		scrollPane.setViewportView(table);
-
-		separator_1 = new JSeparator();
-		separator_1.setBackground(new Color(0, 0, 128));
-		separator_1.setBounds(55, 115, 99, 2);
-		panel.add(separator_1);
-
-		separator_2 = new JSeparator();
-		separator_2.setBackground(new Color(0, 0, 128));
-		separator_2.setBounds(237, 116, 61, 2);
-		panel.add(separator_2);
 
 		separator_3 = new JSeparator();
 		separator_3.setBackground(new Color(0, 0, 128));
 		separator_3.setBounds(448, 115, 99, 2);
 		panel.add(separator_3);
+
+		btnPrelancamento = new JButton("");
+		btnPrelancamento.setIcon(new ImageIcon(LancarDuplicata.class.getResource("/com/sert/img/btnPrevia.png")));
+		btnPrelancamento.setFont(new Font("Tahoma", Font.BOLD, 11));
+		btnPrelancamento.setBackground(Color.WHITE);
+		btnPrelancamento.setBorder(null);
+		btnPrelancamento.setBounds(559, 94, 76, 23);
+		panel.add(btnPrelancamento);
+		btnPrelancamento.addActionListener(this);
+		btnPrelancamento.addMouseListener(this);
+		btnPrelancamento.setFocusPainted(false);
+
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 128, 676, 233);
+		panel.add(scrollPane);
+
+		modelo = new DefaultTableModel();
+		modelo.addColumn("Vencimento");
+		modelo.addColumn("Parcela");
+		modelo.addColumn("Valor");
+
+		table = new JTable();
+		table.setModel(modelo);
+		table.setBackground(Color.WHITE);
+		scrollPane.setViewportView(table);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == btnPrelancamento) {
+			int qntdParcelas = Integer.parseInt(txtParcelas.getText());
+			float valor = Float.parseFloat(txtValor.getText().replace(",", ".")) / qntdParcelas;
+			String data = txtPrimeiroVencimento.getText();
+			String dia = data.substring(0, 2);
+			int mes = Integer.parseInt(data.substring(3, 5));
+			int ano = Integer.parseInt(data.substring(6, 10));
+			String mesString;
 
+			modelo.addRow(new Object[] { data, 1, valor });
+			for (int i = 2; i <= qntdParcelas; i++) {
+				mesString = String.valueOf(mes+=1);
+				if (mesString.length() == 1) {
+					mesString = "0"+mesString;
+				}
+				
+				modelo.addRow(new Object[] { dia + "/" + mesString + "/" + ano, i, valor });
+
+				if (mes == 12) {
+					mes = 0;
+					ano += 1;
+				}
+			}
+			table.setModel(modelo);
+			table.revalidate();
+		}
 	}
 
 	public static List<Cliente> carregarClientes() {
@@ -366,22 +416,21 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		btnPrlanamento.setIcon(new ImageIcon(LancarDuplicata.class.getResource("/com/sert/img/btnPrevia.png")));
+		btnPrelancamento.setIcon(new ImageIcon(LancarDuplicata.class.getResource("/com/sert/img/btnPrevia.png")));
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		btnPrlanamento.setIcon(new ImageIcon(LancarDuplicata.class.getResource("/com/sert/img/btnPreviaPressed.png")));
+		btnPrelancamento
+				.setIcon(new ImageIcon(LancarDuplicata.class.getResource("/com/sert/img/btnPreviaPressed.png")));
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
-		btnPrlanamento.setIcon(new ImageIcon(LancarDuplicata.class.getResource("/com/sert/img/btnPrevia.png")));
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		btnPrlanamento.setIcon(new ImageIcon(LancarDuplicata.class.getResource("/com/sert/img/btnPreviaEntered.png")));
 	}
 
 	@Override
