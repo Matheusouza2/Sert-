@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.Font;
 import javax.swing.SwingConstants;
+import javax.swing.JSeparator;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -40,7 +41,7 @@ import javax.swing.SwingConstants;
  * @version 1.0.0
  * 
  */
-public class CadMercadoria extends JDialog {
+public class CadMercadoria extends JDialog implements ActionListener, FocusListener {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPanel;
@@ -53,7 +54,6 @@ public class CadMercadoria extends JDialog {
 	private JLabel lblDescricao;
 	private JLabel lblPrecoVenda;
 	private JLabel lblUsuario;
-	private JLabel lblData;
 	private JLabel lblUnidade;
 	private JLabel lblPrecoCompra;
 	private JLabel lblUltimoUsuEdit;
@@ -69,7 +69,6 @@ public class CadMercadoria extends JDialog {
 	private JButton btnSalvar;
 	private JButton btnX;
 
-	private int codUsu;
 	private JLabel lblCadastroDeMercadoria;
 
 	private JLabel lblLucro;
@@ -78,7 +77,12 @@ public class CadMercadoria extends JDialog {
 	private ControlerMercadoria controlerMercadoria;
 	private JLabel lblEstoque;
 	private Mercadoria mercadoria;
+	private JSeparator separatorCodBarras;
+	private JSeparator separatorDescricao;
 	private static String dataSalvAlt;
+	private JSeparator separatorPrecComp;
+	private JSeparator separatorPrecVend;
+	private JSeparator separatorIdMerc;
 
 	public CadMercadoria(int operacao, long codBarras) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -123,63 +127,7 @@ public class CadMercadoria extends JDialog {
 		btnSalvar = new JButton();
 		btnSalvar.setBackground(new Color(0, 255, 0));
 		btnSalvar.setBorderPainted(false);
-		btnSalvar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try {
-					controlerMercadoria = new ControlerMercadoria();
-					if (operacao == 0) {
-						if (txtCodBarras.getText().equals("") || txtDescricaoMerc.getText().equals("")) {
-							JOptionPane.showMessageDialog(null,
-									"Os campos 'Cod. de Barras' e 'Descrição' não podem estar em branco", "Erro",
-									JOptionPane.ERROR_MESSAGE);
-						} else {
-							Mercadoria mercadoria = new Mercadoria(Integer.parseInt(txtCodMercadoria.getText()), Long.parseLong(txtCodBarras.getText()),
-									txtDescricaoMerc.getText(),
-									Float.parseFloat(txtPrecoVenda.getText().replace(",", ".")), lblData.getText(),
-									codUsu, cbUnd.getSelectedItem().toString(),
-									Float.parseFloat(txtPrecoCompra.getText().replace(",", ".")), UsuLogado.getNome(),
-									dataPrincipal, 0);
-							controlerMercadoria.cadastrarMercadoria(mercadoria);
-							JOptionPane.showMessageDialog(null, "Mercadoria cadastrada com sucesso", "Sucesso!",
-									JOptionPane.INFORMATION_MESSAGE);
-							limpaCampos();
-						}
-					} else if (operacao == 1) {
-						if (txtCodBarras.getText().equals("") && txtDescricaoMerc.getText().equals("")) {
-							JOptionPane.showMessageDialog(null,
-									"Os campos 'Cod. de Barras' e 'Descrição' não podem estar em branco", "Erro",
-									JOptionPane.ERROR_MESSAGE);
-						} else {
-							Mercadoria mercadoria = new Mercadoria(Integer.parseInt(txtCodMercadoria.getText()),
-									Long.parseLong(txtCodBarras.getText()), txtDescricaoMerc.getText(),
-									Float.parseFloat(txtPrecoVenda.getText().replace(",", ".")), dataSalvAlt, codUsu,
-									cbUnd.getSelectedItem().toString(),
-									Float.parseFloat(txtPrecoCompra.getText().replace(",", ".")), UsuLogado.getNome(),
-									dataPrincipal, 0);
-							controlerMercadoria.alterarMercadoria(mercadoria);
-							JOptionPane.showMessageDialog(null, "Mercadoria alterada com sucesso", "Sucesso!",
-									JOptionPane.INFORMATION_MESSAGE);
-							dispose();
-							
-						}
-					}
-
-				} catch (ClassNotFoundException e1) {
-					JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (SQLException e1) {
-					JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (IOException e1) {
-					JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro SQL",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (CodBarrasJaCadastradoException e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
-				} catch (MercadoriaNaoEncontradaException e1) {
-					JOptionPane.showMessageDialog(null, e1.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
-				}
-			}
-		});
+		btnSalvar.addActionListener(this);
 		btnSalvar.setIcon(new ImageIcon(CadMercadoria.class.getResource("/com/sert/img/BtnSalvar.png")));
 		btnSalvar.setBounds(10, 11, 89, 91);
 		panelBtn.add(btnSalvar);
@@ -191,13 +139,16 @@ public class CadMercadoria extends JDialog {
 		panelForm.setLayout(null);
 
 		lblCodigoMercadoria = new JLabel("Código Mercadoria:");
+		lblCodigoMercadoria.setForeground(new Color(128, 128, 128));
 		lblCodigoMercadoria.setBounds(10, 14, 114, 14);
 		panelForm.add(lblCodigoMercadoria);
 
 		try {
 			idGerador = new ControlerMercadoria().confereId();
 			txtCodMercadoria = new JTextField();
+			txtCodMercadoria.setForeground(new Color(128, 128, 128));
 			txtCodMercadoria.setEnabled(false);
+			txtCodMercadoria.setBorder(null);
 			txtCodMercadoria.setBounds(134, 11, 58, 20);
 			txtCodMercadoria.setText(String.valueOf(idGerador));
 			panelForm.add(txtCodMercadoria);
@@ -213,12 +164,21 @@ public class CadMercadoria extends JDialog {
 					JOptionPane.ERROR_MESSAGE);
 		}
 
-		lblCodDeBarras = new JLabel("Cod. de barras");
+		separatorIdMerc = new JSeparator();
+		separatorIdMerc.setBackground(new Color(0, 0, 128));
+		separatorIdMerc.setBounds(10, 31, 182, 2);
+		panelForm.add(separatorIdMerc);
+
+		lblCodDeBarras = new JLabel("Cod. de barras:");
+		lblCodDeBarras.setForeground(new Color(128, 128, 128));
 		lblCodDeBarras.setBounds(263, 14, 88, 14);
 		panelForm.add(lblCodDeBarras);
 
 		txtCodBarras = new JNumberField();
-		txtCodBarras.setBounds(361, 11, 156, 20);
+		txtCodBarras.setForeground(new Color(128, 128, 128));
+		txtCodBarras.setBounds(353, 11, 164, 20);
+		txtCodBarras.setBorder(null);
+		txtCodBarras.setBackground(new Color(240, 240, 240));
 		txtCodBarras.setFocusable(true);
 		panelForm.add(txtCodBarras);
 		txtCodBarras.setColumns(10);
@@ -228,90 +188,94 @@ public class CadMercadoria extends JDialog {
 			panelForm.add(lblEstoque);
 		}
 
+		separatorCodBarras = new JSeparator();
+		separatorCodBarras.setBackground(new Color(0, 0, 128));
+		separatorCodBarras.setBounds(263, 31, 254, 2);
+		panelForm.add(separatorCodBarras);
+
 		lblDescricao = new JLabel("Descrição:");
+		lblDescricao.setForeground(new Color(128, 128, 128));
 		lblDescricao.setBounds(10, 64, 63, 14);
 		panelForm.add(lblDescricao);
 
 		txtDescricaoMerc = new JTextField();
-		txtDescricaoMerc.setBounds(83, 61, 434, 20);
+		txtDescricaoMerc.setForeground(new Color(128, 128, 128));
+		txtDescricaoMerc.setBounds(72, 61, 445, 20);
+		txtDescricaoMerc.setBorder(null);
+		txtDescricaoMerc.setBackground(new Color(240, 240, 240));
 		panelForm.add(txtDescricaoMerc);
 		txtDescricaoMerc.setColumns(10);
 
+		separatorDescricao = new JSeparator();
+		separatorDescricao.setBackground(new Color(0, 0, 128));
+		separatorDescricao.setBounds(10, 81, 507, 2);
+		panelForm.add(separatorDescricao);
+
 		lblUnidade = new JLabel("Unidade:");
+		lblUnidade.setForeground(new Color(128, 128, 128));
 		lblUnidade.setBounds(593, 64, 58, 14);
 		panelForm.add(lblUnidade);
 
 		cbUnd = new JComboBox<String>();
+		cbUnd.setBackground(new Color(240, 240, 240));
+		cbUnd.setForeground(new Color(128, 128, 128));
 		cbUnd.setModel(new DefaultComboBoxModel<String>(new String[] { "", "CJ", "CX", "FD", "UN", "RS", "PC" }));
 		cbUnd.setBounds(661, 61, 88, 20);
 		panelForm.add(cbUnd);
 
 		lblPrecoCompra = new JLabel("Preço Compra (R$):");
+		lblPrecoCompra.setForeground(new Color(128, 128, 128));
 		lblPrecoCompra.setBounds(10, 151, 114, 14);
 		panelForm.add(lblPrecoCompra);
 
 		txtPrecoCompra = new JNumberFormatField(new DecimalFormat("0.00"));
+		txtPrecoCompra.setHorizontalAlignment(SwingConstants.LEFT);
+		txtPrecoCompra.setForeground(new Color(128, 128, 128));
+		txtPrecoCompra.setBorder(null);
+		txtPrecoCompra.setBackground(new Color(240, 240, 240));
 		txtPrecoCompra.setColumns(10);
-		txtPrecoCompra.setBounds(134, 148, 86, 20);
+		txtPrecoCompra.setBounds(122, 148, 98, 20);
 		panelForm.add(txtPrecoCompra);
-		txtPrecoCompra.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				float precoCompra = Float.parseFloat(txtPrecoCompra.getText().replace(",", "."));
-				float precoVenda = Float.parseFloat(txtPrecoVenda.getText().replace(",", "."));
-				float lucro = ((precoVenda / precoCompra) - 1) * 100;
-				if (lucro <= 0) {
-					lblLucro.setText("Lucro (%): " + 0);
-				} else {
-					lblLucro.setText(String.format("Lucro (%%): %.2f", lucro));
-				}
+		txtPrecoCompra.addFocusListener(this);
 
-			}
-
-			@Override
-			public void focusGained(FocusEvent arg0) {
-			}
-		});
+		separatorPrecComp = new JSeparator();
+		separatorPrecComp.setBackground(new Color(0, 0, 128));
+		separatorPrecComp.setBounds(10, 168, 210, 2);
+		panelForm.add(separatorPrecComp);
 
 		lblPrecoVenda = new JLabel("Preço venda (R$):");
-		lblPrecoVenda.setBounds(399, 154, 100, 14);
+		lblPrecoVenda.setForeground(new Color(128, 128, 128));
+		lblPrecoVenda.setBounds(399, 151, 100, 14);
 		panelForm.add(lblPrecoVenda);
 
 		txtPrecoVenda = new JNumberFormatField(new DecimalFormat("0.00"));
+		txtPrecoVenda.setHorizontalAlignment(SwingConstants.LEFT);
+		txtPrecoVenda.setForeground(new Color(128, 128, 128));
+		txtPrecoVenda.setBorder(null);
+		txtPrecoVenda.setBackground(new Color(240, 240, 240));
 		txtPrecoVenda.setLimit(6);
-		txtPrecoVenda.setBounds(509, 151, 86, 20);
+		txtPrecoVenda.setBounds(499, 148, 96, 20);
 		panelForm.add(txtPrecoVenda);
 		txtPrecoVenda.setColumns(10);
-		txtPrecoVenda.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				float precoCompra = Float.parseFloat(txtPrecoCompra.getText().replace(",", "."));
-				float precoVenda = Float.parseFloat(txtPrecoVenda.getText().replace(",", "."));
-				float lucro = (((precoVenda / precoCompra) - 1) * 100);
+		txtPrecoVenda.addFocusListener(this);
 
-				lblLucro.setText(String.format("Lucro (%%): %.2f", lucro));
-			}
-
-			@Override
-			public void focusGained(FocusEvent arg0) {
-			}
-		});
+		separatorPrecVend = new JSeparator();
+		separatorPrecVend.setBackground(new Color(0, 0, 128));
+		separatorPrecVend.setBounds(399, 168, 196, 2);
+		panelForm.add(separatorPrecVend);
 
 		lblLucro = new JLabel("Lucro (%): ");
+		lblLucro.setForeground(new Color(128, 128, 128));
 		lblLucro.setBounds(399, 202, 162, 14);
 		panelForm.add(lblLucro);
 
-		lblDataDeInclusao = new JLabel("Data de cadastro: ");
+		lblDataDeInclusao = new JLabel("Data de cadastro: " + dataPrincipal);
+		lblDataDeInclusao.setForeground(new Color(128, 128, 128));
 		lblDataDeInclusao.setBounds(10, 294, 210, 14);
 		panelForm.add(lblDataDeInclusao);
 
-		if (operacao == 0) {
-			lblData = new JLabel(dataPrincipal);
-			lblData.setBounds(144, 294, 76, 14);
-			panelForm.add(lblData);
-		}
-
 		lblUsuario = new JLabel("Usuário: " + UsuLogado.getNome());
+		lblUsuario.setForeground(new Color(128, 128, 128));
 		lblUsuario.setBounds(564, 294, 205, 14);
 		panelForm.add(lblUsuario);
 
@@ -335,7 +299,7 @@ public class CadMercadoria extends JDialog {
 				cbUnd.setSelectedItem(mercadoria.getUnd().trim());
 				lblDataDeInclusao.setText("data de cadastro: " + mercadoria.getDataCadastro());
 				txtPrecoCompra.setText(String.format("%.2f", mercadoria.getPrecoCompra()));
-				lblEstoque.setText("Estoque: "+String.format("%.2f", mercadoria.getEstoque()));
+				lblEstoque.setText("Estoque: " + String.format("%.2f", mercadoria.getEstoque()));
 				lblDataDeEdicao.setText("Data de edição: " + mercadoria.getDataAlt());
 				lblUltimoUsuEdit.setText("Último usuário a editar: " + mercadoria.getUsuAlt());
 				dataSalvAlt = mercadoria.getDataCadastro();
@@ -386,5 +350,38 @@ public class CadMercadoria extends JDialog {
 			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro SQL",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		if (arg0.getSource() == txtPrecoCompra) {
+			float precoCompra = Float.parseFloat(txtPrecoCompra.getText().replace(",", "."));
+			float precoVenda = Float.parseFloat(txtPrecoVenda.getText().replace(",", "."));
+			float lucro = ((precoVenda / precoCompra) - 1) * 100;
+			if (lucro <= 0) {
+				lblLucro.setText("Lucro (%): " + 0);
+			} else {
+				lblLucro.setText(String.format("Lucro (%%): %.2f", lucro));
+			}
+		} else if (arg0.getSource() == txtPrecoVenda) {
+			float precoCompra = Float.parseFloat(txtPrecoCompra.getText().replace(",", "."));
+			float precoVenda = Float.parseFloat(txtPrecoVenda.getText().replace(",", "."));
+			float lucro = (((precoVenda / precoCompra) - 1) * 100);
+
+			lblLucro.setText(String.format("Lucro (%%): %.2f", lucro));
+		}
+
 	}
 }

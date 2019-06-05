@@ -1,5 +1,7 @@
 package com.sert.main;
 
+import com.sert.telas.CadCliente;
+import com.sert.telas.CadMercadoria;
 import com.sert.telas.Entrada;
 
 /**
@@ -25,7 +27,7 @@ import com.sert.telas.Entrada;
 public class Main {
 	public static void main(String[] args) {
 		try {
-			new Entrada().setVisible(true);
+			new CadCliente(0, 0).setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
