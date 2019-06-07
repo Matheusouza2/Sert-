@@ -9,6 +9,8 @@ import com.sert.controler.ControlerDuplicata;
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
+import com.sert.controler.PermissoesStatic;
+import com.sert.controler.UsuLogado;
 import com.sert.dao.ConexaoDao;
 import com.sert.entidades.DuplicataCliente;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
@@ -79,6 +81,7 @@ public class Banner extends JFrame {
 				preencherListas();
 				progressBar.setString("Carregando clientes e seus debitos");
 				verContasAReceber();
+				PermissoesStatic.preenchePermissoes(UsuLogado.getId());
 				progressBar.setString("Carregando modulos adicionais");
 				
 				return null;

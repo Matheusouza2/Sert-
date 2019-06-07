@@ -10,6 +10,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+import com.sert.controler.PermissoesStatic;
 import com.sert.telas.CadMercadoria;
 import com.sert.telas.ListarMercadorias;
 /**
@@ -86,5 +87,16 @@ public class OpcProdutos extends JDialog {
 				dispose();
 			}
 		});
+		
+		getPermissoes();
+	}
+	
+	private void getPermissoes() {
+		if(!PermissoesStatic.permissoesFunc.isCadProd()) {
+			btnCadastrarNovaMercadoria.setEnabled(false);
+		}
+		if(!PermissoesStatic.permissoesFunc.isListProd()) {
+			btnListaDeMerc.setEnabled(false);
+		}
 	}
 }

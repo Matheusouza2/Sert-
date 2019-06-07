@@ -43,7 +43,7 @@ import javax.swing.JSeparator;
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * 
  * @author Matheus Souza
- * @version 1.0.0
+ * @version 1.1.0
  * 
  */
 public class CadNotas extends JDialog {

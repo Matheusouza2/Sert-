@@ -28,7 +28,6 @@ import java.text.DecimalFormat;
 
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.Log;
-import com.sert.dao.RelatorioInterfaceDao;
 import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Venda;
@@ -428,7 +427,7 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				int opcao = JOptionPane.showConfirmDialog(null, "Deseja imprimir a venda? ", "Impressão",
 						JOptionPane.YES_NO_OPTION);
 				if (opcao == JOptionPane.YES_NO_OPTION) {
-					new RelatorioInterfaceDao().venda(vendaFinal.getId()); 
+					new PrintableVenda(vendaFinal); 
 				}
 				
 				JOptionPane.showMessageDialog(null, "Venda realizada com sucesso!", "VENDA FINALIZADA",

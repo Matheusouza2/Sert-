@@ -19,19 +19,23 @@ public class ControlerConsignacao {
 		consignacaoDao.cadastrar(consignacao);
 	}
 	
-	public List<Orcamento> listarConsignacao(){
+	public List<Orcamento> listarConsignacao() throws SQLException{
 		return consignacaoDao.listar();
 	}
-	
-	public void alterarConsignacao(Orcamento consignacao) {
-		
-	}
-	
-	public void excluirConsignacao(int id) {
-		
-	}
-	
+
 	public int retornarId() throws SQLException {
 		return consignacaoDao.recuperaId();
+	}
+	
+	public Orcamento consultarConsignacao(int id) throws SQLException {
+		return consignacaoDao.consultarConsignacao(id);
+	}
+	
+	public void devolucaoConsig(Orcamento consignacao) throws SQLException {
+		consignacaoDao.devolucao(consignacao);
+	}
+	
+	public void faturarConsignacao(Orcamento consignacao) throws SQLException {
+		consignacaoDao.faturarConsignacao(consignacao);
 	}
 }

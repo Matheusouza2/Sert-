@@ -25,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerCliente;
 import com.sert.controler.Log;
+import com.sert.controler.PermissoesStatic;
 import com.sert.entidades.Cliente;
 
 public class ListarCliente extends JDialog {
@@ -188,6 +189,8 @@ public class ListarCliente extends JDialog {
 		tabCliente.getTableHeader().setReorderingAllowed(false);
 		tabCliente.setModel(modelo);
 		scrollPane.setViewportView(tabCliente);
+		
+		getPermissoes();
 	}
 
 	private void repagina() {
@@ -279,5 +282,14 @@ public class ListarCliente extends JDialog {
 				btnExcluir.doClick();
 			}
 		});
+	}
+	
+	private void getPermissoes() {
+		if(!PermissoesStatic.permissoesFunc.isAltCliente()) {
+			btnEditar.setEnabled(false);
+		}
+		if(!PermissoesStatic.permissoesFunc.isExclCliente()) {
+			btnExcluir.setEnabled(false);
+		}
 	}
 }

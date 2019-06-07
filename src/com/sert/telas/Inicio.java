@@ -6,6 +6,7 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 
 import com.sert.controler.JDateField;
+import com.sert.controler.PermissoesStatic;
 import com.sert.controler.UsuLogado;
 import com.sert.opcoes.OpcClientes;
 import com.sert.opcoes.OpcDashBoard;
@@ -88,7 +89,7 @@ public class Inicio extends JDialog {
 		btnClientes = new JButton();
 		btnClientes.setBackground(new Color(255, 0, 102));
 		btnClientes.setBorderPainted(false);
-		btnClientes.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnCliente.png")));
+		btnClientes.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/usersBtn.png")));
 		btnClientes.setBounds(7, 11, 89, 91);
 		panelButtons.add(btnClientes);
 		btnClientes.addActionListener(new ActionListener() {
@@ -249,21 +250,23 @@ public class Inicio extends JDialog {
 		lblBemVindoa.setFont(new Font("Tahoma", Font.BOLD, 18));
 		lblBemVindoa.setBounds(451, 102, 442, 20);
 		panelUsados.add(lblBemVindoa);
-		
-				lblLegenda = new JLabel("F1 - Empresa | F2 - Pesquisar Preço");
-				lblLegenda.setBounds(10, 11, 564, 14);
-				panelUsados.add(lblLegenda);
+
+		lblLegenda = new JLabel("F1 - Empresa | F2 - Pesquisar Preço");
+		lblLegenda.setBounds(10, 11, 564, 14);
+		panelUsados.add(lblLegenda);
 
 		lblBanner = new JLabel("");
 		lblBanner.setHorizontalAlignment(SwingConstants.CENTER);
 		lblBanner.setIcon(new ImageIcon("C:\\Sert+\\img\\BannerInicio.png"));
 		lblBanner.setBounds(0, 0, 1344, 590);
 		panelUsados.add(lblBanner);
-		
+
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/backEntrada.png")));
 		lblNewLabel.setBounds(0, 0, 1344, 622);
 		panelUsados.add(lblNewLabel);
+
+		permissoes();
 	}
 
 	private void listen() {
@@ -283,5 +286,14 @@ public class Inicio extends JDialog {
 		Image icone = Toolkit.getDefaultToolkit().getImage(url);
 
 		return icone;
+	}
+
+	private void permissoes() {
+		if (!PermissoesStatic.permissoesFunc.isLancarVendas()) {
+			btnVendas.setEnabled(false);
+		}
+		if (!PermissoesStatic.permissoesFunc.isListFunc()) {
+			btnFuncionario.setEnabled(false);
+		}
 	}
 }

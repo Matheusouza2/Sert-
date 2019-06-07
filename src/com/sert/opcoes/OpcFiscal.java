@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+import com.sert.controler.PermissoesStatic;
 import com.sert.telas.AjusteEstoque;
 import com.sert.telas.CadNotas;
 import com.sert.telas.ListarNFeEntrada;
@@ -96,5 +97,19 @@ public class OpcFiscal extends JDialog {
 				dispose();
 			}
 		});
+		
+		getPermissoes();
+	}
+	
+	private void getPermissoes() {
+		if(!PermissoesStatic.permissoesFunc.isCadNota()) {
+			btnCadastroNfe.setEnabled(false);
+		}
+		if(!PermissoesStatic.permissoesFunc.isListNota()) {
+			btnVizuNota.setEnabled(false);
+		}
+		if(!PermissoesStatic.permissoesFunc.isMovEstoque()) {
+			btnMovEstoque.setEnabled(false);
+		}
 	}
 }

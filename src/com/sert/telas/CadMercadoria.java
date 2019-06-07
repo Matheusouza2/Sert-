@@ -83,6 +83,7 @@ public class CadMercadoria extends JDialog implements ActionListener, FocusListe
 	private JSeparator separatorPrecComp;
 	private JSeparator separatorPrecVend;
 	private JSeparator separatorIdMerc;
+	private int operacao;
 
 	public CadMercadoria(int operacao, long codBarras) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -95,6 +96,8 @@ public class CadMercadoria extends JDialog implements ActionListener, FocusListe
 		contentPanel.setBorder(new LineBorder(new Color(255, 255, 0), 1, true));
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
+
+		this.operacao = operacao;
 
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);
@@ -354,13 +357,62 @@ public class CadMercadoria extends JDialog implements ActionListener, FocusListe
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		try {
+			controlerMercadoria = new ControlerMercadoria();
+			if (operacao == 0) {
+				if (txtCodBarras.getText().equals("") || txtDescricaoMerc.getText().equals("")) {
+					JOptionPane.showMessageDialog(null,
+							"Os campos 'Cod. de Barras' e 'Descrição' não podem estar em branco", "Erro",
+							JOptionPane.ERROR_MESSAGE);
+				} else {
+					Mercadoria mercadoria = new Mercadoria(0, Long.parseLong(txtCodBarras.getText()),
+							txtDescricaoMerc.getText(), Float.parseFloat(txtPrecoVenda.getText().replace(",", ".")),
+							dataPrincipal, UsuLogado.getId(), cbUnd.getSelectedItem().toString(),
+							Float.parseFloat(txtPrecoCompra.getText().replace(",", ".")), UsuLogado.getNome(),
+							dataPrincipal, 0);
+					new ControlerMercadoria().cadastrarMercadoria(mercadoria);
+					JOptionPane.showMessageDialog(null, "Mercadoria cadastrada com sucesso", "Sucesso!",
+							JOptionPane.INFORMATION_MESSAGE);
+					limpaCampos();
+				}
+			} else if (operacao == 1) {
+				if (txtCodBarras.getText().equals("") && txtDescricaoMerc.getText().equals("")) {
+					JOptionPane.showMessageDialog(null,
+							"Os campos 'Cod. de Barras' e 'Descrição' não podem estar em branco", "Erro",
+							JOptionPane.ERROR_MESSAGE);
+				} else {
+					Mercadoria mercadoria = new Mercadoria(Integer.parseInt(txtCodMercadoria.getText()),
+							Long.parseLong(txtCodBarras.getText()), txtDescricaoMerc.getText(),
+							Float.parseFloat(txtPrecoVenda.getText().replace(",", ".")), dataSalvAlt, UsuLogado.getId(),
+							cbUnd.getSelectedItem().toString(),
+							Float.parseFloat(txtPrecoCompra.getText().replace(",", ".")), UsuLogado.getNome(),
+							dataPrincipal, 0);
+					controlerMercadoria.alterarMercadoria(mercadoria);
+					JOptionPane.showMessageDialog(null, "Mercadoria alterada com sucesso", "Sucesso!",
+							JOptionPane.INFORMATION_MESSAGE);
+					dispose();
 
+				}
+			}
+
+		} catch (ClassNotFoundException e1) {
+			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (SQLException e1) {
+			JOptionPane.showMessageDialog(null, "Erro no metodo SQL: " + e1.getMessage(), "Erro SQL",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (IOException e1) {
+			JOptionPane.showMessageDialog(null, "Erro na escrita do Log: " + e1.getMessage(), "Erro SQL",
+					JOptionPane.ERROR_MESSAGE);
+		} catch (CodBarrasJaCadastradoException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+		} catch (MercadoriaNaoEncontradaException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage(), "Aviso", JOptionPane.WARNING_MESSAGE);
+		}
 	}
 
 	@Override
 	public void focusGained(FocusEvent arg0) {
-		// TODO Auto-generated method stub
 
 	}
 

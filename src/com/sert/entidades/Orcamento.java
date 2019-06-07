@@ -9,11 +9,13 @@ public class Orcamento {
 	private Usuario usuario;
 	private List<Mercadoria> mercadorias;
 	private float valTotal;
+	private String status;
+	private String data;
 
 	public Orcamento() {
-	
+
 	}
-	
+
 	public Orcamento(int id, Cliente cliente, Usuario usuario, List<Mercadoria> mercadorias, float valTotal) {
 		super();
 		this.id = id;
@@ -61,5 +63,21 @@ public class Orcamento {
 
 	public void setValTotal(float valTotal) {
 		this.valTotal = valTotal;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
 	}
 }

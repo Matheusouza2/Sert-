@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+import com.sert.controler.PermissoesStatic;
 import com.sert.telas.CadCliente;
 import com.sert.telas.ContasAReceber;
 import com.sert.telas.ListarCliente;
@@ -83,14 +84,7 @@ public class OpcClientes extends JDialog {
 				new ContasAReceber().setVisible(true);				
 			}
 		});
-		
-//		JButton btnContasAPagar = new JButton("contas a pagar");
-//		btnContasAPagar.setBackground(new Color(255, 255, 0));
-//		btnContasAPagar.setForeground(new Color(0, 0, 0));
-//		btnContasAPagar.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-//		btnContasAPagar.setBounds(10, 220, 248, 21);
-//		getContentPane().add(btnContasAPagar);
-		
+				
 		btnX = new JButton("X");
 		btnX.setBackground(Color.RED);
 		btnX.setForeground(Color.WHITE);
@@ -102,5 +96,15 @@ public class OpcClientes extends JDialog {
 				dispose();
 			}
 		});
+		getPermissoes();
+	}
+	
+	private void getPermissoes() {
+		if(!PermissoesStatic.permissoesFunc.isCadCliente()) {
+			btnCadastrarNovoCliente.setEnabled(false);
+		}
+		if(!PermissoesStatic.permissoesFunc.isListCliente()) {
+			btnListaDeClientes.setEnabled(false);
+		}
 	}
 }

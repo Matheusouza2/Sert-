@@ -42,6 +42,7 @@ import com.sert.controler.ControlerUsuario;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.Log;
+import com.sert.controler.PermissoesStatic;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.JDocumentFormatedField;
@@ -99,8 +100,8 @@ public class TelaOrcamento extends JDialog {
 	private JTextField txtUf;
 	private JTextField txtCodVendedor;
 	private JButton btnImprimir;
-	private JButton gerarConsignacao;
-	private JButton button_1;
+	private JButton btnGerarConsignacao;
+	private JButton btnVerConsignacao;
 	private JButton btnAdd;
 	private JComboBox<String> cbVendedor;
 	private JSeparator separator;
@@ -198,12 +199,12 @@ public class TelaOrcamento extends JDialog {
 			}
 		});
 
-		gerarConsignacao = new JButton();
-		gerarConsignacao.setIcon(new ImageIcon(TelaOrcamento.class.getResource("/com/sert/img/btnConsignacao.png")));
-		gerarConsignacao.setBackground(new Color(173, 216, 230));
-		gerarConsignacao.setBounds(208, 11, 89, 91);
-		panelBtn.add(gerarConsignacao);
-		gerarConsignacao.addActionListener(new ActionListener() {
+		btnGerarConsignacao = new JButton();
+		btnGerarConsignacao.setIcon(new ImageIcon(TelaOrcamento.class.getResource("/com/sert/img/btnConsignacao.png")));
+		btnGerarConsignacao.setBackground(new Color(173, 216, 230));
+		btnGerarConsignacao.setBounds(208, 11, 89, 91);
+		panelBtn.add(btnGerarConsignacao);
+		btnGerarConsignacao.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int opcao = JOptionPane.showConfirmDialog(null, "Deseja gerar uma consignação deste orçamento?",
@@ -211,59 +212,73 @@ public class TelaOrcamento extends JDialog {
 				if (opcao == JOptionPane.YES_OPTION) {
 					Orcamento consignacao = new Orcamento();
 					List<Mercadoria> listMerc = new ArrayList<>();
-					Mercadoria merc = new Mercadoria();
+					Mercadoria merc;
 					Cliente cliente = new Cliente();
 					Usuario usu = new Usuario();
 					float valTotal = 0;
 					usu.setId(Integer.parseInt(txtCodVendedor.getText()));
 					cliente.setId(Integer.parseInt(txtCodCliente.getText()));
 					for (int i = 0; i < table.getRowCount(); i++) {
+						merc = new Mercadoria();
 						merc.setId((int) table.getValueAt(i, 0));
 						merc.setEstoque(Float
 								.parseFloat(table.getValueAt(i, 4).toString().replace("R$", "").replace(",", ".")));
 						merc.setPrecoVenda(Float.parseFloat(table.getValueAt(i, 3).toString().replace("R$", "").replace(",", ".")));
+						merc.setStatus("Aberto");
 						listMerc.add(merc);
 						valTotal += Float
 								.parseFloat(table.getValueAt(i, 5).toString().replace("R$", "").replace(",", "."));
 					}
+						System.out.println(listMerc.get(0).getId());
+					
 					try {
 						consignacao.setId(new ControlerConsignacao().retornarId());
 						consignacao.setUsuario(usu);
 						consignacao.setCliente(cliente);
 						consignacao.setMercadorias(listMerc);
 						consignacao.setValTotal(valTotal);
+						consignacao.setData(new JDateField().getTimeStamp());
+						consignacao.setStatus("Aberto");
 						new ControlerConsignacao().lancarConsignacao(consignacao);
 						
 						JOptionPane.showMessageDialog(null, "Consignação gerada com sucesso!");
+						limparTela();
 					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, e1.getMessage());
 						e1.printStackTrace();
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, e1.getMessage());
 						e1.printStackTrace();
 					} catch (IOException e1) {
-						// TODO Auto-generated catch block
+						JOptionPane.showMessageDialog(null, e1.getMessage());
 						e1.printStackTrace();
 					}
 				}
 			}
 		});
 
-		button_1 = new JButton();
-		button_1.setBackground(Color.GREEN);
-		button_1.setBounds(307, 11, 89, 91);
-		panelBtn.add(button_1);
+		btnVerConsignacao = new JButton();
+		btnVerConsignacao.setIcon(new ImageIcon(TelaOrcamento.class.getResource("/com/sert/img/btnAcompanharConsignacao.png")));
+		btnVerConsignacao.setBackground(Color.ORANGE);
+		btnVerConsignacao.setBounds(307, 11, 89, 91);
+		panelBtn.add(btnVerConsignacao);
+		btnVerConsignacao.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				new AcompanharConsignacao().setVisible(true);
+			}
+		});
 
 		try {
 			id = new ControlerOrcamento().confereId();
 		} catch (ClassNotFoundException e2) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, e2.getMessage());
 			e2.printStackTrace();
 		} catch (SQLException e2) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, e2.getMessage());
 			e2.printStackTrace();
 		} catch (IOException e2) {
-			// TODO Auto-generated catch block
+			JOptionPane.showMessageDialog(null, e2.getMessage());
 			e2.printStackTrace();
 		}
 
@@ -487,6 +502,7 @@ public class TelaOrcamento extends JDialog {
 				public void itemStateChanged(ItemEvent e) {
 					int i = cbCliente.getSelectedIndex();
 					txtCodCliente.setText(String.valueOf(clientes.get(i).getId()));
+					txtCpf.setText(String.valueOf(clientes.get(i).getCpf()));
 					txtBairro.setText(clientes.get(i).getBairro());
 					txtCidade.setText(clientes.get(i).getCidade());
 					txtEndereco.setText(clientes.get(i).getRua());
@@ -619,7 +635,7 @@ public class TelaOrcamento extends JDialog {
 			JOptionPane.showMessageDialog(null, e1.getMessage());
 			Log.gravaLog("| ORCAMENTO | " + e1.getMessage());
 		}
-
+		getPermissoes();
 	}
 
 	public void escutaComboMerc() {
@@ -790,5 +806,21 @@ public class TelaOrcamento extends JDialog {
 			}
 		});
 
+	}
+	
+	public void limparTela() {
+		cbCliente.setSelectedIndex(-1);
+	}
+	
+	private void getPermissoes() {
+		if(!PermissoesStatic.permissoesFunc.isCadOrcamento()) {
+			btnSalvar.setEnabled(false);
+		}
+		if(!PermissoesStatic.permissoesFunc.isLancConsignacao()) {
+			btnGerarConsignacao.setEnabled(false);
+		}
+		if(!PermissoesStatic.permissoesFunc.isVerConsig()) {
+			btnVerConsignacao.setEnabled(false);
+		}
 	}
 }

@@ -10,11 +10,12 @@ public class JDateField {
 	private Date data = new Date();
 	private static Date dataStatic = new Date();
 	private static SimpleDateFormat formatadorDate = new SimpleDateFormat("dd/MM/yyyy");;
-	private static SimpleDateFormat formatadorDateHoraStatic = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");;
-	private SimpleDateFormat formatadorDateHora;
+	private static SimpleDateFormat formatadorDateHoraStatic = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+	private  SimpleDateFormat formatadorDateHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private  SimpleDateFormat formatadorTimeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	public JDateField() {
-		formatadorDateHora = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
 	}
 
 	public static String getDate() {
@@ -23,6 +24,10 @@ public class JDateField {
 
 	public String getDateHora() {
 		return formatadorDateHora.format(data);
+	}
+	
+	public String getTimeStamp() {
+		return formatadorTimeStamp.format(data);
 	}
 
 	public static String getDateHoraStatic() {

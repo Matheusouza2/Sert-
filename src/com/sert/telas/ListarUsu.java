@@ -23,6 +23,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.Log;
+import com.sert.controler.PermissoesStatic;
 import com.sert.entidades.Usuario;
 import com.sert.exceptions.NenhumUsuCadException;
 
@@ -191,6 +192,8 @@ public class ListarUsu extends JDialog {
 		tabUsu.getTableHeader().setReorderingAllowed(false);
 		tabUsu.setModel(modelo);
 		scrollPane.setViewportView(tabUsu);
+
+		getPermissoes();
 	}
 
 	public static void repagina() {
@@ -247,5 +250,17 @@ public class ListarUsu extends JDialog {
 				btnExcluir.doClick();
 			}
 		});
+	}
+
+	private void getPermissoes() {
+		if (!PermissoesStatic.permissoesFunc.isCadFunc()) {
+			btnNovoUsuario.setEnabled(false);
+		}
+		if (!PermissoesStatic.permissoesFunc.isAltFunc()) {
+			btnEditar.setEnabled(false);
+		}
+		if (!PermissoesStatic.permissoesFunc.isExclFunc()) {
+			btnExcluir.setEnabled(false);
+		}
 	}
 }

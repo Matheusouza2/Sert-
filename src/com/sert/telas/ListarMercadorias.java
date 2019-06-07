@@ -20,6 +20,7 @@ import javax.swing.border.LineBorder;
 
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.Log;
+import com.sert.controler.PermissoesStatic;
 import com.sert.entidades.Mercadoria;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.tables.TableModelMerc;
@@ -274,6 +275,7 @@ public class ListarMercadorias extends JDialog {
 		tabMerc.getColumnModel().getColumn(2).setPreferredWidth(790);
 		tabMerc.getColumnModel().getColumn(3).setPreferredWidth(100);
 
+		getPermissoes();
 	}
 
 	public static void repagina() {
@@ -331,5 +333,14 @@ public class ListarMercadorias extends JDialog {
 				btnExcluir.doClick();
 			}
 		});
+	}
+	
+	private void getPermissoes() {
+		if(!PermissoesStatic.permissoesFunc.isAltProd()) {
+			btnEditar.setEnabled(false);
+		}
+		if(!PermissoesStatic.permissoesFunc.isExclProduto()) {
+			btnExcluir.setEnabled(false);
+		}
 	}
 }

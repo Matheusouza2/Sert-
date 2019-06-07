@@ -16,7 +16,7 @@ public class ControlerOrcamento {
 	public void salvarOrcamento(Orcamento orcamento) throws SQLException {
 		orcamentoDao.cadastrar(orcamento);
 	}
-	
+		
 	public int confereId() throws SQLException {
 		return orcamentoDao.consultaIdOrcamento();
 	}

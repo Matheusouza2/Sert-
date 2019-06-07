@@ -28,6 +28,7 @@ import com.sert.controler.Log;
 import com.sert.controler.Seguranca;
 import com.sert.controler.ValidaCNP;
 import com.sert.editableFields.JDocumentFormatedField;
+import com.sert.entidades.PermissoesFunc;
 import com.sert.entidades.Usuario;
 import com.sert.exceptions.UsuarioJaCadastradoException;
 
@@ -78,6 +79,35 @@ public class CadUsu extends JDialog {
 	private int id;
 	private JLabel lblSenha;
 	private JTabbedPane tabbedPane;
+	private JCheckBox chckbxEstoque;
+	private JCheckBox chckbxCaixa;
+	private JCheckBox chckbxCompra;
+	private JCheckBox chckbxVenda;
+	private PermissoesFunc permissoes = new PermissoesFunc();
+	private JCheckBox chckbxCadClient;
+	private JPanel panelCliente;
+	private JCheckBox chckbxEditClient;
+	private JCheckBox chckbxExcClient;
+	private JCheckBox chckbxListarClient;
+	private JPanel panelNota;
+	private JCheckBox chckbxCadNota;
+	private JCheckBox chckbxMovEstoque;
+	private JCheckBox chckbxListarProd;
+	private JCheckBox chckbxEditarFunc;
+	private JCheckBox chckbxExcluirFunc;
+	private JCheckBox chckbxListarFunc;
+	private JCheckBox chckbxEditProd;
+	private JCheckBox chckbxCadProd;
+	private JCheckBox chckbxExcProd;
+	private JCheckBox chckbxCadastrarFunc;
+	private JCheckBox chckbxLancarVendas;
+	private JCheckBox chckbxLancarConsignao;
+	private JCheckBox chckbxListarNota;
+	private JPanel panelOrcamento;
+	private JCheckBox chckbxCadOrcamento;
+	private JCheckBox chckbxVerConsignao;
+	private JPanel panelPreConfg;
+	private JCheckBox chckbxAdmin;
 
 	// Opção 0 vai ativar o cadastro enquanto a opção 1 vai ativar a alteração do
 	// usuario
@@ -154,203 +184,165 @@ public class CadUsu extends JDialog {
 		tabbedPane.addTab("Permissões", null, panelPermissoes, null);
 		tabbedPane.setEnabledAt(0, true);
 
-		JPanel panel = new JPanel();
-		panel.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Funcionarios",
+		panelCliente = new JPanel();
+		panelCliente.setLayout(null);
+		panelCliente.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 2, true), "Clientes",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel.setBounds(183, 147, 126, 126);
-		panelPermissoes.add(panel);
-		panel.setLayout(null);
+		panelCliente.setBounds(28, 11, 126, 126);
+		panelPermissoes.add(panelCliente);
 
-		JCheckBox chckbxCadastrar = new JCheckBox("Cadastrar");
-		chckbxCadastrar.setBounds(6, 45, 97, 23);
-		panel.add(chckbxCadastrar);
+		chckbxCadClient = new JCheckBox("Cadastrar");
+		chckbxCadClient.setBounds(6, 19, 97, 23);
+		panelCliente.add(chckbxCadClient);
 
-		JCheckBox chckbxEditar = new JCheckBox("Editar");
-		chckbxEditar.setBounds(6, 71, 97, 23);
-		panel.add(chckbxEditar);
+		chckbxEditClient = new JCheckBox("Editar");
+		chckbxEditClient.setBounds(6, 71, 97, 23);
+		panelCliente.add(chckbxEditClient);
 
-		JCheckBox chckbxExcluir = new JCheckBox("Excluir");
-		chckbxExcluir.setBounds(6, 97, 97, 23);
-		panel.add(chckbxExcluir);
+		chckbxExcClient = new JCheckBox("Excluir");
+		chckbxExcClient.setBounds(6, 97, 97, 23);
+		panelCliente.add(chckbxExcClient);
 
-		JCheckBox chckbxListar = new JCheckBox("Listar");
-		chckbxListar.setBounds(6, 19, 97, 23);
-		panel.add(chckbxListar);
+		chckbxListarClient = new JCheckBox("Listar");
+		chckbxListarClient.setBounds(6, 45, 97, 23);
+		panelCliente.add(chckbxListarClient);
 
-		JPanel panel_1 = new JPanel();
-		panel_1.setLayout(null);
-		panel_1.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Produto",
+		JPanel panelFuncionario = new JPanel();
+		panelFuncionario.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 2, true), "Funcionarios",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_1.setBounds(338, 147, 126, 126);
-		panelPermissoes.add(panel_1);
+		panelFuncionario.setBounds(183, 11, 126, 126);
+		panelPermissoes.add(panelFuncionario);
+		panelFuncionario.setLayout(null);
 
-		JCheckBox checkBox = new JCheckBox("Cadastrar");
-		checkBox.setBounds(6, 19, 97, 23);
-		panel_1.add(checkBox);
+		chckbxCadastrarFunc = new JCheckBox("Cadastrar");
+		chckbxCadastrarFunc.setBounds(6, 45, 97, 23);
+		panelFuncionario.add(chckbxCadastrarFunc);
 
-		JCheckBox checkBox_1 = new JCheckBox("Editar");
-		checkBox_1.setBounds(6, 71, 97, 23);
-		panel_1.add(checkBox_1);
+		chckbxEditarFunc = new JCheckBox("Editar");
+		chckbxEditarFunc.setBounds(6, 71, 97, 23);
+		panelFuncionario.add(chckbxEditarFunc);
 
-		JCheckBox checkBox_2 = new JCheckBox("Excluir");
-		checkBox_2.setBounds(6, 97, 97, 23);
-		panel_1.add(checkBox_2);
+		chckbxExcluirFunc = new JCheckBox("Excluir");
+		chckbxExcluirFunc.setBounds(6, 97, 97, 23);
+		panelFuncionario.add(chckbxExcluirFunc);
 
-		JCheckBox checkBox_3 = new JCheckBox("Listar");
-		checkBox_3.setBounds(6, 45, 97, 23);
-		panel_1.add(checkBox_3);
+		chckbxListarFunc = new JCheckBox("Listar");
+		chckbxListarFunc.setBounds(6, 19, 97, 23);
+		panelFuncionario.add(chckbxListarFunc);
 
-		JPanel panel_2 = new JPanel();
-		panel_2.setLayout(null);
-		panel_2.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Clientes",
+		JPanel panelProduto = new JPanel();
+		panelProduto.setLayout(null);
+		panelProduto.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 2, true), "Produto",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_2.setBounds(28, 147, 126, 126);
-		panelPermissoes.add(panel_2);
+		panelProduto.setBounds(338, 11, 126, 126);
+		panelPermissoes.add(panelProduto);
 
-		JCheckBox checkBox_4 = new JCheckBox("Cadastrar");
-		checkBox_4.setBounds(6, 19, 97, 23);
-		panel_2.add(checkBox_4);
+		chckbxCadProd = new JCheckBox("Cadastrar");
+		chckbxCadProd.setBounds(6, 19, 97, 23);
+		panelProduto.add(chckbxCadProd);
 
-		JCheckBox checkBox_5 = new JCheckBox("Editar");
-		checkBox_5.setBounds(6, 71, 97, 23);
-		panel_2.add(checkBox_5);
+		chckbxEditProd = new JCheckBox("Editar");
+		chckbxEditProd.setBounds(6, 71, 97, 23);
+		panelProduto.add(chckbxEditProd);
 
-		JCheckBox checkBox_6 = new JCheckBox("Excluir");
-		checkBox_6.setBounds(6, 97, 97, 23);
-		panel_2.add(checkBox_6);
+		chckbxExcProd = new JCheckBox("Excluir");
+		chckbxExcProd.setBounds(6, 97, 97, 23);
+		panelProduto.add(chckbxExcProd);
 
-		JCheckBox checkBox_7 = new JCheckBox("Listar");
-		checkBox_7.setBounds(6, 45, 97, 23);
-		panel_2.add(checkBox_7);
+		chckbxListarProd = new JCheckBox("Listar");
+		chckbxListarProd.setBounds(6, 45, 97, 23);
+		panelProduto.add(chckbxListarProd);
 
-		JPanel panel_3 = new JPanel();
-		panel_3.setLayout(null);
-		panel_3.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Fiscal",
+		panelNota = new JPanel();
+		panelNota.setLayout(null);
+		panelNota.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 2, true), "Nota",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_3.setBounds(493, 147, 126, 126);
-		panelPermissoes.add(panel_3);
+		panelNota.setBounds(493, 11, 126, 98);
+		panelPermissoes.add(panelNota);
 
-		JCheckBox checkBox_8 = new JCheckBox("Cadastrar");
-		checkBox_8.setBounds(6, 19, 97, 23);
-		panel_3.add(checkBox_8);
+		chckbxCadNota = new JCheckBox("Cadastrar");
+		chckbxCadNota.setBounds(6, 19, 97, 23);
+		panelNota.add(chckbxCadNota);
 
-		JCheckBox checkBox_9 = new JCheckBox("Editar");
-		checkBox_9.setBounds(6, 71, 97, 23);
-		panel_3.add(checkBox_9);
+		chckbxMovEstoque = new JCheckBox("Mov Estoque");
+		chckbxMovEstoque.setBounds(6, 71, 97, 23);
+		panelNota.add(chckbxMovEstoque);
 
-		JCheckBox checkBox_10 = new JCheckBox("Excluir");
-		checkBox_10.setBounds(6, 97, 97, 23);
-		panel_3.add(checkBox_10);
+		chckbxListarNota = new JCheckBox("Listar");
+		chckbxListarNota.setBounds(6, 45, 97, 23);
+		panelNota.add(chckbxListarNota);
 
-		JCheckBox checkBox_11 = new JCheckBox("Listar");
-		checkBox_11.setBounds(6, 45, 97, 23);
-		panel_3.add(checkBox_11);
-
-		JPanel panel_4 = new JPanel();
-		panel_4.setLayout(null);
-		panel_4.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Or\u00E7amento",
+		panelOrcamento = new JPanel();
+		panelOrcamento.setLayout(null);
+		panelOrcamento.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 2, true), "Or\u00E7amento",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_4.setBounds(648, 147, 126, 126);
-		panelPermissoes.add(panel_4);
+		panelOrcamento.setBounds(629, 11, 170, 103);
+		panelPermissoes.add(panelOrcamento);
 
-		JCheckBox checkBox_12 = new JCheckBox("Cadastrar");
-		checkBox_12.setBounds(6, 19, 97, 23);
-		panel_4.add(checkBox_12);
+		chckbxCadOrcamento = new JCheckBox("Cadastrar");
+		chckbxCadOrcamento.setBounds(6, 19, 97, 23);
+		panelOrcamento.add(chckbxCadOrcamento);
 
-		JCheckBox checkBox_13 = new JCheckBox("Editar");
-		checkBox_13.setBounds(6, 71, 97, 23);
-		panel_4.add(checkBox_13);
+		chckbxVerConsignao = new JCheckBox("Ver consignação");
+		chckbxVerConsignao.setBounds(6, 71, 139, 23);
+		panelOrcamento.add(chckbxVerConsignao);
 
-		JCheckBox checkBox_14 = new JCheckBox("Excluir");
-		checkBox_14.setBounds(6, 97, 97, 23);
-		panel_4.add(checkBox_14);
+		chckbxLancarConsignao = new JCheckBox("Lançar consignação");
+		chckbxLancarConsignao.setBounds(6, 45, 158, 23);
+		panelOrcamento.add(chckbxLancarConsignao);
 
-		JCheckBox checkBox_15 = new JCheckBox("Listar");
-		checkBox_15.setBounds(6, 45, 97, 23);
-		panel_4.add(checkBox_15);
-
-		JPanel panel_5 = new JPanel();
-		panel_5.setLayout(null);
-		panel_5.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Vendas",
+		JPanel panelVenda = new JPanel();
+		panelVenda.setLayout(null);
+		panelVenda.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 2, true), "Vendas",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_5.setBounds(28, 284, 126, 126);
-		panelPermissoes.add(panel_5);
+		panelVenda.setBounds(28, 148, 126, 54);
+		panelPermissoes.add(panelVenda);
 
-		JCheckBox checkBox_16 = new JCheckBox("Cadastrar");
-		checkBox_16.setBounds(6, 19, 97, 23);
-		panel_5.add(checkBox_16);
+		chckbxLancarVendas = new JCheckBox("Lançar Vendas");
+		chckbxLancarVendas.setBounds(6, 19, 114, 23);
+		panelVenda.add(chckbxLancarVendas);
 
-		JCheckBox checkBox_17 = new JCheckBox("Editar");
-		checkBox_17.setBounds(6, 71, 97, 23);
-		panel_5.add(checkBox_17);
-
-		JCheckBox checkBox_18 = new JCheckBox("Excluir");
-		checkBox_18.setBounds(6, 97, 97, 23);
-		panel_5.add(checkBox_18);
-
-		JCheckBox checkBox_19 = new JCheckBox("Listar");
-		checkBox_19.setBounds(6, 45, 97, 23);
-		panel_5.add(checkBox_19);
-
-		JPanel panel_6 = new JPanel();
-		panel_6.setLayout(null);
-		panel_6.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Dashboard",
+		JPanel panelDashBoard = new JPanel();
+		panelDashBoard.setLayout(null);
+		panelDashBoard.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 2, true), "Dashboard",
 				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_6.setBounds(183, 284, 126, 126);
-		panelPermissoes.add(panel_6);
+		panelDashBoard.setBounds(183, 148, 126, 126);
+		panelPermissoes.add(panelDashBoard);
 
-		JCheckBox checkBox_20 = new JCheckBox("Cadastrar");
-		checkBox_20.setBounds(6, 19, 97, 23);
-		panel_6.add(checkBox_20);
+		chckbxEstoque = new JCheckBox("Estoque");
+		chckbxEstoque.setBounds(6, 19, 97, 23);
+		panelDashBoard.add(chckbxEstoque);
 
-		JCheckBox checkBox_21 = new JCheckBox("Editar");
-		checkBox_21.setBounds(6, 71, 97, 23);
-		panel_6.add(checkBox_21);
+		chckbxCaixa = new JCheckBox("Caixa");
+		chckbxCaixa.setBounds(6, 71, 97, 23);
+		panelDashBoard.add(chckbxCaixa);
 
-		JCheckBox checkBox_22 = new JCheckBox("Excluir");
-		checkBox_22.setBounds(6, 97, 97, 23);
-		panel_6.add(checkBox_22);
+		chckbxCompra = new JCheckBox("Compra");
+		chckbxCompra.setBounds(6, 97, 97, 23);
+		panelDashBoard.add(chckbxCompra);
 
-		JCheckBox checkBox_23 = new JCheckBox("Listar");
-		checkBox_23.setBounds(6, 45, 97, 23);
-		panel_6.add(checkBox_23);
+		chckbxVenda = new JCheckBox("Venda");
+		chckbxVenda.setBounds(6, 45, 97, 23);
+		panelDashBoard.add(chckbxVenda);
 
-		JPanel panel_7 = new JPanel();
-		panel_7.setLayout(null);
-		panel_7.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Ferramentas",
-				TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_7.setBounds(338, 284, 126, 126);
-		panelPermissoes.add(panel_7);
+		panelPreConfg = new JPanel();
+		panelPreConfg.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 2, true),
+				"Pr\u00E9 configura\u00E7\u00F5es", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panelPreConfg.setBounds(673, 290, 126, 120);
+		panelPermissoes.add(panelPreConfg);
+		panelPreConfg.setLayout(null);
 
-		JCheckBox checkBox_24 = new JCheckBox("Cadastrar");
-		checkBox_24.setBounds(6, 19, 97, 23);
-		panel_7.add(checkBox_24);
-
-		JCheckBox checkBox_25 = new JCheckBox("Editar");
-		checkBox_25.setBounds(6, 71, 97, 23);
-		panel_7.add(checkBox_25);
-
-		JCheckBox checkBox_26 = new JCheckBox("Excluir");
-		checkBox_26.setBounds(6, 97, 97, 23);
-		panel_7.add(checkBox_26);
-
-		JCheckBox checkBox_27 = new JCheckBox("Listar");
-		checkBox_27.setBounds(6, 45, 97, 23);
-		panel_7.add(checkBox_27);
-		
-		JPanel panel_8 = new JPanel();
-		panel_8.setBorder(new TitledBorder(new LineBorder(new Color(0, 0, 128), 1, true), "Permiss\u00F5es rapidas", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panel_8.setBounds(28, 11, 281, 125);
-		panelPermissoes.add(panel_8);
-		panel_8.setLayout(null);
-		
-		JCheckBox chckbxPdv = new JCheckBox("PDV");
-		chckbxPdv.setBounds(6, 17, 54, 23);
-		panel_8.add(chckbxPdv);
-		
-		JCheckBox chckbxEntradaDeMercadorias = new JCheckBox("Entrada de mercadorias");
-		chckbxEntradaDeMercadorias.setBounds(6, 43, 151, 23);
-		panel_8.add(chckbxEntradaDeMercadorias);
+		chckbxAdmin = new JCheckBox("Admin");
+		chckbxAdmin.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(chckbxAdmin.isSelected()) {
+					selectAll();
+				}
+			}
+		});
+		chckbxAdmin.setBounds(6, 22, 97, 23);
+		panelPreConfg.add(chckbxAdmin);
 
 		lblCodigoCliente = new JLabel("Codigo Funcionario:");
 		lblCodigoCliente.setBounds(10, 14, 111, 14);
@@ -382,7 +374,7 @@ public class CadUsu extends JDialog {
 							cpf = null;
 							txtCpf.setText(null);
 						}
-					}else {
+					} else {
 						cpf = null;
 						txtCpf.setText(null);
 					}
@@ -523,6 +515,8 @@ public class CadUsu extends JDialog {
 				txtEstado.setSelectedItem(usuario.getUf());
 				txtAreaObs.setText(usuario.getObs());
 
+				getPermissoes(idUsu);
+
 			} catch (ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, "Classe não encontrada, ver o log para mais detalhes",
 						"Class not found", JOptionPane.ERROR_MESSAGE);
@@ -541,6 +535,7 @@ public class CadUsu extends JDialog {
 		btnSalvar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				Usuario usu = new Usuario();
+				setPermissoes();
 				usu.setId(Integer.parseInt(txtCodFunc.getText()));
 				if (!txtCpf.getText().replace(".", "").replace("-", "").replace(" ", "").isEmpty()) {
 					usu.setCpf(Long.parseLong(txtCpf.getText().replace(".", "").replace("-", "").replace(" ", "")));
@@ -563,11 +558,11 @@ public class CadUsu extends JDialog {
 				usu.setObs(txtAreaObs.getText());
 				try {
 					if (opcao == 0) {
-						new ControlerUsuario().cadastrarUsuario(usu);
+						new ControlerUsuario().cadastrarUsuario(usu, permissoes);
 						JOptionPane.showMessageDialog(null, "Cadastro realizado com sucesso!");
 						dispose();
 					} else {
-						new ControlerUsuario().atualizarUsuario(usu);
+						new ControlerUsuario().atualizarUsuario(usu, permissoes);
 						JOptionPane.showMessageDialog(null, "Atualização realizada com sucesso!");
 						ListarUsu.repagina();
 						dispose();
@@ -590,5 +585,191 @@ public class CadUsu extends JDialog {
 				}
 			}
 		});
+	}
+
+	private void setPermissoes() {
+		permissoes.setIdFunc(Integer.parseInt(txtCodFunc.getText()));
+		if (chckbxCadClient.isSelected()) {
+			permissoes.setCadCliente(true);
+		}
+		if (chckbxEditClient.isSelected()) {
+			permissoes.setAltCliente(true);
+		}
+		if (chckbxListarClient.isSelected()) {
+			permissoes.setListCliente(true);
+		}
+		if (chckbxExcClient.isSelected()) {
+			permissoes.setExclCliente(true);
+		}
+		if (chckbxListarFunc.isSelected()) {
+			permissoes.setListFunc(true);
+		}
+		if (chckbxCadastrarFunc.isSelected()) {
+			permissoes.setCadFunc(true);
+		}
+		if (chckbxEditarFunc.isSelected()) {
+			permissoes.setAltFunc(true);
+		}
+		if (chckbxExcluirFunc.isSelected()) {
+			permissoes.setExclFunc(true);
+		}
+		if (chckbxCadProd.isSelected()) {
+			permissoes.setCadProd(true);
+		}
+		if (chckbxListarProd.isSelected()) {
+			permissoes.setListProd(true);
+		}
+		if (chckbxEditProd.isSelected()) {
+			permissoes.setAltProd(true);
+		}
+		if (chckbxExcProd.isSelected()) {
+			permissoes.setExclProduto(true);
+		}
+		if (chckbxCadNota.isSelected()) {
+			permissoes.setCadNota(true);
+		}
+		if (chckbxListarNota.isSelected()) {
+			permissoes.setListNota(true);
+		}
+		if (chckbxMovEstoque.isSelected()) {
+			permissoes.setMovEstoque(true);
+		}
+		if (chckbxCadOrcamento.isSelected()) {
+			permissoes.setCadOrcamento(true);
+		}
+		if (chckbxLancarConsignao.isSelected()) {
+			permissoes.setLancConsignacao(true);
+		}
+		if (chckbxVerConsignao.isSelected()) {
+			permissoes.setVerConsig(true);
+		}
+		if (chckbxEstoque.isSelected()) {
+			permissoes.setDashEstoque(true);
+		}
+		if (chckbxVenda.isSelected()) {
+			permissoes.setDashVenda(true);
+		}
+		if (chckbxCaixa.isSelected()) {
+			permissoes.setDashCaixa(true);
+		}
+		if (chckbxCompra.isSelected()) {
+			permissoes.setDashCompra(true);
+		}
+		if (chckbxLancarVendas.isSelected()) {
+			permissoes.setLancarVendas(true);
+		}
+	}
+
+	private void getPermissoes(int idUsu) {
+
+		PermissoesFunc permissoesGet;
+		try {
+			permissoesGet = new ControlerUsuario().consultaPermicoes(idUsu);
+			if (permissoesGet.isCadCliente()) {
+				chckbxCadClient.setSelected(true);
+			}
+			if (permissoesGet.isAltCliente()) {
+				chckbxEditClient.setSelected(true);
+			}
+			if (permissoesGet.isListCliente()) {
+				chckbxListarClient.setSelected(true);
+			}
+			if (permissoesGet.isExclCliente()) {
+				chckbxExcClient.setSelected(true);
+			}
+			if (permissoesGet.isListFunc()) {
+				chckbxListarFunc.setSelected(true);
+			}
+			if (permissoesGet.isCadFunc()) {
+				chckbxCadastrarFunc.setSelected(true);
+			}
+			if (permissoesGet.isAltFunc()) {
+				chckbxEditarFunc.setSelected(true);
+			}
+			if (permissoesGet.isExclFunc()) {
+				chckbxExcluirFunc.setSelected(true);
+			}
+			if (permissoesGet.isCadProd()) {
+				chckbxCadProd.setSelected(true);
+			}
+			if (permissoesGet.isListProd()) {
+				chckbxListarProd.setSelected(true);
+			}
+			if (permissoesGet.isAltProd()) {
+				chckbxEditProd.setSelected(true);
+			}
+			if (permissoesGet.isExclProduto()) {
+				chckbxExcProd.setSelected(true);
+			}
+			if (permissoesGet.isCadNota()) {
+				chckbxCadNota.setSelected(true);
+			}
+			if (permissoesGet.isListNota()) {
+				chckbxListarNota.setSelected(true);
+			}
+			if (permissoesGet.isMovEstoque()) {
+				chckbxMovEstoque.setSelected(true);
+			}
+			if (permissoesGet.isCadOrcamento()) {
+				chckbxCadOrcamento.setSelected(true);
+			}
+			if (permissoesGet.isLancConsignacao()) {
+				chckbxLancarConsignao.setSelected(true);
+			}
+			if (permissoesGet.isVerConsig()) {
+				chckbxVerConsignao.setSelected(true);
+			}
+			if (permissoesGet.isDashEstoque()) {
+				chckbxEstoque.setSelected(true);
+			}
+			if (permissoesGet.isDashVenda()) {
+				chckbxVenda.setSelected(true);
+			}
+			if (permissoesGet.isDashCaixa()) {
+				chckbxCaixa.setSelected(true);
+			}
+			if (permissoesGet.isDashCompra()) {
+				chckbxCompra.setSelected(true);
+			}
+			if (permissoesGet.isLancarVendas()) {
+				chckbxLancarVendas.setSelected(true);
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void selectAll() {
+		chckbxCadClient.setSelected(true);
+		chckbxEditClient.setSelected(true);
+		chckbxListarClient.setSelected(true);
+		chckbxExcClient.setSelected(true);
+		chckbxListarFunc.setSelected(true);
+		chckbxCadastrarFunc.setSelected(true);
+		chckbxEditarFunc.setSelected(true);
+		chckbxExcluirFunc.setSelected(true);
+		chckbxCadProd.setSelected(true);
+		chckbxListarProd.setSelected(true);
+		chckbxEditProd.setSelected(true);
+		chckbxExcProd.setSelected(true);
+		chckbxCadNota.setSelected(true);
+		chckbxListarNota.setSelected(true);
+		chckbxMovEstoque.setSelected(true);
+		chckbxCadOrcamento.setSelected(true);
+		chckbxLancarConsignao.setSelected(true);
+		chckbxVerConsignao.setSelected(true);
+		chckbxEstoque.setSelected(true);
+		chckbxVenda.setSelected(true);
+		chckbxCaixa.setSelected(true);
+		chckbxCompra.setSelected(true);
+		chckbxLancarVendas.setSelected(true);
+
 	}
 }

@@ -1,9 +1,6 @@
 package com.sert.main;
 
-import com.sert.telas.CadCliente;
-import com.sert.telas.CadMercadoria;
 import com.sert.telas.Entrada;
-import com.sert.telas.Inicio;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K

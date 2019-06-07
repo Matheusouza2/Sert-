@@ -467,7 +467,7 @@ public class PontoDeVenda extends JDialog {
 					mercFech.add(merc);
 				}
 				Venda venda = new Venda(controlerVenda.getIdVenda(), UsuLogado.getId(), UsuLogado.getNome(), idCliente,
-						nomeCliente, JDateField.getDateHoraStatic(), mercFech,
+						nomeCliente, new JDateField().getTimeStamp(), mercFech,
 						Float.parseFloat(String.format("%.2f", total).replace(",", ".")), 0, 0, 0, 0, 0, 0, 0, 0, 0);
 				new PontoDeVendaFecharVenda(venda).setVisible(true);
 			} catch (ClassNotFoundException e) {
@@ -527,5 +527,17 @@ public class PontoDeVenda extends JDialog {
 	public static void addMercPesq(long codBarras) {
 		txtCodBarras.setText(String.valueOf(codBarras));
 		adicionarItem();
+	}
+	
+	public void addMercConsig(long codBarras, float qntd) {
+		txtCodBarras.setText(String.valueOf(codBarras));
+		txtQuant.setText(String.valueOf(qntd));
+		adicionarItem();
+	}
+	
+	public void addConsig(String nome, String id, String cpf) {
+		lblCliente.setText("Cliente: "+nome);
+		lblCpf.setText("CPF: "+cpf);
+		idCliente = Integer.parseInt(id);
 	}
 }

@@ -18,6 +18,7 @@ public class Mercadoria implements TextFilterator<Mercadoria> {
 	private String dataAlt;
 	private float estoque;
 	private String cadastrada;
+	private String status;
 
 	public Mercadoria() {
 	}
@@ -132,6 +133,13 @@ public class Mercadoria implements TextFilterator<Mercadoria> {
 
 	public void setCadastrada(String cadastrada) {
 		this.cadastrada = cadastrada;
+	}
+	
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 	@Override

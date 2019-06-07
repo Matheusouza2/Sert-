@@ -65,23 +65,4 @@ public class RelatorioInterfaceDao {
 			JOptionPane.showMessageDialog(null, e.getMessage());
 		}
 	}
-
-	public void venda(int id) {
-		try {
-			String sql = "SELECT f.nome as func_nome, cl.nome as cliente_nome, cl.cpf, v.id, v.data_venda, v.val_total, v.acrescimo, v.desconto, v.val_dinheiro, v.val_cartao, cm.id as id_merc, cm.cod_barras, cm.nome_mercadoria, vm.valor_un, vm.quantidade, emp.nome_fant, emp.rua, emp.numero_end, emp.cidade, emp.uf FROM vendas v INNER JOIN funcionario f ON v.vendedor = f.id INNER JOIN clientes cl ON v.cliente = cl.id INNER JOIN venda_merc vm ON v.id = vm.id INNER JOIN cad_mercadorias cm ON vm.id_merc = cm.id INNER JOIN empresa emp ON emp.cnpj = (SELECT cnpj FROM empresa) WHERE v.id = "
-					+ id;
-			PreparedStatement stmt = con.prepareStatement(sql);
-			ResultSet rs = stmt.executeQuery();
-			HashMap parametros = new HashMap();
-			JDialog viewer = new JDialog(new javax.swing.JFrame(), "Estoque", true);
-			viewer.setSize(800, 600);
-			viewer.setLocationRelativeTo(null);
-			JasperPrint impressao = JasperFillManager.fillReport("src/relatorios/venda.jasper", parametros,
-					new JRResultSetDataSource(rs));
-			JasperPrintManager.printReport(impressao, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, e.getMessage());
-		}
-	}
 }
