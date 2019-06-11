@@ -5,11 +5,18 @@ import javax.swing.border.EmptyBorder;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.border.LineBorder;
+
+import com.sert.controler.ControlerCaixa;
+import com.sert.controler.UsuLogado;
+import com.sert.entidades.Caixa;
+
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
@@ -20,7 +27,7 @@ import javax.swing.JSeparator;
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * 
  * @author Matheus Souza
- * @version 1.0.0
+ * @version 1.1.0
  * 
  */
 public class MovimentoCaixa extends JDialog {
@@ -129,7 +136,24 @@ public class MovimentoCaixa extends JDialog {
 		btnConfirmar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				
+				try {
+				Caixa caixa = new Caixa();
+				caixa.setHistorico(txtHistorico.getText());
+				caixa.setDinheiro(1);
+				caixa.setIdUsuario(UsuLogado.getId());
+				caixa.setValorDinheiro(Float.parseFloat(txtValor.getText()));
+				if (rdbtnSangria.isSelected()) {
+					caixa.setRetirada(true);
+				} else {
+					caixa.setRetirada(false);
+				}
+				new ControlerCaixa().lancamentoCaixa(caixa);
+				}catch (SQLException e) {
+
+				}catch (ClassNotFoundException e) {
+
+				}catch (IOException e) {
+				}
 			}
 		});
 	}

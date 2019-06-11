@@ -20,14 +20,13 @@ import javax.swing.border.LineBorder;
 
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
-import com.sert.controler.Log;
 import com.sert.controler.PermissoesStatic;
 import com.sert.entidades.Mercadoria;
-import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.tables.TableModelMerc;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.AdvancedTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
@@ -45,7 +44,6 @@ import javax.swing.SwingWorker;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.JSeparator;
-import javax.swing.JProgressBar;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -66,18 +64,20 @@ public class ListarMercadorias extends JDialog {
 	private JButton btnExcluir;
 	private JButton btnEditar;
 	private static JTable tabMerc;
-
-	private static ControlerMercadoria controlerMercadoria;
-
 	private JLabel lblListaDeMercadorias;
 	private JTextField txtPesquisa;
 	private JSeparator separator;
 	private JLabel lblProcurar;
-	private FilterList<Mercadoria> textFilteredIssues;
+	private static FilterList<Mercadoria> textFilteredIssues;
 	private JSeparator separator_1;
 	private JButton btnAtualizar;
+	private static JPanel panelAguarde;
+	private JLabel label;
+	private JLabel lblAguarde;
+	private static AdvancedTableModel<Mercadoria> mercTableModel;
 	private static BasicEventList<Mercadoria> mercadorias;
 	private static List<Mercadoria> preencheTable;
+	private static Matcher<? super Mercadoria> textMatcherEditor;
 
 	public ListarMercadorias() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -91,7 +91,7 @@ public class ListarMercadorias extends JDialog {
 		contentPanel.setLayout(null);
 
 		listen();
-		
+
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);
 		contentPanel.add(btnX);
@@ -103,6 +103,24 @@ public class ListarMercadorias extends JDialog {
 				dispose();
 			}
 		});
+
+		panelAguarde = new JPanel();
+		panelAguarde.setBounds(305, 201, 223, 187);
+		panelAguarde.setVisible(false);
+		contentPanel.add(panelAguarde);
+		panelAguarde.setLayout(null);
+
+		label = new JLabel("");
+		label.setIcon(new ImageIcon(AjusteEstoque.class.getResource("/com/sert/img/load.gif")));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBounds(0, 0, 223, 187);
+		panelAguarde.add(label);
+
+		lblAguarde = new JLabel("Aguarde...");
+		lblAguarde.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblAguarde.setHorizontalAlignment(SwingConstants.CENTER);
+		lblAguarde.setBounds(0, 162, 223, 25);
+		panelAguarde.add(lblAguarde);
 
 		panelBtn = new JPanel();
 		panelBtn.setBackground(new Color(255, 255, 0));
@@ -215,60 +233,29 @@ public class ListarMercadorias extends JDialog {
 
 		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(txtPesquisa,
 				new Mercadoria());
-		
+
 		separator_1 = new JSeparator();
 		separator_1.setBackground(new Color(0, 0, 128));
 		separator_1.setBounds(607, 65, 197, 2);
 		panelBtn.add(separator_1);
-		
-		JProgressBar progressBar = new JProgressBar();
-		progressBar.setBounds(73, 30, 224, 35);
-		progressBar.setVisible(false);
-		progressBar.setStringPainted(true);
-		progressBar.setString("Aguarde...");
-		progressBar.setIndeterminate(true);
-		panelBtn.add(progressBar);
-		
+
 		btnAtualizar = new JButton();
 		btnAtualizar.setIcon(new ImageIcon(ListarMercadorias.class.getResource("/com/sert/img/btnAtualizar.png")));
 		btnAtualizar.setBorderPainted(false);
 		btnAtualizar.setBackground(Color.LIGHT_GRAY);
 		btnAtualizar.setBounds(109, 11, 89, 91);
 		panelBtn.add(btnAtualizar);
-		
+
 		btnAtualizar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				btnEditar.setVisible(false);
-				btnExcluir.setVisible(false);
-				btnAtualizar.setVisible(false);
-				progressBar.setVisible(true);
-				
-				new SwingWorker<Object, Object>() {
-					@Override
-					protected Object doInBackground() throws Exception {
-						repagina();
-						return null;
-					}
-					
-					@Override
-					protected void done() {
-						progressBar.setVisible(false);
-						btnEditar.setVisible(true);
-						btnExcluir.setVisible(true);
-						btnAtualizar.setVisible(true);
-						contentPanel.setCursor(Cursor.getDefaultCursor());
-						JOptionPane.showMessageDialog(panelBtn, "Lista de mercadoria atualizada com sucesso");
-						super.done();
-					}
-				}.execute();		
+				repagina();
 			}
 		});
 
 		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
-		AdvancedTableModel<Mercadoria> mercTableModel = GlazedListsSwing
-				.eventTableModelWithThreadProxyList(textFilteredIssues, new TableModelMerc());
+		mercTableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(textFilteredIssues, new TableModelMerc());
 		tabMerc.setModel(mercTableModel);
 
 		tabMerc.getColumnModel().getColumn(0).setPreferredWidth(58);
@@ -280,33 +267,32 @@ public class ListarMercadorias extends JDialog {
 	}
 
 	public static void repagina() {
-		try {
-			controlerMercadoria = new ControlerMercadoria();
-			preencheTable = controlerMercadoria.listarMercadorias();
-			mercadorias.clear();
-			for (Mercadoria merc : preencheTable) {
-				mercadorias.add(merc);
+		panelAguarde.setVisible(true);
+		new SwingWorker<Object, Object>() {
+			@Override
+			protected Object doInBackground() throws Exception {
+				new ControlerVenda().atualizarCadastros();
+				ControlerVenda.mercadorias = new ControlerMercadoria().listarMercadorias();
+				preencheTable = ControlerVenda.mercadorias;
+				PesqMercVenda.setPreencheTable(ControlerVenda.mercadorias);
+				return null;
 			}
-			new ControlerVenda().atualizarCadastros();
-			PesqMercVenda.setPreencheTable(new ControlerMercadoria().listarMercadorias());
-		}catch (ClassNotFoundException e1) {
-			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes",
-					"Sistema", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR MERCADORIAS |" + e1.getMessage());
-		} catch (SQLException e1) {
-			JOptionPane.showMessageDialog(null, "Erro de banco de dados, veja o log para mais detalhes",
-					"Banco de dados", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR MERCADORIAS |" + e1.getMessage());
-		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(null, "Erro de escrita de arquivo, veja o log para mais detalhes",
-					"Arquivo", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR MERCADORIAS |" + e1.getMessage());
-		} catch (NenhumaMercadoriaCadastradaException e1) {
-			JOptionPane.showMessageDialog(null, e1.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-			Log.gravaLog("| LISTAR MERCADORIAS |"+e1.getMessage());
-		}
 
+			protected void done() {
+				panelAguarde.setVisible(false);
+				JOptionPane.showMessageDialog(null, "Atualização realizada com sucesso", "Sucesso",
+						JOptionPane.INFORMATION_MESSAGE);
+			};
+
+		}.execute();
+		mercadorias.clear();
+		for (Mercadoria merc : preencheTable) {
+			mercadorias.add(merc);
+		}
 		tabMerc.revalidate();
+		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
+		mercTableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(textFilteredIssues, new TableModelMerc());
+		tabMerc.setModel(mercTableModel);
 	}
 
 	public static void setPreencheTable(List<Mercadoria> preencheTable1) {
@@ -336,12 +322,12 @@ public class ListarMercadorias extends JDialog {
 			}
 		});
 	}
-	
+
 	private void getPermissoes() {
-		if(!PermissoesStatic.permissoesFunc.isAltProd()) {
+		if (!PermissoesStatic.permissoesFunc.isAltProd()) {
 			btnEditar.setEnabled(false);
 		}
-		if(!PermissoesStatic.permissoesFunc.isExclProduto()) {
+		if (!PermissoesStatic.permissoesFunc.isExclProduto()) {
 			btnExcluir.setEnabled(false);
 		}
 	}
