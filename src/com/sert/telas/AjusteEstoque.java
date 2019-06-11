@@ -377,7 +377,7 @@ public class AjusteEstoque extends JDialog {
 			merc.setCodBarras(Long.parseLong(table.getValueAt(i, 1).toString()));
 			merc.setMercadoria(table.getValueAt(i, 2).toString());
 			merc.setPrecoVenda(Float.parseFloat(table.getValueAt(i, 3).toString().replace(",", ".").replace("R$", "")));
-			merc.setEstoque(Float.parseFloat(table.getValueAt(i, 4).toString()));
+			merc.setEstoque(Float.parseFloat(table.getValueAt(i, 4).toString().replace(",", ".")));
 			mercList.add(merc);
 		}
 
@@ -409,7 +409,7 @@ public class AjusteEstoque extends JDialog {
 						} else {
 							long codBarras = Long.parseLong(cbMercRef.getSelectedItem().toString());
 							Mercadoria mercadoria = new ControlerMercadoria().consultaMercadoria(codBarras);
-							float quant = Float.parseFloat(txtQuant.getText());
+							float quant = Float.parseFloat(txtQuant.getText().replace(",", "."));
 
 							modelo.addRow(new Object[] { mercadoria.getId(), mercadoria.getCodBarras(),
 									mercadoria.getMercadoria(), mercadoria.getPrecoVenda(), quant,

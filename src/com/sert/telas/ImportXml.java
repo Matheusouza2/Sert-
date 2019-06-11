@@ -3,11 +3,14 @@ package com.sert.telas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Desktop;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -17,6 +20,7 @@ import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -52,21 +56,24 @@ import com.sert.exceptions.FornecedorJaCadastradoException;
 import com.sert.exceptions.MercadoriaNaoEncontradaException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.LookAndFeel;
 import javax.swing.JSeparator;
 import javax.swing.JProgressBar;
+import javax.swing.JRootPane;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * 
  * @author Matheus Souza
- * @version 1.0.0
+ * @version 1.1.0
  * 
  */
 public class ImportXml extends JDialog {
@@ -133,7 +140,9 @@ public class ImportXml extends JDialog {
 
 	public ImportXml() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 1366, 760);
+		Toolkit toolkit = Toolkit.getDefaultToolkit();
+		Dimension screenSize = toolkit.getScreenSize();
+		setBounds(100, 100, screenSize.width - 74, 760);
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		setModal(true);
@@ -142,8 +151,10 @@ public class ImportXml extends JDialog {
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
 
+		listen();
+
 		btnX = new JButton("X");
-		btnX.setBounds(1320, 0, 46, 23);
+		btnX.setBounds(getWidth()-46, 0, 46, 23);
 		contentPanel.add(btnX);
 		btnX.setForeground(Color.WHITE);
 		btnX.setBackground(Color.RED);
@@ -164,7 +175,7 @@ public class ImportXml extends JDialog {
 		panelBtn = new JPanel();
 		panelBtn.setBackground(new Color(255, 255, 0));
 		panelBtn.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
-		panelBtn.setBounds(10, 34, 1346, 113);
+		panelBtn.setBounds(10, 34, getWidth() - 20, 113);
 		contentPanel.add(panelBtn);
 		panelBtn.setLayout(null);
 
@@ -186,7 +197,7 @@ public class ImportXml extends JDialog {
 		btnSalvar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				progressBar.setVisible(true);
 				recuperaNota();
@@ -194,7 +205,7 @@ public class ImportXml extends JDialog {
 				new SwingWorker() {
 					@Override
 					public Object doInBackground() throws Exception {
-						
+
 						return null;
 					}
 
@@ -247,7 +258,7 @@ public class ImportXml extends JDialog {
 		lblCaminhoDoXml = new JLabel("Caminho do XML:");
 		lblCaminhoDoXml.setBounds(646, 48, 128, 17);
 		panelBtn.add(lblCaminhoDoXml);
-		
+
 		btnFsist = new JButton();
 		btnFsist.setIcon(new ImageIcon(ImportXml.class.getResource("/com/sert/img/btnFsist.png")));
 		btnFsist.setBorderPainted(false);
@@ -258,20 +269,20 @@ public class ImportXml extends JDialog {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-			    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-			        try {
-			        	URI uri = new URI("https://www.fsist.com.br/");
-			            desktop.browse(uri);
-			        } catch (Exception e1) {
-			            e1.printStackTrace();
-			        }
-			    }				
+				if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+					try {
+						URI uri = new URI("https://www.fsist.com.br/");
+						desktop.browse(uri);
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				}
 			}
 		});
 
 		panelForm = new JPanel();
 		panelForm.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
-		panelForm.setBounds(10, 158, 1346, 591);
+		panelForm.setBounds(10, 158, getWidth() - 20, 591);
 		contentPanel.add(panelForm);
 		panelForm.setLayout(null);
 
@@ -292,6 +303,7 @@ public class ImportXml extends JDialog {
 			}
 		};
 		table.setModel(modelo);
+		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
 		lblFornecedor = new JLabel("Fornecedor:");
 		lblFornecedor.setBounds(10, 9, 73, 14);
@@ -460,7 +472,7 @@ public class ImportXml extends JDialog {
 				new SwingWorker() {
 					@Override
 					public Object doInBackground() throws Exception {
-						
+
 						return null;
 					}
 
@@ -501,7 +513,7 @@ public class ImportXml extends JDialog {
 							"CNPJ divergente", JOptionPane.YES_NO_OPTION);
 					if (resposta == JOptionPane.YES_OPTION) {
 						importaNota();
-					}else {
+					} else {
 						return;
 					}
 				} else {
@@ -637,9 +649,9 @@ public class ImportXml extends JDialog {
 				mercadoriaImport = new Mercadoria();
 				mercadoriaImport.setId(Integer.parseInt(table.getValueAt(i, 0).toString()));
 				mercadoriaImport.setMercadoria(table.getValueAt(i, 1).toString());
-				if(nfeXml.getMercadorias().get(i).getCodBarras() == 0) {
-					mercadoriaImport.setCodBarras(Long.parseLong("98500000"+mercadoriaImport.getId()));
-				}else {
+				if (nfeXml.getMercadorias().get(i).getCodBarras() == 0) {
+					mercadoriaImport.setCodBarras(Long.parseLong("98500000" + mercadoriaImport.getId()));
+				} else {
 					mercadoriaImport.setCodBarras(nfeXml.getMercadorias().get(i).getCodBarras());
 				}
 				mercadoriaImport.setDataCadastro(JDateField.getDate());
@@ -705,26 +717,48 @@ public class ImportXml extends JDialog {
 
 				controlerNfe.cadastrarNfe(entrada);
 
-				JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso !", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso !", "Sucesso",
+						JOptionPane.INFORMATION_MESSAGE);
 
 			} else {
-				JOptionPane.showMessageDialog(null,"Nota fiscal já cadastrada no sistema !", "Nota já cadastrada",JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Nota fiscal já cadastrada no sistema !", "Nota já cadastrada",
+						JOptionPane.ERROR_MESSAGE);
 			}
 
 		} catch (ClassNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (SQLException e1) {
-			JOptionPane.showMessageDialog(null,"Erro de banco de dados, ver o LOG para mais detalhes", "Erro",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erro de banco de dados, ver o LOG para mais detalhes", "Erro",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("ImportXml LINE 699---> " + e1.getMessage());
 		} catch (IOException e1) {
-			JOptionPane.showMessageDialog(null,"Erro de arquivo, ver o LOG para mais detalhes", "Erro",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erro de arquivo, ver o LOG para mais detalhes", "Erro",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("ImportXml LINE 702---> " + e1.getMessage());
 		} catch (MercadoriaNaoEncontradaException e) {
-			JOptionPane.showMessageDialog(null,"Erro no cadastro de mercadoria, ver o LOG para mais detalhes", "Erro",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erro no cadastro de mercadoria, ver o LOG para mais detalhes", "Erro",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("ImportXml LINE 705---> " + e.getMessage());
 		} catch (FornecedorJaCadastradoException e) {
-			JOptionPane.showMessageDialog(null,"Erro ao cadastrar o Fornecedor, ver o LOG para mais detalhes", "Erro",JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Erro ao cadastrar o Fornecedor, ver o LOG para mais detalhes", "Erro",
+					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("ImportXml LINE 708---> " + e.getMessage());
 		}
+	}
+
+	private void listen() {
+
+		JRootPane escback = getRootPane();
+		escback.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+				"ESC");
+		escback.getRootPane().getActionMap().put("ESC", new AbstractAction("ESC") {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				dispose();
+			}
+
+		});
 	}
 }

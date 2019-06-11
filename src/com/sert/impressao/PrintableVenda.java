@@ -44,7 +44,7 @@ public class PrintableVenda {
 			FileWriter arquivoTxt = new FileWriter(arquivo, true);
 			PrintWriter linhasTxt = new PrintWriter(arquivoTxt);
 
-			// Pegar informações da venda
+			// Pegar informações da Empresa
 			Empresa empresa = new ControlerEmpresa().listEmpresa().get(0);
 
 			// ACREDITO QUE SO PODE TER 42 CARACTERES
@@ -61,14 +61,14 @@ public class PrintableVenda {
 			for (Mercadoria mercadoria : venda.getMercadorias()) {
 				linhasTxt.print(String.format("%10s", mercadoria.getMercadoria()));
 				linhasTxt.println();
-				linhasTxt.print(String.format("%15s     ", mercadoria.getEstoque()));
-				linhasTxt.print(String.format("%10s    ", mercadoria.getPrecoVenda()));
-				linhasTxt.print(String.format("%9s    ", mercadoria.getEstoque() * mercadoria.getPrecoVenda()));
+				linhasTxt.print(String.format("%15s     ", String.format("%.2f",mercadoria.getEstoque())));
+				linhasTxt.print(String.format("%10s    ", String.format("%.2f",mercadoria.getPrecoVenda())));
+				linhasTxt.print(String.format("%9s    ", String.format("%.2f",mercadoria.getEstoque() * mercadoria.getPrecoVenda())));
 				linhasTxt.println();
 			}
 			linhasTxt.println();
 			linhasTxt.println("------------------------------------------------");
-			linhasTxt.println("Total                             R$ " + venda.getValTotal());
+			linhasTxt.println("Total                             R$ " + String.format("%.2f", venda.getValTotal()));
 			linhasTxt.println("------------------------------------------------");
 			linhasTxt.println("Cliente: " + venda.getCliente());
 			linhasTxt.println("Vendedor: " + venda.getVendedor());

@@ -37,6 +37,7 @@ import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.editableFields.JNumberField;
 import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Cliente;
+import com.sert.entidades.DuplicataCliente;
 
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
@@ -144,6 +145,11 @@ public class LancarDuplicata extends JDialog implements ActionListener, MouseLis
 		btnSalvarDup.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				DuplicataCliente duplicata = new DuplicataCliente();
+				duplicata.setId(Integer.parseInt(txtIdDuplicata.getText()));
+				Cliente cliente = new Cliente();
+				cliente.setId(Integer.parseInt(cbIdCliente.getSelectedItem().toString()));
+				duplicata.setCliente(cliente);
 			}
 		});
 
