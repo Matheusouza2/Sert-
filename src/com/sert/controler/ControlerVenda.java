@@ -117,6 +117,7 @@ public class ControlerVenda {
 
 	public void atualizarCadastros()
 			throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException {
+		mercadorias.removeAll(mercadorias);
 		mercadorias = new ControlerMercadoria().listarMercadorias();
 		PesqMercVenda.setPreencheTable(mercadorias);
 	}

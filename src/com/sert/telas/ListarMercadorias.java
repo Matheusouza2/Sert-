@@ -19,6 +19,7 @@ import javax.swing.JRootPane;
 import javax.swing.border.LineBorder;
 
 import com.sert.controler.ControlerMercadoria;
+import com.sert.controler.ControlerVenda;
 import com.sert.controler.Log;
 import com.sert.controler.PermissoesStatic;
 import com.sert.entidades.Mercadoria;
@@ -286,6 +287,7 @@ public class ListarMercadorias extends JDialog {
 			for (Mercadoria merc : preencheTable) {
 				mercadorias.add(merc);
 			}
+			new ControlerVenda().atualizarCadastros();
 			PesqMercVenda.setPreencheTable(new ControlerMercadoria().listarMercadorias());
 		}catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Classe não encontrada, veja o log para mais detalhes",

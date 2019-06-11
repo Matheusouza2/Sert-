@@ -40,7 +40,7 @@ public class CaixaDao {
 	public List<Caixa> historicoCaixa(String dataInicial, String dataFinal) throws SQLException {
 		String sql = "SELECT historico, id_operador, f.nome, id_usuario, to_char(data_operacao, 'dd/MM/yyyy HH:mm:SS') data_operacao, retirada, dinheiro, val_dinheiro, cartao, val_cartao, duplicata FROM caixa cx INNER JOIN funcionario f ON f.id = cx.id_usuario WHERE data_operacao BETWEEN '"
 				+ dataInicial + " 00:00:00' AND '" + dataFinal + " 23:59:59';";
-
+		
 		PreparedStatement prepare = con.prepareStatement(sql);
 
 		ResultSet resultado = prepare.executeQuery();
@@ -50,6 +50,7 @@ public class CaixaDao {
 		while (resultado.next()) {
 			caixa = new Caixa();
 			usu = new Usuario();
+			caixa.setIdOperador(resultado.getInt("id_operador"));
 			caixa.setHistorico(resultado.getString("historico").trim());
 			caixa.setCartao(resultado.getInt("cartao"));
 			caixa.setDataOperacao(resultado.getString("data_operacao"));
@@ -59,10 +60,18 @@ public class CaixaDao {
 			caixa.setRetirada(resultado.getBoolean("retirada"));
 			caixa.setValorCartao(resultado.getFloat("val_cartao"));
 			caixa.setValorDinheiro(resultado.getFloat("val_dinheiro"));
+			String sqlVenda = "SELECT vm.valor_compra FROM venda_merc vm INNER JOIN caixa cx ON vm.id = "+caixa.getIdOperador();
+			PreparedStatement preparedStatement = con.prepareStatement(sqlVenda);
+			ResultSet result = preparedStatement.executeQuery();
+			while(result.next()) {
+				caixa.setValorCompra(result.getFloat("valor_compra"));
+			}
 			usu.setNome(resultado.getString("nome").trim());
 			caixa.setIdUsuario(usu.getId());
 			caixaList.add(caixa);
 		}
+		prepare.close();
+				
 		return caixaList;
 	}
 
@@ -70,5 +79,4 @@ public class CaixaDao {
 
 		return null;
 	}
-
 }

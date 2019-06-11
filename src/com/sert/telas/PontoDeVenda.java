@@ -315,6 +315,8 @@ public class PontoDeVenda extends JDialog {
 				case (KeyEvent.VK_F9):
 					cancelarItem();
 					break;
+				case(KeyEvent.VK_F10):
+					break;
 				case (KeyEvent.VK_F11):
 					cancelarVenda();
 					break;

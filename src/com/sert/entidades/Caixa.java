@@ -7,6 +7,7 @@ public class Caixa {
 	private int dinheiro;
 	private float valorDinheiro;
 	private float valorCartao;
+	private float valorCompra;
 	private int duplicata;
 	private int idOperador;
 	private int idUsuario;
@@ -16,14 +17,15 @@ public class Caixa {
 	public Caixa() {
 	}
 
-	public Caixa(String historico, int cartao, int dinheiro, float valorDinheiro, float valorCartao, int duplicata,
-			int idOperador, int idUsuario, String dataOperacao, boolean retirada) {
+	public Caixa(String historico, int cartao, int dinheiro, float valorDinheiro, float valorCartao, float valorCompra,
+			int duplicata, int idOperador, int idUsuario, String dataOperacao, boolean retirada) {
 		super();
 		this.historico = historico;
 		this.cartao = cartao;
 		this.dinheiro = dinheiro;
 		this.valorDinheiro = valorDinheiro;
 		this.valorCartao = valorCartao;
+		this.valorCompra = valorCompra;
 		this.duplicata = duplicata;
 		this.idOperador = idOperador;
 		this.idUsuario = idUsuario;
@@ -109,5 +111,13 @@ public class Caixa {
 
 	public void setRetirada(boolean retirada) {
 		this.retirada = retirada;
+	}
+
+	public void setValorCompra(float valorCompra) {
+		this.valorCompra = valorCompra;
+	}
+
+	public float getValorCompra() {
+		return valorCompra;
 	}
 }

@@ -25,16 +25,17 @@ public class PermissoesFunc {
 	private boolean dashCaixa;
 	private boolean dashCompra;
 	private boolean lancarVendas;
-	
+	private boolean contasAReceber;
+
 	public PermissoesFunc() {
-	
+
 	}
 
 	public PermissoesFunc(int idFunc, boolean cadCliente, boolean listCliente, boolean altCliente, boolean exclCliente,
 			boolean listFunc, boolean cadFunc, boolean altFunc, boolean exclFunc, boolean cadProd, boolean listProd,
 			boolean altProd, boolean exclProduto, boolean cadNota, boolean listNota, boolean movEstoque,
 			boolean cadOrcamento, boolean lancConsignacao, boolean verConsig, boolean dashEstoque, boolean dashVenda,
-			boolean dashCaixa, boolean dashCompra, boolean lancarVendas) {
+			boolean dashCaixa, boolean dashCompra, boolean lancarVendas, boolean contasAReceber) {
 		super();
 		this.idFunc = idFunc;
 		this.cadCliente = cadCliente;
@@ -60,6 +61,7 @@ public class PermissoesFunc {
 		this.dashCaixa = dashCaixa;
 		this.dashCompra = dashCompra;
 		this.lancarVendas = lancarVendas;
+		this.contasAReceber = contasAReceber;
 	}
 
 	public int getIdFunc() {
@@ -75,6 +77,9 @@ public class PermissoesFunc {
 	}
 
 	public void setCadCliente(boolean cadCliente) {
+		if (!cadCliente) {
+			cadCliente = false;
+		}
 		this.cadCliente = cadCliente;
 	}
 
@@ -245,12 +250,21 @@ public class PermissoesFunc {
 	public void setDashCompra(boolean dashCompra) {
 		this.dashCompra = dashCompra;
 	}
-	
+
 	public boolean isLancarVendas() {
 		return lancarVendas;
 	}
-	
+
 	public void setLancarVendas(boolean lancarVendas) {
 		this.lancarVendas = lancarVendas;
+	}
+
+	public boolean getContasAReceber() {
+		return contasAReceber;
+
+	}
+
+	public void setContasAReceber(boolean contasAReceber) {
+		this.contasAReceber = contasAReceber;
 	}
 }

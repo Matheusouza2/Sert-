@@ -201,21 +201,21 @@ public class RelatorioCaixa extends JDialog {
 				if (preencheTable.get(i).isRetirada()) {
 					operacao = "-";
 				}
-
 				modelo.addRow(new Object[] { preencheTable.get(i).getDataOperacao(),
 						preencheTable.get(i).getHistorico(), operacao,
 						"R$ " + String.format("%.2f", preencheTable.get(i).getValorDinheiro()),
 						"R$ " + String.format("%.2f", preencheTable.get(i).getValorCartao()),
 						"R$ " + String.format("%.2f",
 								preencheTable.get(i).getValorDinheiro() + preencheTable.get(i).getValorCartao()) });
-//				totalAmbos += preencheTable.get(i).getValTotal() + preencheTable.get(i).getAcrescimo()
-//						- preencheTable.get(i).getDesconto();
-//				totalDinheiro += preencheTable.get(i).getValTotal() + preencheTable.get(i).getAcrescimo()
-//						- preencheTable.get(i).getDesconto() - preencheTable.get(i).getValCartao();
-//				totalCartao += preencheTable.get(i).getValCartao();
-//
-//				totalCompra += preencheTable.get(i).getMercadorias().get(i).getPrecoCompra();
+				
+				totalAmbos +=  preencheTable.get(i).getValorDinheiro() +  preencheTable.get(i).getValorCartao();
+				totalDinheiro += preencheTable.get(i).getValorDinheiro();
+				totalCartao += preencheTable.get(i).getValorCartao();
+				totalCompra += preencheTable.get(i).getValorCompra();
+				
 			}
+			
+			
 			lblDinheiro.setText("R$ " + String.format("%.2f", totalDinheiro));
 			lblTotalVenda.setText(String.valueOf(tabMerc.getRowCount()));
 			lblCartao.setText("R$ " + String.format("%.2f", totalCartao));

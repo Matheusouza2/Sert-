@@ -74,7 +74,7 @@ public class PrintableVenda {
 			linhasTxt.println("Vendedor: " + venda.getVendedor());
 			linhasTxt.println("Data: " + venda.getDataVenda());
 			linhasTxt.println("===============================================");
-			linhasTxt.println("           AGRADECEMOS SUA PRESENÇA            ");
+			linhasTxt.println("           AGRADECEMOS SUA PRESENCA            ");
 			linhasTxt.println("                 VOLTE SEMPRE                  ");
 			linhasTxt.println();
 			linhasTxt.println("SertSoft (87) 98875-4442				          ");
