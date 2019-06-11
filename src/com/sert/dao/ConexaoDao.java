@@ -17,7 +17,7 @@ public class ConexaoDao {
 			Class.forName("org.postgresql.Driver");
 			con = DriverManager.getConnection(
 					"jdbc:postgresql://" + controler.getHost() + ":" + controler.getPort()
-							+ "/sertbd?autoReconnect=true&useSSL=false",
+							+ "/teste?autoReconnect=true&useSSL=false",
 					controler.getLogin(), controler.getPassword());
 		}
 		return con;

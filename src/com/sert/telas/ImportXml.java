@@ -238,13 +238,14 @@ public class ImportXml extends JDialog {
 		});
 
 		txtCaminhoXML = new JTextField();
-		txtCaminhoXML.setBounds(784, 46, 431, 20);
+		System.out.println(getWidth());
+		txtCaminhoXML.setBounds(getWidth()-590, 46, 431, 20);
 		panelBtn.add(txtCaminhoXML);
 		txtCaminhoXML.setColumns(10);
 		txtCaminhoXML.setEditable(false);
 
 		btnBuscarXml = new JButton("Buscar XML");
-		btnBuscarXml.setBounds(1225, 45, 111, 23);
+		btnBuscarXml.setBounds(getWidth()-150, 45, 111, 23);
 		panelBtn.add(btnBuscarXml);
 
 		separator = new JSeparator();
@@ -256,7 +257,7 @@ public class ImportXml extends JDialog {
 		panelBtn.add(separator);
 
 		lblCaminhoDoXml = new JLabel("Caminho do XML:");
-		lblCaminhoDoXml.setBounds(646, 48, 128, 17);
+		lblCaminhoDoXml.setBounds(getWidth()-710, 48, 128, 17);
 		panelBtn.add(lblCaminhoDoXml);
 
 		btnFsist = new JButton();
@@ -287,7 +288,7 @@ public class ImportXml extends JDialog {
 		panelForm.setLayout(null);
 
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 120, 1326, 460);
+		scrollPane.setBounds(10, 120, panelForm.getWidth()-20, 460);
 		panelForm.add(scrollPane);
 
 		table = new JTable();
@@ -679,8 +680,9 @@ public class ImportXml extends JDialog {
 			if (controlerNfe.pesqNfe(nfeXml.getChave()).getChave() == null) {
 				// Cadastra as mercadorias e seu estoque
 				for (int i = 0; i < mercadoriaGravar.size(); i++) {
+					Mercadoria mercadoria;
 					if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
-						Mercadoria mercadoria = new Mercadoria(mercadoriaGravar.get(i).getId(),
+						mercadoria = new Mercadoria(mercadoriaGravar.get(i).getId(),
 								mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getMercadoria(),
 								mercadoriaGravar.get(i).getPrecoVenda(), mercadoriaGravar.get(i).getDataCadastro(),
 								mercadoriaGravar.get(i).getUsuCad(), mercadoriaGravar.get(i).getUnd(),
@@ -689,8 +691,11 @@ public class ImportXml extends JDialog {
 						controlerMercadoria.cadastrarMercadoriaNf(mercadoria);
 
 					} else {
-						controlerMercadoria.entradaMercadoria(mercadoriaGravar.get(i).getEstoque(),
-								mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getId());
+						mercadoria = new Mercadoria();
+						mercadoria.setEstoque(mercadoriaGravar.get(i).getEstoque());
+						mercadoria.setCodBarras(mercadoriaGravar.get(i).getCodBarras());
+						mercadoria.setPrecoVenda(mercadoriaGravar.get(i).getPrecoVenda());
+						controlerMercadoria.entradaMercadoria(mercadoria, mercadoriaGravar.get(i).getId());
 					}
 				}
 

@@ -117,20 +117,21 @@ public class MercadoriaDao {
 		return id;
 	}
 
-	public void entradaNotaEstoque(float estoque, long codBarras, long codFornecedor) throws SQLException {
+	public void entradaNotaEstoque(Mercadoria mercadoria, long codFornecedor) throws SQLException {
 		if (codFornecedor == 0) {
 			String sql = "UPDATE cad_mercadorias SET estoque=? WHERE cod_barras=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setFloat(1, estoque);
-			preparedStatement.setLong(2, codBarras);
+			preparedStatement.setFloat(1, mercadoria.getEstoque());
+			preparedStatement.setLong(2, mercadoria.getCodBarras());
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
 		} else {
-			String sql = "UPDATE cad_mercadorias SET estoque=?, cod_fornecedor=? WHERE cod_barras=?";
+			String sql = "UPDATE cad_mercadorias SET estoque=?, cod_fornecedor=?, preco_venda=? WHERE cod_barras=?";
 			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setFloat(1, estoque);
+			preparedStatement.setFloat(1, mercadoria.getEstoque());
 			preparedStatement.setLong(2, codFornecedor);
-			preparedStatement.setLong(3, codBarras);
+			preparedStatement.setFloat(3, mercadoria.getPrecoVenda());
+			preparedStatement.setLong(4, mercadoria.getCodBarras());
 			preparedStatement.executeUpdate();
 			preparedStatement.close();
 		}

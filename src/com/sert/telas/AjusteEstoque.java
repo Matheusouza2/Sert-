@@ -27,6 +27,7 @@ import javax.swing.table.DefaultTableModel;
 
 import com.sert.controler.ControlerAjusteEstoque;
 import com.sert.controler.ControlerMercadoria;
+import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.AutoCompletion;
@@ -45,6 +46,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
@@ -89,6 +91,9 @@ public class AjusteEstoque extends JDialog {
 	private JTextField txtQuant;
 	private JLabel lblCod;
 	private JLabel lblSelecioneOTipo;
+	private JPanel panelAguarde;
+	private JLabel label;
+	private JLabel lblAguarde;
 
 	public AjusteEstoque() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -131,6 +136,24 @@ public class AjusteEstoque extends JDialog {
 			}
 		});
 
+		panelAguarde = new JPanel();
+		panelAguarde.setBounds(305, 201, 223, 187);
+		panelAguarde.setVisible(false);
+		contentPane.add(panelAguarde);
+		panelAguarde.setLayout(null);
+
+		label = new JLabel("");
+		label.setIcon(new ImageIcon(AjusteEstoque.class.getResource("/com/sert/img/load.gif")));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBounds(0, 0, 223, 187);
+		panelAguarde.add(label);
+
+		lblAguarde = new JLabel("Aguarde...");
+		lblAguarde.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblAguarde.setHorizontalAlignment(SwingConstants.CENTER);
+		lblAguarde.setBounds(0, 162, 223, 25);
+		panelAguarde.add(lblAguarde);
+
 		panelBtn = new JPanel();
 		panelBtn.setBackground(new Color(255, 255, 0));
 		panelBtn.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
@@ -148,9 +171,6 @@ public class AjusteEstoque extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					movEstoque();
-					JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",
-							JOptionPane.INFORMATION_MESSAGE);
-
 					while (table.getRowCount() > 0) {
 						modelo.removeRow(0);
 					}
@@ -382,6 +402,24 @@ public class AjusteEstoque extends JDialog {
 		}
 
 		new ControlerAjusteEstoque().movEstoque(mercList, operacao);
+		panelAguarde.setVisible(true);
+		new SwingWorker<Object, Object>() {
+			@Override
+			protected Object doInBackground() throws Exception {
+				new ControlerVenda().atualizarCadastros();
+				ControlerVenda.mercadorias = new ControlerMercadoria().listarMercadorias();
+				ListarMercadorias.setPreencheTable(ControlerVenda.mercadorias);
+				PesqMercVenda.setPreencheTable(ControlerVenda.mercadorias);
+				return null;
+			}
+
+			protected void done() {
+				panelAguarde.setVisible(false);
+				JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",
+						JOptionPane.INFORMATION_MESSAGE);
+			};
+
+		}.execute();
 	}
 
 	private void listen() {

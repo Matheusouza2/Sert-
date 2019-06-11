@@ -27,7 +27,7 @@ import com.sert.telas.ImportXml;
 public class Main {
 	public static void main(String[] args) {
 		try {
-			new AjusteEstoque().setVisible(true);
+			new Entrada().setVisible(true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

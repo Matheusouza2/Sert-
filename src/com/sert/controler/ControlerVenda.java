@@ -33,12 +33,16 @@ public class ControlerVenda {
 	public void finalizarVenda(Venda venda) throws SQLException, ClassNotFoundException,
 			NenhumaMercadoriaCadastradaException, IOException, MercadoriaNaoEncontradaException {
 		vendaDao.cadastrarVenda(venda);
+		Mercadoria mercadoriaBaixa;
 		List<Mercadoria> baixaEstoque = new ControlerMercadoria().listarMercadorias();
 		for (int i = 0; i < baixaEstoque.size(); i++) {
 			for (int j = 0; j < venda.getMercadorias().size(); j++) {
 				if (baixaEstoque.get(i).getCodBarras() == venda.getMercadorias().get(j).getCodBarras()) {
+					mercadoriaBaixa = new Mercadoria();
 					float estoque = baixaEstoque.get(i).getEstoque() - venda.getMercadorias().get(j).getEstoque();
-					new ControlerMercadoria().saidaMercadoria(estoque, venda.getMercadorias().get(j).getCodBarras());
+					mercadoriaBaixa.setCodBarras(venda.getMercadorias().get(j).getCodBarras());
+					mercadoriaBaixa.setEstoque(estoque);
+					new ControlerMercadoria().saidaMercadoria(mercadoriaBaixa);
 				}
 			}
 		}

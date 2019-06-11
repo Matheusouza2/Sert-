@@ -365,7 +365,7 @@ public class CadMercadoria extends JDialog implements ActionListener, FocusListe
 							"Os campos 'Cod. de Barras' e 'Descrição' não podem estar em branco", "Erro",
 							JOptionPane.ERROR_MESSAGE);
 				} else {
-					Mercadoria mercadoria = new Mercadoria(0, Long.parseLong(txtCodBarras.getText()),
+					Mercadoria mercadoria = new Mercadoria(Integer.parseInt(txtCodMercadoria.getText()), Long.parseLong(txtCodBarras.getText()),
 							txtDescricaoMerc.getText(), Float.parseFloat(txtPrecoVenda.getText().replace(",", ".")),
 							dataPrincipal, UsuLogado.getId(), cbUnd.getSelectedItem().toString(),
 							Float.parseFloat(txtPrecoCompra.getText().replace(",", ".")), UsuLogado.getNome(),
