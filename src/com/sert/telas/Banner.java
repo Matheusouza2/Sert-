@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import com.sert.controler.ControlerDuplicata;
-import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.PermissoesStatic;
@@ -14,9 +13,8 @@ import com.sert.controler.UsuLogado;
 import com.sert.dao.ConexaoDao;
 import com.sert.entidades.DuplicataCliente;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
+import com.sert.valida.LiberacaoData;
 
-import javax.swing.JProgressBar;
-import java.awt.Color;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.IOException;
@@ -29,10 +27,15 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.swing.JLabel;
-
+import javax.swing.JOptionPane;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+
+import java.awt.Font;
+import java.awt.Color;
+import java.awt.Cursor;
+import javax.swing.JProgressBar;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -45,6 +48,7 @@ public class Banner extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
+	private JLabel lblProgressBar;
 
 	public Banner() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -58,59 +62,75 @@ public class Banner extends JFrame {
 		contentPane.setLayout(null);
 		setIconImage(getIconImage());
 
-		JProgressBar progressBar = new JProgressBar(0, 100);
-		progressBar.setForeground(new Color(0, 0, 255));
-		progressBar.setBounds(10, 290, 650, 29);
-		contentPane.add(progressBar);
-		progressBar.setStringPainted(true);
-
 		JLabel label = new JLabel("");
 		label.setVerticalAlignment(SwingConstants.TOP);
 		label.setIcon(new ImageIcon(Banner.class.getResource("/com/sert/img/SertSoftBanner.png")));
-		label.setBounds(0, 0, 681, 297);
+		label.setBounds(0, 0, 681, 267);
 		contentPane.add(label);
 
-		progressBar.setIndeterminate(true);
+		lblProgressBar = new JLabel("Aguarde...");
+		lblProgressBar.setForeground(new Color(0, 0, 255));
+		lblProgressBar.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 25));
+		lblProgressBar.setHorizontalAlignment(SwingConstants.CENTER);
+		lblProgressBar.setBounds(10, 278, 650, 41);
+		contentPane.add(lblProgressBar);
 
+		JLabel lblNewLabel = new JLabel("");
+		lblNewLabel.setBounds(512, 273, 40, 40);
+		contentPane.add(lblNewLabel);
+
+		contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+	        
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setForeground(new Color(0, 0, 128));
+		progressBar.setIndeterminate(true);
+		progressBar.setBorder(null);
+		progressBar.setBackground(Color.WHITE);
+		progressBar.setBounds(0, 323, 670, 7);
+		contentPane.add(progressBar);
 		new SwingWorker<Object, Object>() {
 			@Override
 			protected Object doInBackground() throws Exception {
-				progressBar.setString("Testando conexão do banco de dados");
+				lblProgressBar.setText("Sincronizando com o servidor...");
+				if(!LiberacaoData.isDataOk()) {
+					JOptionPane.showMessageDialog(null, "Verifique a data e a hora do seu computador");
+					dispose();
+				}
+				lblProgressBar.setText("Testando conexão do banco de dados...");
 				ConexaoDao.testarCon();
-				progressBar.setString("Carregando mercadorias");
-				preencherListas();
-				progressBar.setString("Carregando clientes e seus debitos");
-				verContasAReceber();
+				lblProgressBar.setText("Carregando Permissões...");
 				PermissoesStatic.preenchePermissoes(UsuLogado.getId());
-				progressBar.setString("Carregando modulos adicionais");
-				
+				lblProgressBar.setText("Carregando mercadorias...");
+				preencherListas();
+				lblProgressBar.setText("Carregando clientes...");
+				verContasAReceber();
 				return null;
 			}
 
 			protected void done() {
-				new Inicio().setVisible(true);
+				contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				dispose();
+				new Inicio().setVisible(true);
 			}
 		}.execute();
 	}
-	
-	private void preencherListas() throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException {
+
+	private void preencherListas()
+			throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException {
+		lblProgressBar.setText("Atualizando Mercadorias...");
 		new ControlerVenda().atualizarCadastros();
-		ControlerVenda.mercadorias = new ControlerMercadoria().listarMercadorias();
-		ListarMercadorias.setPreencheTable(ControlerVenda.mercadorias);
-		PesqMercVenda.setPreencheTable(ControlerVenda.mercadorias);
 	}
-	
+
 	private void verContasAReceber() throws ClassNotFoundException, SQLException, IOException, ParseException {
 		ControlerDuplicata dup = new ControlerDuplicata();
 		List<DuplicataCliente> listDup = dup.listDuplicata();
-		
-		for(DuplicataCliente duplicata : listDup) {
+		lblProgressBar.setText("Verificando situações...");
+		for (DuplicataCliente duplicata : listDup) {
 			DateFormat df = new SimpleDateFormat("ddMMyyyy");
-	        //Converte para Date
-	        Date diaDup = df.parse(duplicata.getDataVencimento().replace("/", "").replace(" ", "").replace(":", ""));
-	        Date hoje = df.parse(JDateField.getDate().replace("/", "").replace(" ", "").replace(":", ""));
-			if(diaDup.before(hoje) && duplicata.getSituacao().equals("A vencer")){
+			// Converte para Date
+			Date diaDup = df.parse(duplicata.getDataVencimento().replace("/", "").replace(" ", "").replace(":", ""));
+			Date hoje = df.parse(JDateField.getDate().replace("/", "").replace(" ", "").replace(":", ""));
+			if (diaDup.before(hoje) && duplicata.getSituacao().equals("A vencer")) {
 				dup.alterarDuplicataStatus(duplicata.getId(), "Atrasada");
 			}
 		}

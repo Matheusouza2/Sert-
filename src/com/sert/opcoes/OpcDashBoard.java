@@ -107,7 +107,7 @@ public class OpcDashBoard extends JDialog {
 		btnRelaCaixa.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new DataPicker(DataPicker.VENDAS).setVisible(true);
+				new DataPicker(DataPicker.CAIXA).setVisible(true);
 			}
 		});
 

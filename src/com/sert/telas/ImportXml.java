@@ -200,12 +200,11 @@ public class ImportXml extends JDialog {
 
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				progressBar.setVisible(true);
-				recuperaNota();
-				confirmarCadastro();
 				new SwingWorker() {
 					@Override
 					public Object doInBackground() throws Exception {
-
+						recuperaNota();
+						confirmarCadastro();
 						return null;
 					}
 
@@ -238,7 +237,6 @@ public class ImportXml extends JDialog {
 		});
 
 		txtCaminhoXML = new JTextField();
-		System.out.println(getWidth());
 		txtCaminhoXML.setBounds(getWidth()-590, 46, 431, 20);
 		panelBtn.add(txtCaminhoXML);
 		txtCaminhoXML.setColumns(10);
@@ -424,6 +422,8 @@ public class ImportXml extends JDialog {
 		cbMercRef = new JComboBox<Long>();
 
 		try {
+			cbMercRef.addItem(0L);
+			cbMercDesc.addItem("");
 			mercList = new ControlerMercadoria().listarMercadorias();
 			for (Mercadoria merc : mercList) {
 				cbMercDesc.addItem(merc.getMercadoria());
@@ -448,16 +448,16 @@ public class ImportXml extends JDialog {
 		modelo.addColumn("Descrição");
 		modelo.addColumn("Quant.");
 		modelo.addColumn("Preço Venda");
-		table.getColumnModel().getColumn(0).setPreferredWidth(75);
-		table.getColumnModel().getColumn(1).setPreferredWidth(450);
-		table.getColumnModel().getColumn(2).setPreferredWidth(95);
-		table.getColumnModel().getColumn(3).setPreferredWidth(110);
-		table.getColumnModel().getColumn(4).setPreferredWidth(100);
-		table.getColumnModel().getColumn(5).setPreferredWidth(105);
+		table.getColumnModel().getColumn(0).setPreferredWidth(60);
+		table.getColumnModel().getColumn(1).setPreferredWidth(320);
+		table.getColumnModel().getColumn(2).setPreferredWidth(82);
+		table.getColumnModel().getColumn(3).setPreferredWidth(85);
+		table.getColumnModel().getColumn(4).setPreferredWidth(82);
+		table.getColumnModel().getColumn(5).setPreferredWidth(82);
 		table.getColumnModel().getColumn(6).setPreferredWidth(1);
-		table.getColumnModel().getColumn(7).setPreferredWidth(150);
-		table.getColumnModel().getColumn(8).setPreferredWidth(450);
-		table.getColumnModel().getColumn(9).setPreferredWidth(70);
+		table.getColumnModel().getColumn(7).setPreferredWidth(100);
+		table.getColumnModel().getColumn(8).setPreferredWidth(350);
+		table.getColumnModel().getColumn(9).setPreferredWidth(55);
 		table.getColumnModel().getColumn(10).setPreferredWidth(100);
 		table.getColumnModel().getColumn(7).setCellEditor(new DefaultCellEditor(cbMercRef));
 		table.getColumnModel().getColumn(8).setCellEditor(new DefaultCellEditor(cbMercDesc));
@@ -467,13 +467,12 @@ public class ImportXml extends JDialog {
 		btnBuscarXml.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				buscarXml(lfAnterior);
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				progressBar.setVisible(true);
 				new SwingWorker() {
 					@Override
 					public Object doInBackground() throws Exception {
-
+						buscarXml(lfAnterior);
 						return null;
 					}
 
@@ -489,6 +488,7 @@ public class ImportXml extends JDialog {
 
 	public void buscarXml(LookAndFeel lfAnterior) {
 		try {
+			File caminho;
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			escolherXml = new JFileChooser();
 			escolherXml.setFileFilter(new FileFilter() {
@@ -503,7 +503,7 @@ public class ImportXml extends JDialog {
 			});
 			escolherXml.showOpenDialog(rootPane);
 			UIManager.setLookAndFeel(lfAnterior);
-			File caminho = escolherXml.getSelectedFile();
+			caminho = escolherXml.getSelectedFile();
 			if (caminho != null) {
 				txtCaminhoXML.setText(String.valueOf(caminho));
 				nfeXml = new DeserializableNfe().lerXml(String.valueOf(caminho));
@@ -520,6 +520,8 @@ public class ImportXml extends JDialog {
 				} else {
 					importaNota();
 				}
+				File xml = new File(caminho.toString());
+				xml.delete();
 			} else {
 				JOptionPane.showMessageDialog(null, "Nenhum arquivo selecionado", "AVISO", JOptionPane.WARNING_MESSAGE);
 			}
@@ -676,9 +678,16 @@ public class ImportXml extends JDialog {
 		try {
 			controlerMercadoria = new ControlerMercadoria();
 			controlerNfe = new ControlerNfe();
-
+			
+			// 1 - Cadastra Fornecedor
+			ControlerFornecedor controlerFornecedor = new ControlerFornecedor();
+			Fornecedor fornecedor = controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn());
+			if (fornecedor == null) {
+				controlerFornecedor.cadadastrar(nfeXml.getFornecedor());
+			}
+			
+			// 2 - Cadastra as mercadorias e seus estoques
 			if (controlerNfe.pesqNfe(nfeXml.getChave()).getChave() == null) {
-				// Cadastra as mercadorias e seu estoque
 				for (int i = 0; i < mercadoriaGravar.size(); i++) {
 					Mercadoria mercadoria;
 					if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
@@ -698,13 +707,8 @@ public class ImportXml extends JDialog {
 						controlerMercadoria.entradaMercadoria(mercadoria, mercadoriaGravar.get(i).getId());
 					}
 				}
-
-				// Cadastra o cabeçalho da nota junto com o fornecedor
-				ControlerFornecedor controlerFornecedor = new ControlerFornecedor();
-				if (controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn()).getCnpjForn() == null) {
-					controlerFornecedor.cadadastrar(nfeXml.getFornecedor());
-				}
-
+				
+				// 3 - Cadastra a nota
 				MercadoriaNFe mercadoriaNota;
 				List<MercadoriaNFe> mercadoriasNota = new ArrayList<MercadoriaNFe>();
 				for (Mercadoria mercadoria : mercadoriaGravar) {
@@ -715,13 +719,12 @@ public class ImportXml extends JDialog {
 					mercadoriaNota.setQuantCompra(mercadoria.getEstoque());
 					mercadoriasNota.add(mercadoriaNota);
 				}
-				Fornecedor fornecedor = controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn());
 				int id = controlerNfe.recuperaId();
 				NFeEntrada entrada = new NFeEntrada(nfeXml.getCnpjDest(), fornecedor, id, nfeXml.getChave(),
 						nfeXml.getNumNota(), mercadoriasNota, nfeXml.getValNota(), JDateField.getDateHoraStatic());
 
 				controlerNfe.cadastrarNfe(entrada);
-
+				
 				JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso !", "Sucesso",
 						JOptionPane.INFORMATION_MESSAGE);
 

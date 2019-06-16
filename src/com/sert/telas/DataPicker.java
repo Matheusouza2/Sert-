@@ -38,7 +38,7 @@ public class DataPicker extends JDialog {
 	private JLabel lblDataFinal;
 	private JButton btnOk;
 	private JButton btnX;
-	public static int VENDAS = 0;
+	public static int CAIXA = 0;
 	public static int COMPRAS = 1;
 
 	public DataPicker(int tela) {
@@ -102,7 +102,7 @@ public class DataPicker extends JDialog {
 				} else {
 					if (tela == COMPRAS) {
 						new RelatorioCompras(txtDtInicial.getText(), txtDtFinal.getText()).setVisible(true);
-					} else if (tela == VENDAS) {
+					} else if (tela == CAIXA) {
 						new RelatorioCaixa(txtDtInicial.getText(), txtDtFinal.getText()).setVisible(true);
 					}
 				}

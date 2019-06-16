@@ -26,8 +26,6 @@ import com.sert.tables.TableModelMerc;
 
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.matchers.Matcher;
-import ca.odell.glazedlists.matchers.MatcherEditor;
 import ca.odell.glazedlists.swing.AdvancedTableModel;
 import ca.odell.glazedlists.swing.GlazedListsSwing;
 import ca.odell.glazedlists.swing.TextComponentMatcherEditor;
@@ -74,10 +72,10 @@ public class ListarMercadorias extends JDialog {
 	private static JPanel panelAguarde;
 	private JLabel label;
 	private JLabel lblAguarde;
+	private TextComponentMatcherEditor<Mercadoria> textMatcherEditor;
 	private static AdvancedTableModel<Mercadoria> mercTableModel;
 	private static BasicEventList<Mercadoria> mercadorias;
 	private static List<Mercadoria> preencheTable;
-	private static Matcher<? super Mercadoria> textMatcherEditor;
 
 	public ListarMercadorias() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -231,9 +229,6 @@ public class ListarMercadorias extends JDialog {
 			mercadorias.add(merc);
 		}
 
-		MatcherEditor<Mercadoria> textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(txtPesquisa,
-				new Mercadoria());
-
 		separator_1 = new JSeparator();
 		separator_1.setBackground(new Color(0, 0, 128));
 		separator_1.setBounds(607, 65, 197, 2);
@@ -251,8 +246,11 @@ public class ListarMercadorias extends JDialog {
 			public void actionPerformed(ActionEvent arg0) {
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				repagina();
+				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		});
+
+		textMatcherEditor = new TextComponentMatcherEditor<Mercadoria>(txtPesquisa, new Mercadoria());
 
 		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
 		mercTableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(textFilteredIssues, new TableModelMerc());
@@ -272,9 +270,13 @@ public class ListarMercadorias extends JDialog {
 			@Override
 			protected Object doInBackground() throws Exception {
 				new ControlerVenda().atualizarCadastros();
-				ControlerVenda.mercadorias = new ControlerMercadoria().listarMercadorias();
-				preencheTable = ControlerVenda.mercadorias;
-				PesqMercVenda.setPreencheTable(ControlerVenda.mercadorias);
+				for(int i = 0; i < mercadorias.size(); i++) {
+					mercadorias.remove(0);
+				}
+				for (Mercadoria merc : preencheTable) {
+					mercadorias.add(merc);
+				}
+				tabMerc.revalidate();
 				return null;
 			}
 
@@ -285,14 +287,6 @@ public class ListarMercadorias extends JDialog {
 			};
 
 		}.execute();
-		mercadorias.clear();
-		for (Mercadoria merc : preencheTable) {
-			mercadorias.add(merc);
-		}
-		tabMerc.revalidate();
-		textFilteredIssues = new FilterList<Mercadoria>(mercadorias, textMatcherEditor);
-		mercTableModel = GlazedListsSwing.eventTableModelWithThreadProxyList(textFilteredIssues, new TableModelMerc());
-		tabMerc.setModel(mercTableModel);
 	}
 
 	public static void setPreencheTable(List<Mercadoria> preencheTable1) {

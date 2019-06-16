@@ -14,6 +14,7 @@ import com.sert.exceptions.MercadoriaSemPrecoException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.exceptions.NenhumaVendaRalizadaException;
 import com.sert.exceptions.VendaNaoEncontradaException;
+import com.sert.telas.ListarMercadorias;
 import com.sert.telas.PesqMercVenda;
 
 public class ControlerVenda {
@@ -121,9 +122,10 @@ public class ControlerVenda {
 
 	public void atualizarCadastros()
 			throws ClassNotFoundException, NenhumaMercadoriaCadastradaException, SQLException, IOException {
-		mercadorias.removeAll(mercadorias);
+		mercadorias.clear();
 		mercadorias = new ControlerMercadoria().listarMercadorias();
 		PesqMercVenda.setPreencheTable(mercadorias);
+		ListarMercadorias.setPreencheTable(mercadorias);
 	}
 
 	public List<Venda> pesquisarVenda(String dtInicial, String dtFinal) throws SQLException {

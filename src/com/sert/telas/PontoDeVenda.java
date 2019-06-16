@@ -1,6 +1,7 @@
 package com.sert.telas;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -23,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.Log;
@@ -37,6 +40,7 @@ import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
 import com.sert.relatorios.RelatorioVendas;
 
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.JTable;
 import javax.swing.JScrollPane;
@@ -88,9 +92,15 @@ public class PontoDeVenda extends JDialog {
 	private static int item;
 	private static int idCliente = 0;
 	private static String nomeCliente;
-	private JLabel lblNewLabel;
 	private JSeparator separator_1;
 	private Cliente cliente;
+	private JLabel lblFLiberar;
+	private JLabel lblFFunes;
+	private JLabel lblFAtualizar;
+	private JSeparator separator;
+	private JPanel panelAguarde;
+	private JLabel label;
+	private JLabel lblAguarde;
 
 	public PontoDeVenda() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -109,11 +119,29 @@ public class PontoDeVenda extends JDialog {
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 255), 1, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		panelAguarde = new JPanel();
+		panelAguarde.setBounds(566, 270, 223, 187);
+		contentPane.add(panelAguarde);
+		panelAguarde.setVisible(false);
+		panelAguarde.setLayout(null);
+
+		label = new JLabel("");
+		label.setIcon(new ImageIcon(AjusteEstoque.class.getResource("/com/sert/img/load.gif")));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBounds(0, 0, 223, 187);
+		panelAguarde.add(label);
+
+		lblAguarde = new JLabel("Aguarde...");
+		lblAguarde.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblAguarde.setHorizontalAlignment(SwingConstants.CENTER);
+		lblAguarde.setBounds(0, 162, 223, 25);
+		panelAguarde.add(lblAguarde);
 
 		panelMother = new JPanel();
 		panelMother.setBorder(new LineBorder(new Color(0, 0, 255), 2, true));
 		panelMother.setBackground(new Color(0, 0, 128));
-		panelMother.setBounds(10, 11, 1330, 707);
+		panelMother.setBounds(10, 11, getWidth() - 20, 707);
 		contentPane.add(panelMother);
 		panelMother.setLayout(null);
 
@@ -171,41 +199,53 @@ public class PontoDeVenda extends JDialog {
 		lblFSelecionarCliente = new JLabel("F1 - Selecionar Cliente");
 		lblFSelecionarCliente.setForeground(new Color(255, 255, 0));
 		lblFSelecionarCliente.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFSelecionarCliente.setBounds(246, 18, 144, 14);
+		lblFSelecionarCliente.setBounds(148, 18, 144, 14);
 		panelMenu.add(lblFSelecionarCliente);
 
 		lblFPesquisar = new JLabel("F2 - Pesquisar mercadoria");
 		lblFPesquisar.setForeground(new Color(255, 255, 0));
 		lblFPesquisar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFPesquisar.setBounds(246, 50, 174, 14);
+		lblFPesquisar.setBounds(148, 50, 174, 14);
 		panelMenu.add(lblFPesquisar);
 
 		lblFFechar = new JLabel("F4 - Fechar venda");
 		lblFFechar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFFechar.setForeground(new Color(255, 255, 0));
-		lblFFechar.setBounds(246, 82, 123, 14);
+		lblFFechar.setBounds(148, 82, 123, 14);
 		panelMenu.add(lblFFechar);
 
 		lblFCancelarItem = new JLabel("F9 - Cancelar Item");
 		lblFCancelarItem.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFCancelarItem.setForeground(new Color(255, 255, 0));
-		lblFCancelarItem.setBounds(636, 50, 136, 14);
+		lblFCancelarItem.setBounds(440, 82, 136, 14);
 		panelMenu.add(lblFCancelarItem);
 
 		lblFCancelarVenda = new JLabel("F11 - Cancelar Venda");
 		lblFCancelarVenda.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFCancelarVenda.setForeground(new Color(255, 255, 0));
-		lblFCancelarVenda.setBounds(636, 82, 144, 14);
+		lblFCancelarVenda.setBounds(748, 50, 144, 14);
 		panelMenu.add(lblFCancelarVenda);
 
-		JLabel lblFLiberar = new JLabel("F7 - Liberar Caixa");
+		lblFLiberar = new JLabel("F7 - Liberar Caixa");
 		lblFLiberar.setForeground(new Color(255, 255, 0));
 		lblFLiberar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFLiberar.setBounds(636, 18, 136, 14);
+		lblFLiberar.setBounds(440, 50, 136, 14);
 		panelMenu.add(lblFLiberar);
+		
+		lblFFunes = new JLabel("F10 - Funções");
+		lblFFunes.setForeground(Color.YELLOW);
+		lblFFunes.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblFFunes.setBounds(748, 18, 123, 14);
+		panelMenu.add(lblFFunes);
+		
+		lblFAtualizar = new JLabel("F5 - Atualizar cadastros");
+		lblFAtualizar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblFAtualizar.setForeground(Color.YELLOW);
+		lblFAtualizar.setBounds(440, 16, 160, 19);
+		panelMenu.add(lblFAtualizar);
 
 		panelValue = new JPanel();
-		panelValue.setBounds(1040, 60, 280, 511);
+		panelValue.setBounds(panelMother.getY() - 400, 60, 280, 511);
 		panelValue.setBorder(new LineBorder(new Color(255, 255, 0), 1, true));
 		panelMother.add(panelValue);
 		panelValue.setLayout(null);
@@ -259,13 +299,7 @@ public class PontoDeVenda extends JDialog {
 		};
 		prodVenda.setModel(modelo);
 
-		lblNewLabel = new JLabel("F6 - Atualizar cadastros");
-		lblNewLabel.setForeground(new Color(255, 0, 0));
-		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		lblNewLabel.setBounds(1146, 0, 184, 14);
-		panelMother.add(lblNewLabel);
-
-		JSeparator separator = new JSeparator();
+		separator = new JSeparator();
 		separator.setBounds(176, 44, 139, 5);
 		panelMother.add(separator);
 
@@ -306,8 +340,11 @@ public class PontoDeVenda extends JDialog {
 				case (KeyEvent.VK_F4):
 					fecharVenda();
 					break;
+				case (KeyEvent.VK_F5):
+					atualizarCad();
+					break;
 				case (KeyEvent.VK_F6):
-					new RelatorioVendas().setVisible(true);
+					//new RelatorioVendas().setVisible(true);
 					break;
 				case (KeyEvent.VK_F7):
 					liberarCaixa();
@@ -316,6 +353,7 @@ public class PontoDeVenda extends JDialog {
 					cancelarItem();
 					break;
 				case(KeyEvent.VK_F10):
+					new PontoDeVendaFuncoes().setVisible(true);
 					break;
 				case (KeyEvent.VK_F11):
 					cancelarVenda();
@@ -541,5 +579,28 @@ public class PontoDeVenda extends JDialog {
 		lblCliente.setText("Cliente: "+nome);
 		lblCpf.setText("CPF: "+cpf);
 		idCliente = Integer.parseInt(id);
+	}
+	
+	private void atualizarCad() {
+		contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		panelAguarde.setVisible(true);
+		new SwingWorker<Object, Object>() {
+			@Override
+			protected Object doInBackground() throws Exception {
+				new ControlerVenda().atualizarCadastros();
+				ControlerVenda.mercadorias = new ControlerMercadoria().listarMercadorias();
+				ListarMercadorias.setPreencheTable(ControlerVenda.mercadorias);
+				PesqMercVenda.setPreencheTable(ControlerVenda.mercadorias);
+				return null;
+			}
+
+			protected void done() {
+				contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+				panelAguarde.setVisible(false);
+				JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",
+						JOptionPane.INFORMATION_MESSAGE);
+			};
+
+		}.execute();
 	}
 }

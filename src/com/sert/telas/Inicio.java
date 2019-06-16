@@ -87,9 +87,9 @@ public class Inicio extends JDialog {
 		panelButtons.setLayout(null);
 
 		btnClientes = new JButton();
-		btnClientes.setBackground(new Color(255, 0, 102));
+		btnClientes.setBackground(new Color(0, 85, 254));
 		btnClientes.setBorderPainted(false);
-		btnClientes.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/usersBtn.png")));
+		btnClientes.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnCliente.png")));
 		btnClientes.setBounds(7, 11, 89, 91);
 		panelButtons.add(btnClientes);
 		btnClientes.addActionListener(new ActionListener() {
@@ -105,7 +105,7 @@ public class Inicio extends JDialog {
 				new OpcProdutos().setVisible(true);
 			}
 		});
-		btnProdutos.setBackground(new Color(153, 0, 102));
+		btnProdutos.setBackground(new Color(0, 85, 254));
 		btnProdutos.setBorderPainted(false);
 		btnProdutos.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/produtosBtn.png")));
 		btnProdutos.setBounds(205, 11, 89, 91);
@@ -199,9 +199,9 @@ public class Inicio extends JDialog {
 				new ListarUsu().setVisible(true);
 			}
 		});
-		btnFuncionario.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFuncionarios.png")));
+		btnFuncionario.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFuncionariosNew.png")));
 		btnFuncionario.setBorderPainted(false);
-		btnFuncionario.setBackground(new Color(255, 245, 238));
+		btnFuncionario.setBackground(new Color(0, 85, 254));
 		btnFuncionario.setBounds(106, 11, 89, 91);
 		panelButtons.add(btnFuncionario);
 

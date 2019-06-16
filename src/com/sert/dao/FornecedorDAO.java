@@ -58,13 +58,14 @@ public class FornecedorDAO {
 	}
 
 	public Fornecedor pesquisar(String cnpj) throws SQLException {
-		String sql = "SELECT * FROM fornecedor WHERE cnpj = '" + cnpj + "'";
+		String sql = "SELECT * FROM fornecedor WHERE cnpj = ?";
 		PreparedStatement prepare = con.prepareStatement(sql);
-		Fornecedor fornecedor = new Fornecedor();
-
+		prepare.setString(1, cnpj);
+		Fornecedor fornecedor = null;
 		ResultSet result = prepare.executeQuery();
 
-		while (result.next()) {
+		if (result.next()) {
+			fornecedor = new Fornecedor();
 			fornecedor.setId(result.getInt("id"));
 			fornecedor.setCnpjForn(result.getString("cnpj").trim());
 			fornecedor.setIeForn(result.getString("ie").trim());

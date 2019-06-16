@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -14,14 +15,19 @@ import javax.swing.JDialog;
 import javax.swing.border.LineBorder;
 
 import com.sert.controler.ControlerCaixa;
+import com.sert.controler.JDateField;
 import com.sert.controler.UsuLogado;
+import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Caixa;
 
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JSeparator;
+import java.awt.Font;
+import javax.swing.ImageIcon;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -60,17 +66,19 @@ public class MovimentoCaixa extends JDialog {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		lblMovimentarCaixa = new JLabel("movimentar caixa");
+		lblMovimentarCaixa = new JLabel("Movimentar Caixa");
+		lblMovimentarCaixa.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 18));
 		lblMovimentarCaixa.setHorizontalAlignment(SwingConstants.CENTER);
 		lblMovimentarCaixa.setForeground(new Color(255, 255, 255));
 		lblMovimentarCaixa.setBounds(119, 4, 178, 19);
 		contentPane.add(lblMovimentarCaixa);
 
-		btnX = new JButton("X");
+		btnX = new JButton("");
+		btnX.setIcon(new ImageIcon(MovimentoCaixa.class.getResource("/com/sert/img/btnX.png")));
 		btnX.setBounds(378, 0, 39, 23);
+		btnX.setFocusPainted(false);
 		contentPane.add(btnX);
-		btnX.setForeground(Color.WHITE);
-		btnX.setBackground(Color.RED);
+		btnX.setBackground(new Color(0, 0, 128));
 		btnX.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				dispose();
@@ -118,7 +126,7 @@ public class MovimentoCaixa extends JDialog {
 		lblValor.setBounds(108, 172, 86, 14);
 		panel.add(lblValor);
 
-		txtValor = new JTextField();
+		txtValor = new JNumberFormatField(new DecimalFormat("0.00"));
 		txtValor.setBounds(189, 169, 86, 20);
 		txtValor.setBorder(null);
 		txtValor.setBackground(new Color(240, 240, 240));
@@ -140,14 +148,18 @@ public class MovimentoCaixa extends JDialog {
 				Caixa caixa = new Caixa();
 				caixa.setHistorico(txtHistorico.getText());
 				caixa.setDinheiro(1);
+				caixa.setDataOperacao(new JDateField().getTimeStamp());
 				caixa.setIdUsuario(UsuLogado.getId());
-				caixa.setValorDinheiro(Float.parseFloat(txtValor.getText()));
+				caixa.setValorDinheiro(Float.parseFloat(txtValor.getText().replace(",", ".")));
 				if (rdbtnSangria.isSelected()) {
 					caixa.setRetirada(true);
 				} else {
 					caixa.setRetirada(false);
 				}
 				new ControlerCaixa().lancamentoCaixa(caixa);
+				JOptionPane.showMessageDialog(null, "Lançamento efetuado com sucesso");
+				txtHistorico.setText("");
+				txtValor.setText("");
 				}catch (SQLException e) {
 
 				}catch (ClassNotFoundException e) {

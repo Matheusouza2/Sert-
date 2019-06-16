@@ -416,6 +416,7 @@ public class AjusteEstoque extends JDialog {
 			}
 
 			protected void done() {
+				contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				panelAguarde.setVisible(false);
 				JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",
 						JOptionPane.INFORMATION_MESSAGE);

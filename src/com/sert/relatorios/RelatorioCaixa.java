@@ -63,6 +63,10 @@ public class RelatorioCaixa extends JDialog {
 	private JLabel lblCompra;
 	private JLabel lblLucro;
 	private JLabel lblPeriodo;
+	private JLabel lblValSangria;
+	private JLabel lblSangria;
+	private JLabel lblTotalDeCaixa;
+	private JLabel lblTotalCaixa;
 
 	public RelatorioCaixa(String dtInicial, String dtFinal) {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -139,8 +143,8 @@ public class RelatorioCaixa extends JDialog {
 		contentPanel.add(panel);
 		panel.setLayout(null);
 
-		lblQuantVenda = new JLabel("Quantidade de Vendas:");
-		lblQuantVenda.setBounds(0, 0, 135, 14);
+		lblQuantVenda = new JLabel("Quantidade de Movimentações:");
+		lblQuantVenda.setBounds(0, 0, 164, 14);
 		panel.add(lblQuantVenda);
 
 		lblDinheiro = new JLabel("");
@@ -148,7 +152,7 @@ public class RelatorioCaixa extends JDialog {
 		panel.add(lblDinheiro);
 
 		lblTotalVenda = new JLabel("");
-		lblTotalVenda.setBounds(142, 0, 58, 14);
+		lblTotalVenda.setBounds(167, 0, 58, 14);
 		panel.add(lblTotalVenda);
 
 		lblCartao = new JLabel("");
@@ -178,7 +182,23 @@ public class RelatorioCaixa extends JDialog {
 		lblLucro = new JLabel();
 		lblLucro.setBounds(142, 100, 172, 32);
 		panel.add(lblLucro);
+		
+		lblSangria = new JLabel("Sangria:");
+		lblSangria.setBounds(288, 25, 90, 14);
+		panel.add(lblSangria);
+		
+		lblValSangria = new JLabel("");
+		lblValSangria.setBounds(388, 25, 90, 14);
+		panel.add(lblValSangria);
 
+		lblTotalDeCaixa = new JLabel("Total de caixa:");
+		lblTotalDeCaixa.setBounds(288, 62, 90, 14);
+		panel.add(lblTotalDeCaixa);
+		
+		lblTotalCaixa = new JLabel("");
+		lblTotalCaixa.setBounds(388, 62, 105, 14);
+		panel.add(lblTotalCaixa);
+		
 		modelo.addColumn("Data");
 		modelo.addColumn("Historico");
 		modelo.addColumn("Operação");
@@ -197,22 +217,23 @@ public class RelatorioCaixa extends JDialog {
 			controlerCaixa = new ControlerCaixa();
 			List<Caixa> preencheTable = controlerCaixa.historicoCaixa(dtInicial, dtFinal);
 			String operacao = "+";
+			float retiradas = 0;
 			for (int i = 0; i < preencheTable.size(); i++) {
 				if (preencheTable.get(i).isRetirada()) {
 					operacao = "-";
+					retiradas += preencheTable.get(i).getValorDinheiro();
+				}else {
+					totalAmbos +=  preencheTable.get(i).getValorDinheiro() +  preencheTable.get(i).getValorCartao() - retiradas;
+					totalDinheiro += preencheTable.get(i).getValorDinheiro() - retiradas;
+					totalCartao += preencheTable.get(i).getValorCartao();
+					totalCompra += preencheTable.get(i).getValorCompra();
 				}
 				modelo.addRow(new Object[] { preencheTable.get(i).getDataOperacao(),
 						preencheTable.get(i).getHistorico(), operacao,
 						"R$ " + String.format("%.2f", preencheTable.get(i).getValorDinheiro()),
 						"R$ " + String.format("%.2f", preencheTable.get(i).getValorCartao()),
 						"R$ " + String.format("%.2f",
-								preencheTable.get(i).getValorDinheiro() + preencheTable.get(i).getValorCartao()) });
-				
-				totalAmbos +=  preencheTable.get(i).getValorDinheiro() +  preencheTable.get(i).getValorCartao();
-				totalDinheiro += preencheTable.get(i).getValorDinheiro();
-				totalCartao += preencheTable.get(i).getValorCartao();
-				totalCompra += preencheTable.get(i).getValorCompra();
-				
+								preencheTable.get(i).getValorDinheiro() + preencheTable.get(i).getValorCartao()) });				
 			}
 			
 			
@@ -220,10 +241,13 @@ public class RelatorioCaixa extends JDialog {
 			lblTotalVenda.setText(String.valueOf(tabMerc.getRowCount()));
 			lblCartao.setText("R$ " + String.format("%.2f", totalCartao));
 			lblCompra.setText("R$ " + String.format("%.2f", totalCompra));
-			lucroDinheiro = totalAmbos - totalCompra;
+			lucroDinheiro = totalAmbos - totalCompra - retiradas;
 			lucroPorcento = ((totalAmbos / totalCompra) - 1) * 100;
 			lblLucro.setText("<html>R$ " + String.format("%.2f", lucroDinheiro) + "<br>"
 					+ String.format("%.2f", lucroPorcento) + " %</html>");
+			lblValSangria.setText("R$ " + String.format("%.2f", retiradas));
+			lblTotalCaixa.setText("R$ " + String.format("%.2f", (totalDinheiro+totalCartao) - retiradas));
+			
 
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",

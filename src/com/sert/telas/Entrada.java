@@ -163,8 +163,9 @@ public class Entrada extends JFrame implements FocusListener, MouseListener {
 		panelLogin.add(separator_1);
 
 		btnX = new JButton("X");
+		btnX.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
 		btnX.setForeground(Color.WHITE);
-		btnX.setBounds(501, 11, 42, 23);
+		btnX.setBounds(492, 11, 48, 23);
 		btnX.setBackground(Color.RED);
 		panelLogin.add(btnX);
 		btnX.addActionListener(new ActionListener() {
