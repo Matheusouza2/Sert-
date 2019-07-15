@@ -8,8 +8,6 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -28,23 +26,30 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
+
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+import org.jdesktop.swingx.autocomplete.ComboBoxCellEditor;
 
 import com.sert.controler.ControlerEmpresa;
 import com.sert.controler.ControlerFornecedor;
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerNfe;
+import com.sert.controler.ControlerVenda;
 import com.sert.controler.DeserializableNfe;
 import com.sert.controler.JDateField;
 import com.sert.controler.Log;
 import com.sert.controler.UsuLogado;
-import com.sert.editableFields.AutoCompletion;
 import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.editableFields.JNumberField;
 import com.sert.entidades.Empresa;
@@ -55,6 +60,7 @@ import com.sert.entidades.NFeEntrada;
 import com.sert.exceptions.FornecedorJaCadastradoException;
 import com.sert.exceptions.MercadoriaNaoEncontradaException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
+import com.sert.exceptions.NotaJaCadastradaException;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
@@ -66,7 +72,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.LookAndFeel;
 import javax.swing.JSeparator;
-import javax.swing.JProgressBar;
 import javax.swing.JRootPane;
 
 /**
@@ -76,7 +81,7 @@ import javax.swing.JRootPane;
  * @version 1.1.0
  * 
  */
-public class ImportXml extends JDialog {
+public class ImportXml extends JDialog implements CellEditorListener {
 
 	private static final long serialVersionUID = 1L;
 
@@ -125,18 +130,26 @@ public class ImportXml extends JDialog {
 	private JLabel lblIe;
 	private JLabel lblCnpj;
 
-	private JComboBox<Long> cbMercRef;
-	private JComboBox<String> cbMercDesc;
-
 	private List<Mercadoria> mercList;
 	private JLabel lblAtenoAoCadastrar;
 	private List<Mercadoria> mercadoriaGravar = new ArrayList<>();
 	private Mercadoria mercadoriaImport;
 	private ControlerMercadoria controlerMercadoria;
 
-	private JProgressBar progressBar;
-
 	private JButton btnFsist;
+
+	private ControlerNfe controlerNfe;
+
+	private TableCellEditor cellDescMerc;
+	private TableCellEditor cellRefMerc;
+
+	private JPanel panelAguarde;
+
+	private JLabel label;
+
+	private JLabel lblAguarde;
+
+	private int opcaoEntrada = 0;
 
 	public ImportXml() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -153,11 +166,13 @@ public class ImportXml extends JDialog {
 
 		listen();
 
-		btnX = new JButton("X");
-		btnX.setBounds(getWidth()-46, 0, 46, 23);
+		btnX = new JButton("");
+		btnX.setIcon(new ImageIcon(ImportXml.class.getResource("/com/sert/img/btnX.png")));
+		btnX.setBounds(1262, 2, 28, 28);
 		contentPanel.add(btnX);
-		btnX.setForeground(Color.WHITE);
-		btnX.setBackground(Color.RED);
+		btnX.setBorderPainted(false);
+		btnX.setContentAreaFilled(false);
+		btnX.setOpaque(false);
 		btnX.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -179,14 +194,23 @@ public class ImportXml extends JDialog {
 		contentPanel.add(panelBtn);
 		panelBtn.setLayout(null);
 
-		progressBar = new JProgressBar();
-		progressBar.setForeground(new Color(0, 0, 255));
-		progressBar.setBounds(223, 31, 296, 44);
-		progressBar.setStringPainted(true);
-		progressBar.setString("Aguarde...");
-		progressBar.setIndeterminate(true);
-		progressBar.setVisible(false);
-		panelBtn.add(progressBar);
+		panelAguarde = new JPanel();
+		panelAguarde.setBounds(450, 300, 306, 187);
+		panelAguarde.setVisible(false);
+		contentPanel.add(panelAguarde);
+		panelAguarde.setLayout(null);
+
+		label = new JLabel("");
+		label.setIcon(new ImageIcon(AjusteEstoque.class.getResource("/com/sert/img/load.gif")));
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBounds(41, 0, 223, 187);
+		panelAguarde.add(label);
+
+		lblAguarde = new JLabel("Aguarde...");
+		lblAguarde.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
+		lblAguarde.setHorizontalAlignment(SwingConstants.CENTER);
+		lblAguarde.setBounds(0, 153, 306, 34);
+		panelAguarde.add(lblAguarde);
 
 		btnSalvar = new JButton();
 		btnSalvar.setIcon(new ImageIcon(CadNotas.class.getResource("/com/sert/img/BtnSalvar.png")));
@@ -199,8 +223,8 @@ public class ImportXml extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				progressBar.setVisible(true);
-				new SwingWorker() {
+				panelAguarde.setVisible(true);
+				new SwingWorker<Object, Object>() {
 					@Override
 					public Object doInBackground() throws Exception {
 						recuperaNota();
@@ -210,7 +234,7 @@ public class ImportXml extends JDialog {
 
 					@Override
 					protected void done() {
-						progressBar.setVisible(false);
+						panelAguarde.setVisible(false);
 						contentPanel.setCursor(Cursor.getDefaultCursor());
 						while (table.getRowCount() > 0) {
 							modelo.removeRow(0);
@@ -237,13 +261,13 @@ public class ImportXml extends JDialog {
 		});
 
 		txtCaminhoXML = new JTextField();
-		txtCaminhoXML.setBounds(getWidth()-590, 46, 431, 20);
+		txtCaminhoXML.setBounds(getWidth() - 590, 46, 431, 20);
 		panelBtn.add(txtCaminhoXML);
 		txtCaminhoXML.setColumns(10);
 		txtCaminhoXML.setEditable(false);
 
 		btnBuscarXml = new JButton("Buscar XML");
-		btnBuscarXml.setBounds(getWidth()-150, 45, 111, 23);
+		btnBuscarXml.setBounds(getWidth() - 150, 45, 111, 23);
 		panelBtn.add(btnBuscarXml);
 
 		separator = new JSeparator();
@@ -255,7 +279,7 @@ public class ImportXml extends JDialog {
 		panelBtn.add(separator);
 
 		lblCaminhoDoXml = new JLabel("Caminho do XML:");
-		lblCaminhoDoXml.setBounds(getWidth()-710, 48, 128, 17);
+		lblCaminhoDoXml.setBounds(getWidth() - 710, 48, 128, 17);
 		panelBtn.add(lblCaminhoDoXml);
 
 		btnFsist = new JButton();
@@ -286,7 +310,7 @@ public class ImportXml extends JDialog {
 		panelForm.setLayout(null);
 
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 120, panelForm.getWidth()-20, 460);
+		scrollPane.setBounds(10, 120, panelForm.getWidth() - 20, 460);
 		panelForm.add(scrollPane);
 
 		table = new JTable();
@@ -418,24 +442,39 @@ public class ImportXml extends JDialog {
 		lblAtenoAoCadastrar.setBounds(926, 62, 344, 57);
 		panelForm.add(lblAtenoAoCadastrar);
 
-		cbMercDesc = new JComboBox<String>();
-		cbMercRef = new JComboBox<Long>();
+		JButton btnAtalho = new JButton("");
+		btnAtalho.setMnemonic(KeyEvent.VK_C);
+		btnAtalho.setBounds(171, 9, 0, 0);
+		btnAtalho.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				opcaoEntrada = (opcaoEntrada == 0) ? 1 : 0;
+				JOptionPane.showMessageDialog(null, "Configuração aplicada com sucesso !");
+			}
+		});
+		contentPanel.add(btnAtalho);
 
 		try {
-			cbMercRef.addItem(0L);
-			cbMercDesc.addItem("");
+
 			mercList = new ControlerMercadoria().listarMercadorias();
+			String nomeMerc[] = new String[mercList.size() + 1];
+			String refMerc[] = new String[mercList.size() + 1];
+			refMerc[0] = " ";
+			nomeMerc[0] = " ";
+			int i = 1;
 			for (Mercadoria merc : mercList) {
-				cbMercDesc.addItem(merc.getMercadoria());
-				cbMercRef.addItem(merc.getCodBarras());
+				refMerc[i] = String.valueOf(merc.getCodBarras());
+				nomeMerc[i] = merc.getMercadoria();
+				i += 1;
+
 			}
-			AutoCompletion.enable(cbMercDesc);
-			AutoCompletion.enable(cbMercRef);
+
+			cellDescMerc = createEditor(nomeMerc);
+			cellRefMerc = createEditor(refMerc);
 		} catch (ClassNotFoundException | NenhumaMercadoriaCadastradaException | SQLException | IOException e1) {
 			e1.printStackTrace();
 		}
-
-		escutaComboMerc();
 
 		modelo.addColumn("Código");
 		modelo.addColumn("Descrição");
@@ -459,17 +498,20 @@ public class ImportXml extends JDialog {
 		table.getColumnModel().getColumn(8).setPreferredWidth(350);
 		table.getColumnModel().getColumn(9).setPreferredWidth(55);
 		table.getColumnModel().getColumn(10).setPreferredWidth(100);
-		table.getColumnModel().getColumn(7).setCellEditor(new DefaultCellEditor(cbMercRef));
-		table.getColumnModel().getColumn(8).setCellEditor(new DefaultCellEditor(cbMercDesc));
+		table.getColumnModel().getColumn(7).setCellEditor(cellRefMerc);
+		table.getColumnModel().getColumn(8).setCellEditor(cellDescMerc);
 		table.getColumnModel().getColumn(9).setCellEditor(new DefaultCellEditor(new JNumberField()));
+
+		cellRefMerc.addCellEditorListener(this);
+		cellDescMerc.addCellEditorListener(this);
 
 		LookAndFeel lfAnterior = UIManager.getLookAndFeel();
 		btnBuscarXml.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-				progressBar.setVisible(true);
-				new SwingWorker() {
+				panelAguarde.setVisible(true);
+				new SwingWorker<Object, Object>() {
 					@Override
 					public Object doInBackground() throws Exception {
 						buscarXml(lfAnterior);
@@ -478,7 +520,7 @@ public class ImportXml extends JDialog {
 
 					@Override
 					protected void done() {
-						progressBar.setVisible(false);
+						panelAguarde.setVisible(false);
 						contentPanel.setCursor(Cursor.getDefaultCursor());
 					}
 				}.execute();
@@ -506,8 +548,14 @@ public class ImportXml extends JDialog {
 			caminho = escolherXml.getSelectedFile();
 			if (caminho != null) {
 				txtCaminhoXML.setText(String.valueOf(caminho));
+
 				nfeXml = new DeserializableNfe().lerXml(String.valueOf(caminho));
+
+				controlerNfe = new ControlerNfe();
+				controlerNfe.consultarChaveNfe(nfeXml.getChave());
+
 				Empresa empresa = new ControlerEmpresa().consultarEmpresa(nfeXml.getCnpjDest());
+
 				if (empresa == null) {
 					int resposta = JOptionPane.showConfirmDialog(null,
 							"O destinatario desta nota possui um CNPJ diferente do seu, deseja continuar mesmo assim ?",
@@ -520,30 +568,39 @@ public class ImportXml extends JDialog {
 				} else {
 					importaNota();
 				}
-				File xml = new File(caminho.toString());
-				xml.delete();
 			} else {
 				JOptionPane.showMessageDialog(null, "Nenhum arquivo selecionado", "AVISO", JOptionPane.WARNING_MESSAGE);
 			}
 		} catch (UnsupportedLookAndFeelException e1) {
+			JOptionPane.showMessageDialog(null, "Tipo de busca não suportado pela versã do Windows", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
 		} catch (ClassNotFoundException e1) {
-
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Erro interno do sistema, contate o suporte", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
 		} catch (InstantiationException e1) {
-
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Erro interno do sistema, contate o suporte", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
 		} catch (IllegalAccessException e1) {
-
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Erro interno do sistema, contate o suporte", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
 		} catch (SQLException e1) {
-
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Erro no banco de dados, contate o suporte", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
 		} catch (IOException e1) {
-
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Erro na escrita do arquivo", "Erro", JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
 		} catch (NenhumaMercadoriaCadastradaException e1) {
-
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, e1.getMessage(), "Mercadorias não encontradas",
+					JOptionPane.WARNING_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
+		} catch (NotaJaCadastradaException e1) {
+			JOptionPane.showMessageDialog(null, e1.getMessage(), "Ver cadastro de notas", JOptionPane.WARNING_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
 		}
 	}
 
@@ -553,7 +610,7 @@ public class ImportXml extends JDialog {
 		modelo.setNumRows(0);
 		mercList = new ControlerMercadoria().listarMercadorias();
 		String flag = "N";
-		long codBarrasFlag = 0;
+		String codBarrasFlag = "";
 		String mercadoriaFlag = "";
 		float descUn;
 
@@ -561,7 +618,7 @@ public class ImportXml extends JDialog {
 			for (int j = 0; j < mercList.size(); j++) {
 				if (mercList.get(j).getCodBarras() == nfeXml.getMercadorias().get(i).getCodBarras()) {
 					flag = "C";
-					codBarrasFlag = mercList.get(j).getCodBarras();
+					codBarrasFlag = String.valueOf(mercList.get(j).getCodBarras());
 					mercadoriaFlag = mercList.get(j).getMercadoria();
 					break;
 				}
@@ -577,7 +634,7 @@ public class ImportXml extends JDialog {
 									- nfeXml.getMercadorias().get(i).getValDesc())),
 					flag, codBarrasFlag, mercadoriaFlag, 1, 0 });
 			flag = "N";
-			codBarrasFlag = 0;
+			codBarrasFlag = "";
 			mercadoriaFlag = "";
 		}
 		txtFornecedor.setText(nfeXml.getFornecedor().getNomeFant());
@@ -589,55 +646,7 @@ public class ImportXml extends JDialog {
 		txtUf.setText(nfeXml.getFornecedor().getUfForn());
 		txtNumeroNota.setText(String.valueOf(nfeXml.getNumNota()));
 		txtChave.setText(nfeXml.getChave());
-		txtValorNota.setText(String.valueOf(nfeXml.getValNota()));
-	}
-
-	public void escutaComboMerc() {
-		cbMercRef.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (cbMercRef.isPopupVisible()) {
-
-					if (cbMercRef.getSelectedItem() != null) {
-						for (Mercadoria merc : mercList) {
-							if (cbMercRef.getSelectedItem().equals(merc.getCodBarras())) {
-								modelo.setValueAt("C", table.getSelectedRow(), 6);
-								modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 8);
-								table.setModel(modelo);
-							}
-						}
-					} else {
-						modelo.setValueAt("", table.getSelectedRow(), 8);
-						table.setModel(modelo);
-						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
-								JOptionPane.WARNING_MESSAGE);
-					}
-				}
-			}
-
-		});
-		cbMercDesc.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				if (cbMercDesc.isPopupVisible()) {
-
-					if (cbMercDesc.getSelectedItem() != null) {
-						for (Mercadoria merc : mercList) {
-							if (cbMercDesc.getSelectedItem().equals(merc.getMercadoria())) {
-								modelo.setValueAt("C", table.getSelectedRow(), 6);
-								modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 7);
-								table.setModel(modelo);
-							}
-						}
-					} else {
-						modelo.setValueAt("", table.getSelectedRow(), 7);
-						table.setModel(modelo);
-						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
-								JOptionPane.WARNING_MESSAGE);
-					}
-				}
-			}
-		});
+		txtValorNota.setText(String.format("R$ %.2f", nfeXml.getValNota()));
 	}
 
 	// Recupera os itens da nota para cadastro das mercadorias e seus respectivos
@@ -652,10 +661,10 @@ public class ImportXml extends JDialog {
 				mercadoriaImport = new Mercadoria();
 				mercadoriaImport.setId(Integer.parseInt(table.getValueAt(i, 0).toString()));
 				mercadoriaImport.setMercadoria(table.getValueAt(i, 1).toString());
-				if (nfeXml.getMercadorias().get(i).getCodBarras() == 0) {
+				if (table.getValueAt(i, 7).equals(" ") || table.getValueAt(i, 7).equals("")) {
 					mercadoriaImport.setCodBarras(Long.parseLong("98500000" + mercadoriaImport.getId()));
 				} else {
-					mercadoriaImport.setCodBarras(nfeXml.getMercadorias().get(i).getCodBarras());
+					mercadoriaImport.setCodBarras((long) table.getValueAt(i, 7));
 				}
 				mercadoriaImport.setDataCadastro(JDateField.getDate());
 				mercadoriaImport.setUnd(nfeXml.getMercadorias().get(i).getUnd());
@@ -669,72 +678,84 @@ public class ImportXml extends JDialog {
 				mercadoriaGravar.add(mercadoriaImport);
 			}
 		}
+
 	}
 
 	// Cadastra os itens da nota, atualiza o estoque, cadastra fornecedor, e grava a
 	// nota
 	private void confirmarCadastro() {
-		ControlerNfe controlerNfe;
 		try {
 			controlerMercadoria = new ControlerMercadoria();
 			controlerNfe = new ControlerNfe();
-			
+
 			// 1 - Cadastra Fornecedor
+			lblAguarde.setText("Cadastrando Fornecedor..");
 			ControlerFornecedor controlerFornecedor = new ControlerFornecedor();
 			Fornecedor fornecedor = controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn());
 			if (fornecedor == null) {
 				controlerFornecedor.cadadastrar(nfeXml.getFornecedor());
+				fornecedor = controlerFornecedor.pesqFornecedor(nfeXml.getFornecedor().getCnpjForn());
 			}
-			
+
 			// 2 - Cadastra as mercadorias e seus estoques
-			if (controlerNfe.pesqNfe(nfeXml.getChave()).getChave() == null) {
-				for (int i = 0; i < mercadoriaGravar.size(); i++) {
-					Mercadoria mercadoria;
-					if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
-						mercadoria = new Mercadoria(mercadoriaGravar.get(i).getId(),
-								mercadoriaGravar.get(i).getCodBarras(), mercadoriaGravar.get(i).getMercadoria(),
-								mercadoriaGravar.get(i).getPrecoVenda(), mercadoriaGravar.get(i).getDataCadastro(),
-								mercadoriaGravar.get(i).getUsuCad(), mercadoriaGravar.get(i).getUnd(),
-								mercadoriaGravar.get(i).getPrecoCompra() / mercadoriaGravar.get(i).getEstoque(),
-								UsuLogado.getNome(), "", mercadoriaGravar.get(i).getEstoque());
-						controlerMercadoria.cadastrarMercadoriaNf(mercadoria);
-
-					} else {
-						mercadoria = new Mercadoria();
-						mercadoria.setEstoque(mercadoriaGravar.get(i).getEstoque());
-						mercadoria.setCodBarras(mercadoriaGravar.get(i).getCodBarras());
-						mercadoria.setPrecoVenda(mercadoriaGravar.get(i).getPrecoVenda());
-						controlerMercadoria.entradaMercadoria(mercadoria, mercadoriaGravar.get(i).getId());
-					}
+			lblAguarde.setText("Cadastrando Mercadorias...");
+			float auxEstoque = 0;
+			for (int i = 0; i < mercadoriaGravar.size(); i++) {
+				auxEstoque = mercadoriaGravar.get(i).getEstoque();
+				if (opcaoEntrada == 1) {
+					mercadoriaGravar.get(i).setEstoque(0);
 				}
-				
-				// 3 - Cadastra a nota
-				MercadoriaNFe mercadoriaNota;
-				List<MercadoriaNFe> mercadoriasNota = new ArrayList<MercadoriaNFe>();
-				for (Mercadoria mercadoria : mercadoriaGravar) {
-					mercadoriaNota = new MercadoriaNFe();
-					mercadoriaNota.setCodBarras(mercadoria.getCodBarras());
-					mercadoriaNota.setCodProd(mercadoria.getId());
-					mercadoriaNota.setPrecoUn(mercadoria.getPrecoCompra());
-					mercadoriaNota.setQuantCompra(mercadoria.getEstoque());
-					mercadoriasNota.add(mercadoriaNota);
+
+				Mercadoria mercadoria;
+				if (mercadoriaGravar.get(i).getCadastrada().equals("N")) {
+					mercadoria = new Mercadoria(mercadoriaGravar.get(i).getId(), mercadoriaGravar.get(i).getCodBarras(),
+							mercadoriaGravar.get(i).getMercadoria(), mercadoriaGravar.get(i).getPrecoVenda(),
+							mercadoriaGravar.get(i).getDataCadastro(), mercadoriaGravar.get(i).getUsuCad(),
+							mercadoriaGravar.get(i).getUnd(), mercadoriaGravar.get(i).getPrecoCompra() / auxEstoque,
+							UsuLogado.getNome(), "", mercadoriaGravar.get(i).getEstoque());
+					controlerMercadoria.cadastrarMercadoriaNf(mercadoria);
+
+				} else {
+					mercadoria = new Mercadoria();
+					mercadoria.setEstoque(mercadoriaGravar.get(i).getEstoque());
+					mercadoria.setCodBarras(mercadoriaGravar.get(i).getCodBarras());
+					mercadoria.setPrecoVenda(mercadoriaGravar.get(i).getPrecoVenda());
+					controlerMercadoria.entradaMercadoria(mercadoria, mercadoriaGravar.get(i).getId());
 				}
-				int id = controlerNfe.recuperaId();
-				NFeEntrada entrada = new NFeEntrada(nfeXml.getCnpjDest(), fornecedor, id, nfeXml.getChave(),
-						nfeXml.getNumNota(), mercadoriasNota, nfeXml.getValNota(), JDateField.getDateHoraStatic());
-
-				controlerNfe.cadastrarNfe(entrada);
-				
-				JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso !", "Sucesso",
-						JOptionPane.INFORMATION_MESSAGE);
-
-			} else {
-				JOptionPane.showMessageDialog(null, "Nota fiscal já cadastrada no sistema !", "Nota já cadastrada",
-						JOptionPane.ERROR_MESSAGE);
 			}
+
+			// 3 - Cadastra a nota
+			lblAguarde.setText("Cadastrando Nota...");
+			MercadoriaNFe mercadoriaNota;
+			List<MercadoriaNFe> mercadoriasNota = new ArrayList<MercadoriaNFe>();
+			for (Mercadoria mercadoria : mercadoriaGravar) {
+				int idMerc = controlerMercadoria.consultaMercadoria(mercadoria.getCodBarras()).getId();
+				mercadoriaNota = new MercadoriaNFe();
+				mercadoriaNota.setCodBarras(mercadoria.getCodBarras());
+				mercadoriaNota.setCodProd(idMerc);
+				mercadoriaNota.setPrecoUn(mercadoria.getPrecoCompra());
+				mercadoriaNota.setQuantCompra(mercadoria.getEstoque());
+				mercadoriasNota.add(mercadoriaNota);
+			}
+			int id = controlerNfe.recuperaId();
+			NFeEntrada entrada = new NFeEntrada(nfeXml.getCnpjDest(), fornecedor, id, nfeXml.getChave(),
+					nfeXml.getNumNota(), mercadoriasNota, nfeXml.getValNota(), JDateField.getDateHoraStatic());
+
+			lblAguarde.setText("Atualizando estoque...");
+			new ControlerVenda().atualizarCadastros();
+
+			controlerNfe.cadastrarNfe(entrada);
+
+			JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso !", "Sucesso",
+					JOptionPane.INFORMATION_MESSAGE);
+
+			// File xml = new File(caminho.toString());
+			// xml.delete();
 
 		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Erro interno do sistema, contate o suporte", "Erro",
+					JOptionPane.ERROR_MESSAGE);
+			Log.gravaLog("ImportXml " + e1.getMessage());
 		} catch (SQLException e1) {
 			JOptionPane.showMessageDialog(null, "Erro de banco de dados, ver o LOG para mais detalhes", "Erro",
 					JOptionPane.ERROR_MESSAGE);
@@ -751,6 +772,8 @@ public class ImportXml extends JDialog {
 			JOptionPane.showMessageDialog(null, "Erro ao cadastrar o Fornecedor, ver o LOG para mais detalhes", "Erro",
 					JOptionPane.ERROR_MESSAGE);
 			Log.gravaLog("ImportXml LINE 708---> " + e.getMessage());
+		} catch (NenhumaMercadoriaCadastradaException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -768,5 +791,63 @@ public class ImportXml extends JDialog {
 			}
 
 		});
+	}
+
+	private TableCellEditor createEditor(String dados[]) {
+		JComboBox<String> combo = new JComboBox<String>(dados) {
+			private static final long serialVersionUID = 1L;
+
+			protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
+				boolean retValue = super.processKeyBinding(ks, e, condition, pressed);
+
+				if (!retValue && isStartingCellEdit() && editor != null) {
+					// this is where the magic happens
+					// not quite right; sets the value, but doesn't advance the
+					// cursor position for AC
+					editor.setItem(String.valueOf(ks.getKeyChar()));
+				}
+
+				return retValue;
+			}
+
+			private boolean isStartingCellEdit() {
+				JTable table = (JTable) SwingUtilities.getAncestorOfClass(JTable.class, this);
+
+				return table != null && table.isFocusOwner()
+						&& !Boolean.FALSE.equals((Boolean) table.getClientProperty("JTable.autoStartsEdit"));
+			}
+		};
+		AutoCompleteDecorator.decorate(combo);
+
+		return new ComboBoxCellEditor(combo);
+	}
+
+	@Override
+	public void editingCanceled(ChangeEvent arg0) {
+	}
+
+	@Override
+	public void editingStopped(ChangeEvent arg0) {
+		for (Mercadoria merc : mercList) {
+
+			if (table.getValueAt(table.getSelectedRow(), 8).equals(merc.getMercadoria())) {
+				modelo.setValueAt("C", table.getSelectedRow(), 6);
+				modelo.setValueAt(merc.getCodBarras(), table.getSelectedRow(), 7);
+				table.setModel(modelo);
+				break;
+			} else if (table.getValueAt(table.getSelectedRow(), 7).equals(String.valueOf(merc.getCodBarras()))) {
+				modelo.setValueAt("C", table.getSelectedRow(), 6);
+				modelo.setValueAt(merc.getMercadoria(), table.getSelectedRow(), 8);
+				table.setModel(modelo);
+				break;
+			} else if (table.getValueAt(table.getSelectedRow(), 8).equals(" ")
+					|| table.getValueAt(table.getSelectedRow(), 7).equals(" ")) {
+				modelo.setValueAt("N", table.getSelectedRow(), 6);
+				modelo.setValueAt("", table.getSelectedRow(), 7);
+				modelo.setValueAt("", table.getSelectedRow(), 8);
+				table.setModel(modelo);
+				break;
+			}
+		}
 	}
 }

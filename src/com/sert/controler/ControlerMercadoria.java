@@ -20,8 +20,8 @@ public class ControlerMercadoria {
 		mercadoriaDao = new MercadoriaDao();
 	}
 
-	public void cadastrarMercadoria(Mercadoria mercadoria)
-			throws SQLException, CodBarrasJaCadastradoException, MercadoriaNaoEncontradaException {
+	public void cadastrarMercadoria(Mercadoria mercadoria) throws SQLException, CodBarrasJaCadastradoException,
+			MercadoriaNaoEncontradaException, ClassNotFoundException, IOException {
 		if (consultaMercadoriaCad(mercadoria.getCodBarras()).getCodBarras() == 0) {
 			mercadoriaDao.cadastro(mercadoria);
 		} else {
@@ -80,16 +80,12 @@ public class ControlerMercadoria {
 		return mercadoriaDao.confereId();
 	}
 
-	public void entradaMercadoria(Mercadoria mercadoria, long codFornecedor)
-			throws SQLException, MercadoriaNaoEncontradaException {
-		Mercadoria merc = consultaMercadoria(mercadoria.getCodBarras());
-		float estoque = 0;
-		estoque += merc.getEstoque();
-		mercadoria.setEstoque(estoque);
+	public void entradaMercadoria(Mercadoria mercadoria, long codFornecedor) throws SQLException {
 		mercadoriaDao.entradaNotaEstoque(mercadoria, codFornecedor);
 	}
 
-	public void cadastrarMercadoriaNf(Mercadoria mercadoria) throws SQLException {
+	public void cadastrarMercadoriaNf(Mercadoria mercadoria) throws SQLException, ClassNotFoundException, IOException {
+		mercadoria.setId(new ControlerMercadoria().confereId());
 		mercadoriaDao.cadastro(mercadoria);
 	}
 

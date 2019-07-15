@@ -1,7 +1,6 @@
 package com.sert.opcoes;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -9,12 +8,13 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 import com.sert.controler.PermissoesStatic;
 import com.sert.telas.AjusteEstoque;
 import com.sert.telas.CadNotas;
 import com.sert.telas.ListarNFeEntrada;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -42,17 +42,18 @@ public class OpcFiscal extends JDialog {
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		setModal(true);
+
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(0, 0, 128));
-		contentPane.setBorder(new LineBorder(Color.YELLOW, 2, true));
+		contentPane.setOpaque(false);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		btnCadastroNfe = new JButton("entrada de nota");
-		btnCadastroNfe.setBackground(new Color(255, 255, 0));
-		btnCadastroNfe.setForeground(new Color(0, 0, 0));
-		btnCadastroNfe.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnCadastroNfe.setBounds(10, 107, 248, 21);
+		btnCadastroNfe = new JButton();
+		btnCadastroNfe.setIcon(new ImageIcon(OpcFiscal.class.getResource("/com/sert/img/btnEntradaNota.png")));
+		btnCadastroNfe.setBorderPainted(false);
+		btnCadastroNfe.setOpaque(false);
+		btnCadastroNfe.setContentAreaFilled(false);
+		btnCadastroNfe.setBounds(34, 91, 200, 36);
 		getContentPane().add(btnCadastroNfe);
 		btnCadastroNfe.addActionListener(new ActionListener() {
 			@Override
@@ -61,11 +62,25 @@ public class OpcFiscal extends JDialog {
 			}
 		});
 
-		btnVizuNota = new JButton("vizualizar notas");
-		btnVizuNota.setBackground(new Color(255, 255, 0));
-		btnVizuNota.setForeground(new Color(0, 0, 0));
-		btnVizuNota.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnVizuNota.setBounds(10, 171, 248, 21);
+		btnMovEstoque = new JButton();
+		btnMovEstoque.setIcon(new ImageIcon(OpcFiscal.class.getResource("/com/sert/img/btnMovEstoque.png")));
+		btnMovEstoque.setOpaque(false);
+		btnMovEstoque.setBorderPainted(false);
+		btnMovEstoque.setContentAreaFilled(false);
+		btnMovEstoque.setBounds(34, 185, 200, 36);
+		getContentPane().add(btnMovEstoque);
+		btnMovEstoque.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new AjusteEstoque().setVisible(true);
+			}
+		});
+
+		btnVizuNota = new JButton();
+		btnVizuNota.setIcon(new ImageIcon(OpcFiscal.class.getResource("/com/sert/img/btnVizulizarNotas.png")));
+		btnVizuNota.setBorderPainted(false);
+		btnVizuNota.setContentAreaFilled(false);
+		btnVizuNota.setOpaque(false);
+		btnVizuNota.setBounds(34, 138, 200, 36);
 		getContentPane().add(btnVizuNota);
 		btnVizuNota.addActionListener(new ActionListener() {
 			@Override
@@ -74,41 +89,36 @@ public class OpcFiscal extends JDialog {
 			}
 		});
 
-		btnMovEstoque = new JButton("mov estoque");
-		btnMovEstoque.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				new AjusteEstoque().setVisible(true);
-			}
-		});
-		btnMovEstoque.setBackground(new Color(255, 255, 0));
-		btnMovEstoque.setForeground(new Color(0, 0, 0));
-		btnMovEstoque.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnMovEstoque.setBounds(10, 139, 248, 21);
-		getContentPane().add(btnMovEstoque);
-
-		btnX = new JButton("X");
-		btnX.setBackground(Color.RED);
-		btnX.setForeground(Color.WHITE);
-		btnX.setBounds(212, 11, 46, 23);
+		btnX = new JButton();
+		btnX.setIcon(new ImageIcon(OpcFiscal.class.getResource("/com/sert/img/btnX.png")));
+		btnX.setOpaque(false);
+		btnX.setContentAreaFilled(false);
+		btnX.setBorderPainted(false);
+		btnX.setBounds(239, 2, 30, 30);
 		contentPane.add(btnX);
+		
+		JLabel lblBackground = new JLabel("");
+		lblBackground.setIcon(new ImageIcon(OpcFiscal.class.getResource("/com/sert/img/backOpc.png")));
+		lblBackground.setBounds(0, 0, 269, 300);
+		contentPane.add(lblBackground);
 		btnX.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		});
-		
+
 		getPermissoes();
 	}
-	
+
 	private void getPermissoes() {
-		if(!PermissoesStatic.permissoesFunc.isCadNota()) {
+		if (!PermissoesStatic.permissoesFunc.isCadNota()) {
 			btnCadastroNfe.setEnabled(false);
 		}
-		if(!PermissoesStatic.permissoesFunc.isListNota()) {
+		if (!PermissoesStatic.permissoesFunc.isListNota()) {
 			btnVizuNota.setEnabled(false);
 		}
-		if(!PermissoesStatic.permissoesFunc.isMovEstoque()) {
+		if (!PermissoesStatic.permissoesFunc.isMovEstoque()) {
 			btnMovEstoque.setEnabled(false);
 		}
 	}

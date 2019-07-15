@@ -3,12 +3,17 @@ package com.sert.telas;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +36,14 @@ import com.sert.controler.JDateField;
 import com.sert.controler.Log;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JNumberField;
+import com.sert.editableFields.JNumberFormatField;
 import com.sert.entidades.Cliente;
 import com.sert.entidades.Mercadoria;
 import com.sert.entidades.Venda;
 import com.sert.exceptions.MercadoriaSemEstoqueException;
 import com.sert.exceptions.MercadoriaSemPrecoException;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
-import com.sert.relatorios.RelatorioVendas;
+import com.sert.opcoes.OpcPontoDeVenda;
 
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
@@ -46,6 +52,8 @@ import javax.swing.JTable;
 import javax.swing.JScrollPane;
 import javax.swing.border.TitledBorder;
 import javax.swing.JSeparator;
+import javax.swing.JButton;
+import java.awt.SystemColor;
 
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
@@ -54,7 +62,7 @@ import javax.swing.JSeparator;
  * @version 1.0.0
  * 
  */
-public class PontoDeVenda extends JDialog {
+public class PontoDeVenda extends JDialog implements FocusListener {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JPanel panelMother;
@@ -101,6 +109,18 @@ public class PontoDeVenda extends JDialog {
 	private JPanel panelAguarde;
 	private JLabel label;
 	private JLabel lblAguarde;
+	private int linha = 0;
+	private float totalConsig = 0;
+	private JPanel panelMudarPreco;
+	public static boolean origemConsig = false;
+	private JNumberFormatField txtNovoValor;
+	private JLabel lblR;
+	private JLabel lblNomeMerc;
+	private JButton btnConfirmar;
+	private JButton btnFech;
+	private JLabel lblQnt;
+	private JTextField txtQnt;
+	private JSeparator separator_3;
 
 	public PontoDeVenda() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -109,7 +129,7 @@ public class PontoDeVenda extends JDialog {
 		setBounds(0, 0, screenSize.width, screenSize.height);
 		setModal(true);
 		setUndecorated(true);
-
+		
 		idCliente = 0;
 
 		contentPane = new JPanel();
@@ -119,10 +139,17 @@ public class PontoDeVenda extends JDialog {
 		contentPane.setBorder(new LineBorder(new Color(0, 0, 255), 1, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+
+		panelMudarPreco = new JPanel();
+		panelMudarPreco.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
+		panelMudarPreco.setBounds(356, 164, 348, 218);
+		contentPane.add(panelMudarPreco);
+		panelMudarPreco.setVisible(false);
+		panelMudarPreco.setLayout(null);
 		
 		panelAguarde = new JPanel();
 		panelAguarde.setBounds(566, 270, 223, 187);
-		contentPane.add(panelAguarde);
+		// contentPane.add(panelAguarde);
 		panelAguarde.setVisible(false);
 		panelAguarde.setLayout(null);
 
@@ -141,7 +168,7 @@ public class PontoDeVenda extends JDialog {
 		panelMother = new JPanel();
 		panelMother.setBorder(new LineBorder(new Color(0, 0, 255), 2, true));
 		panelMother.setBackground(new Color(0, 0, 128));
-		panelMother.setBounds(10, 11, getWidth() - 20, 707);
+		panelMother.setBounds(10, 11, getWidth() - 20, getHeight() - 20);
 		contentPane.add(panelMother);
 		panelMother.setLayout(null);
 
@@ -159,16 +186,7 @@ public class PontoDeVenda extends JDialog {
 		txtCodBarras.setBorder(null);
 		txtCodBarras.requestFocusInWindow();
 		panelMother.add(txtCodBarras);
-		txtCodBarras.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent arg0) {
-				txtCodBarras.requestFocusInWindow();
-			}
-
-			@Override
-			public void focusGained(FocusEvent arg0) {
-			}
-		});
+		txtCodBarras.addFocusListener(this);
 
 		lblQuantidade = new JLabel("Quantidade:");
 		lblQuantidade.setForeground(new Color(255, 255, 0));
@@ -217,35 +235,41 @@ public class PontoDeVenda extends JDialog {
 		lblFCancelarItem = new JLabel("F9 - Cancelar Item");
 		lblFCancelarItem.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFCancelarItem.setForeground(new Color(255, 255, 0));
-		lblFCancelarItem.setBounds(440, 82, 136, 14);
+		lblFCancelarItem.setBounds(748, 18, 136, 14);
 		panelMenu.add(lblFCancelarItem);
 
 		lblFCancelarVenda = new JLabel("F11 - Cancelar Venda");
 		lblFCancelarVenda.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFCancelarVenda.setForeground(new Color(255, 255, 0));
-		lblFCancelarVenda.setBounds(748, 50, 144, 14);
+		lblFCancelarVenda.setBounds(748, 82, 144, 14);
 		panelMenu.add(lblFCancelarVenda);
 
 		lblFLiberar = new JLabel("F7 - Liberar Caixa");
 		lblFLiberar.setForeground(new Color(255, 255, 0));
 		lblFLiberar.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFLiberar.setBounds(440, 50, 136, 14);
+		lblFLiberar.setBounds(440, 82, 136, 14);
 		panelMenu.add(lblFLiberar);
-		
+
 		lblFFunes = new JLabel("F10 - Funções");
 		lblFFunes.setForeground(Color.YELLOW);
 		lblFFunes.setFont(new Font("Tahoma", Font.PLAIN, 14));
-		lblFFunes.setBounds(748, 18, 123, 14);
+		lblFFunes.setBounds(748, 50, 123, 14);
 		panelMenu.add(lblFFunes);
-		
+
 		lblFAtualizar = new JLabel("F5 - Atualizar cadastros");
 		lblFAtualizar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblFAtualizar.setForeground(Color.YELLOW);
 		lblFAtualizar.setBounds(440, 16, 160, 19);
 		panelMenu.add(lblFAtualizar);
 
+		JLabel lblFMudar = new JLabel("F6 - Mudar preço");
+		lblFMudar.setForeground(Color.YELLOW);
+		lblFMudar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblFMudar.setBounds(440, 48, 123, 19);
+		panelMenu.add(lblFMudar);
+
 		panelValue = new JPanel();
-		panelValue.setBounds(panelMother.getY() - 400, 60, 280, 511);
+		panelValue.setBounds(panelMother.getX() + 1030, 57, 280, 511);
 		panelValue.setBorder(new LineBorder(new Color(255, 255, 0), 1, true));
 		panelMother.add(panelValue);
 		panelValue.setLayout(null);
@@ -344,7 +368,11 @@ public class PontoDeVenda extends JDialog {
 					atualizarCad();
 					break;
 				case (KeyEvent.VK_F6):
-					//new RelatorioVendas().setVisible(true);
+					if (prodVenda.getSelectedRow() > -1) {
+						mudarPrecoItem();
+					} else {
+						JOptionPane.showMessageDialog(null, "Selecione uma mercadoria antes");
+					}
 					break;
 				case (KeyEvent.VK_F7):
 					liberarCaixa();
@@ -352,8 +380,8 @@ public class PontoDeVenda extends JDialog {
 				case (KeyEvent.VK_F9):
 					cancelarItem();
 					break;
-				case(KeyEvent.VK_F10):
-					new PontoDeVendaFuncoes().setVisible(true);
+				case (KeyEvent.VK_F10):
+					new OpcPontoDeVenda().setVisible(true);
 					break;
 				case (KeyEvent.VK_F11):
 					cancelarVenda();
@@ -551,6 +579,134 @@ public class PontoDeVenda extends JDialog {
 		}
 	}
 
+	private void mudarPrecoItem() {
+		panelMudarPreco.removeAll();
+		panelMudarPreco.setVisible(true);
+
+		txtCodBarras.removeFocusListener(this);
+
+		lblNomeMerc = new JLabel(prodVenda.getValueAt(prodVenda.getSelectedRow(), 3).toString());
+		lblNomeMerc.setFont(new Font("Dialog", Font.BOLD, 18));
+		lblNomeMerc.setHorizontalAlignment(SwingConstants.CENTER);
+		lblNomeMerc.setBounds(10, 44, 328, 50);
+		panelMudarPreco.add(lblNomeMerc);
+
+		lblR = new JLabel("R$");
+		lblR.setBounds(13, 108, 32, 14);
+		panelMudarPreco.add(lblR);
+
+		txtNovoValor = new JNumberFormatField(new DecimalFormat("0.00"));
+		txtNovoValor.setHorizontalAlignment(SwingConstants.LEFT);
+		txtNovoValor.setBorder(null);
+		txtNovoValor.setBackground(new Color(240, 240, 240));
+		txtNovoValor.setBounds(35, 105, 94, 20);
+		panelMudarPreco.add(txtNovoValor);
+		txtNovoValor.setColumns(10);
+
+		JSeparator separator_2 = new JSeparator();
+		separator_2.setBackground(new Color(0, 0, 128));
+		separator_2.setBounds(10, 125, 119, 2);
+		panelMudarPreco.add(separator_2);
+
+		btnFech = new JButton("");
+		btnFech.setIcon(new ImageIcon(PontoDeVenda.class.getResource("/com/sert/img/btnX.png")));
+		btnFech.setBounds(310, 11, 28, 28);
+		panelMudarPreco.add(btnFech);
+		btnFech.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				txtNovoValor.setText("0,00");
+				txtQnt.setText("");
+				panelMudarPreco.setVisible(false);
+				txtCodBarras.addFocusListener(PontoDeVenda.this);
+			}
+		});
+
+		lblQnt = new JLabel("Quant.");
+		lblQnt.setBounds(194, 106, 47, 14);
+		panelMudarPreco.add(lblQnt);
+
+		txtQnt = new JNumberField();
+		txtQnt.setColumns(10);
+		txtQnt.setBorder(null);
+		txtQnt.setBackground(SystemColor.menu);
+		txtQnt.setBounds(236, 103, 89, 20);
+		panelMudarPreco.add(txtQnt);
+
+		separator_3 = new JSeparator();
+		separator_3.setBackground(new Color(0, 0, 128));
+		separator_3.setBounds(194, 123, 131, 2);
+		panelMudarPreco.add(separator_3);
+
+		btnConfirmar = new JButton("");
+		btnConfirmar.setIcon(new ImageIcon(PontoDeVenda.class.getResource("/com/sert/img/btnConfirmar.png")));
+		btnConfirmar.setBorderPainted(false);
+		btnConfirmar.setContentAreaFilled(false);
+		btnConfirmar.setOpaque(false);
+		btnConfirmar.setBounds(135, 184, 89, 23);
+		panelMudarPreco.add(btnConfirmar);
+		btnConfirmar.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				btnConfirmar.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/btnConfirmar.png")));
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				btnConfirmar.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/btnConfirmarPress.png")));
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+			}
+		});
+		btnConfirmar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int linha = prodVenda.getSelectedRow();
+				
+				double valAnt = Double.parseDouble(prodVenda.getValueAt(linha, 5).toString().replace(",", "."));
+				double quantAnt = Double.parseDouble(prodVenda.getValueAt(linha, 4).toString().replace(",", "."));
+				double novaQuant = txtQnt.getText().equals("") ? quantAnt : Double.parseDouble(txtQnt.getText().replace(",", "."));
+				double novoVal = txtNovoValor.getText().equals("0,00") ? valAnt
+						: Double.parseDouble(txtNovoValor.getText().replace(",", "."));
+				
+				double valTotal = novaQuant * novoVal;
+				System.out.println("Valor 0?"+txtNovoValor.getText());
+				System.out.println("Quant 0?"+txtQnt.getText());
+				
+				prodVenda.setValueAt(novaQuant, linha, 4);
+				prodVenda.setValueAt(String.format("%.2f", novoVal), linha, 5);
+				prodVenda.setValueAt(String.format("%.2f", valTotal), linha, 6);
+
+				panelAguarde.setVisible(true);
+				total = 0;
+				for (int i = 0; i < prodVenda.getRowCount(); i++) {
+
+					PontoDeVenda.total += Float.parseFloat(prodVenda.getValueAt(i, 6).toString().replace(",", "."));
+				}
+
+				panelAguarde.setVisible(false);
+
+				lblTotal.setText("TOTAL: R$ " + String.format("%.2f", total));
+
+				btnFech.doClick();
+				novaQuant = 0;
+				novoVal = 0;
+				valAnt = 0;
+				quantAnt = 0;
+			}
+		});
+	}
+
 	public static void liberarCaixaVenda() {
 		if (prodVenda.getRowCount() > 0) {
 			while (prodVenda.getRowCount() > 0) {
@@ -568,19 +724,28 @@ public class PontoDeVenda extends JDialog {
 		txtCodBarras.setText(String.valueOf(codBarras));
 		adicionarItem();
 	}
-	
-	public void addMercConsig(long codBarras, float qntd) {
+
+	public void addMercConsig(long codBarras, float qntd, float precoVenda) {
+		origemConsig = true;
+		totalConsig += (precoVenda * qntd);
+
 		txtCodBarras.setText(String.valueOf(codBarras));
 		txtQuant.setText(String.valueOf(qntd));
 		adicionarItem();
+		prodVenda.setValueAt(String.format("%.2f", precoVenda), linha, 5);
+		prodVenda.setValueAt(String.format("%.2f", precoVenda * qntd), linha, 6);
+		linha++;
+		lblTotal.setText("TOTAL: R$ 1" + String.format("%.2f", totalConsig));
+
+		total = totalConsig;
 	}
-	
+
 	public void addConsig(String nome, String id, String cpf) {
-		lblCliente.setText("Cliente: "+nome);
-		lblCpf.setText("CPF: "+cpf);
+		lblCliente.setText("Cliente: " + nome);
+		lblCpf.setText("CPF: " + cpf);
 		idCliente = Integer.parseInt(id);
 	}
-	
+
 	private void atualizarCad() {
 		contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		panelAguarde.setVisible(true);
@@ -597,10 +762,21 @@ public class PontoDeVenda extends JDialog {
 			protected void done() {
 				contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				panelAguarde.setVisible(false);
-				JOptionPane.showMessageDialog(null, "Ajuste realizado com sucesso", "Sucesso",
+				JOptionPane.showMessageDialog(null, "Cadastros atualizados com sucesso", "Sucesso",
 						JOptionPane.INFORMATION_MESSAGE);
 			};
 
 		}.execute();
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		if (e.getSource() == txtCodBarras) {
+			txtCodBarras.requestFocusInWindow();
+		}
 	}
 }

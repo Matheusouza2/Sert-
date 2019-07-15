@@ -65,6 +65,10 @@ public class DeserializableNfe {
 			fornecedor.setNomeFant(emit.getXFant());
 			fornecedor.setRazSocial(emit.getXNome());
 			fornecedor.setLograForn(emit.getEnderEmit().getXLgr());
+			if(emit.getEnderEmit().getNro().equals("S/N")) {
+				//Se o numero do emitente for S/N converte a 0
+				emit.getEnderEmit().setNro("0");
+			}
 			fornecedor.setNumrEndForn(Integer.parseInt(emit.getEnderEmit().getNro()));
 			fornecedor.setBairroForn(emit.getEnderEmit().getXBairro());
 			fornecedor.setCidadeForn(emit.getEnderEmit().getXMun());
@@ -90,15 +94,6 @@ public class DeserializableNfe {
 
 				mercadorias.add(mercadoria);
 			}
-
-//			for (int i = 0; i < mercadorias.size(); i++) {
-//				for (int j = 0; j < mercadorias.size(); i++) {
-//					if (mercadorias.get(i).getCodBarras() == mercadorias.get(j).getCodBarras()
-//							&& mercadorias.get(i).getMercadoria().equals(mercadorias.get(j).getMercadoria())) {
-//
-//					}
-//				}
-//			}
 
 			nFeEntrada.setMercadorias(mercadorias);
 			return nFeEntrada;

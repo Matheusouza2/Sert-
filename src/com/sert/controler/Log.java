@@ -10,18 +10,19 @@ import java.util.GregorianCalendar;
 import javax.swing.JOptionPane;
 
 public class Log {
-
+	
 	public static void gravaLog(String avsLog) {
 
 		Calendar calendar = new GregorianCalendar();
 		
 		int dia = calendar.get(GregorianCalendar.DAY_OF_MONTH);
-		int mes = calendar.get(GregorianCalendar.MONTH + 1);
+		int mes = calendar.get(GregorianCalendar.MONTH) + 1;
 		int ano = calendar.get(GregorianCalendar.YEAR);
 		int hora = calendar.get(GregorianCalendar.HOUR_OF_DAY);
 		int minuto = calendar.get(GregorianCalendar.MINUTE);
 		int sec = calendar.get(GregorianCalendar.SECOND);
-
+		
+		
 		String caminho = "C:/Program Files/Sert+/Logs/" + dia + ".txt";
 
 		File file = new File(caminho);

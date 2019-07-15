@@ -25,7 +25,7 @@ public class LiberacaoData {
 			Date data = new Date();
 			SimpleDateFormat formatadorDate = new SimpleDateFormat("yyyy-MM-dd");
 			String dataLoc = formatadorDate.format(data);
-
+			
 			if (dataLoc.equals(dataServ)) {
 				dataOk = true;
 			}

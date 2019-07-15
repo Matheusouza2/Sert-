@@ -52,7 +52,7 @@ public class AcompanharConsignacao extends JDialog implements ActionListener, Li
 	private JButton btnLancarVenda;
 	private JButton btnDevolverMerc;
 	private JButton btnDevolucaoTotal;
-	private JTable tableConsignacao;
+	private static JTable tableConsignacao;
 	private DefaultTableModel modelo;
 	private JScrollPane scrollPane;
 	private JLabel lblCodConsignao;
@@ -90,10 +90,10 @@ public class AcompanharConsignacao extends JDialog implements ActionListener, Li
 	private JTextField txtStatus;
 	private JSeparator separatorStatus;
 	private JScrollPane scrollPane_1;
-	private JTable tableMerc;
+	private static JTable tableMerc;
 	private DefaultTableModel modelMerc;
 	private JSeparator separatorCodCons;
-	private ControlerConsignacao controlerConsignacao;
+	private static ControlerConsignacao controlerConsignacao;
 	private JLabel lblPendenteDeFaturamento;
 	private JLabel lblIdCliente;
 
@@ -461,40 +461,43 @@ public class AcompanharConsignacao extends JDialog implements ActionListener, Li
 		});
 	}
 
+	public static void faturarConsignacao() {
+		try {
+			Orcamento consignacao = new Orcamento();
+			consignacao.setStatus("Faturado");
+			consignacao.setId((int) tableConsignacao.getValueAt(tableConsignacao.getSelectedRow(), 0));
+			Mercadoria merc;
+			List<Mercadoria> mercadorias = new ArrayList<Mercadoria>();
+			for (int i = 0; i < tableMerc.getRowCount(); i++) {
+				merc = new Mercadoria();
+				merc.setCodBarras((long) tableMerc.getValueAt(i, 0));
+				merc.setEstoque((float) tableMerc.getValueAt(i, 2));
+				merc.setPrecoVenda((float) tableMerc.getValueAt(i, 3));
+				merc.setId((int) tableMerc.getValueAt(i, 5));
+				merc.setStatus("Faturado");
+				mercadorias.add(merc);
+			}
+			consignacao.setMercadorias(mercadorias);
+			controlerConsignacao.faturarConsignacao(consignacao);
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btnX) {
 			dispose();
 		} else if (e.getSource() == btnLancarVenda) {
 			PontoDeVenda pdv = new PontoDeVenda();
+			pdv.addConsig(txtNomeCliente.getText(), lblIdCliente.getText(), txtCpf.getText());
 			for (int i = 0; i < tableMerc.getRowCount(); i++) {
 				if (tableMerc.getValueAt(i, 4).equals("Aberto")) {
-					pdv.addMercConsig((long) tableMerc.getValueAt(i, 0), (float) tableMerc.getValueAt(i, 2));
+					pdv.addMercConsig((long) tableMerc.getValueAt(i, 0), (float) tableMerc.getValueAt(i, 2),
+							(float) tableMerc.getValueAt(i, 3));
 				}
 			}
-			try {
-				pdv.addConsig(txtNomeCliente.getText(), lblIdCliente.getText(), txtCpf.getText());
-				Orcamento consignacao = new Orcamento();
-				consignacao.setStatus("Faturado");
-				consignacao.setId((int) tableConsignacao.getValueAt(tableConsignacao.getSelectedRow(), 0));
-				Mercadoria merc;
-				List<Mercadoria> mercadorias = new ArrayList<Mercadoria>();
-				for (int i = 0; i < tableMerc.getRowCount(); i++) {
-					merc = new Mercadoria();
-					merc.setCodBarras((long) tableMerc.getValueAt(i, 0));
-					merc.setEstoque((float) tableMerc.getValueAt(i, 2));
-					merc.setPrecoVenda((float) tableMerc.getValueAt(i, 3));
-					merc.setId((int) tableMerc.getValueAt(i, 5));
-					merc.setStatus("Faturado");
-					mercadorias.add(merc);
-				}
-				consignacao.setMercadorias(mercadorias);
-				controlerConsignacao.faturarConsignacao(consignacao);
-				dispose();
-				pdv.setVisible(true);
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			pdv.setVisible(true);
 
 		} else if (e.getSource() == btnDevolverMerc) {
 			try {

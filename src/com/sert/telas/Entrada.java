@@ -45,7 +45,6 @@ import javax.swing.JRootPane;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
 import javax.swing.JWindow;
-
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * 
@@ -98,12 +97,14 @@ public class Entrada extends JFrame implements FocusListener, MouseListener {
 		panelLogin.setLayout(null);
 
 		lblUsuario = new JLabel("Usuário:");
-		lblUsuario.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblUsuario.setBounds(175, 167, 62, 14);
+		lblUsuario.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/iconUsuario.png")));
+		lblUsuario.setHorizontalAlignment(SwingConstants.LEFT);
+		lblUsuario.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 14));
+		lblUsuario.setBounds(145, 160, 92, 28);
 		panelLogin.add(lblUsuario);
 
 		txtUser = new JTextField();
-		txtUser.setBounds(235, 160, 140, 28);
+		txtUser.setBounds(243, 161, 140, 28);
 		txtUser.setBackground(new Color(255, 255, 0));
 		txtUser.setBorder(null);
 		panelLogin.add(txtUser);
@@ -140,17 +141,19 @@ public class Entrada extends JFrame implements FocusListener, MouseListener {
 		separator.setBackground(new Color(0, 0, 255));
 		separator.setToolTipText("");
 		separator.setForeground(Color.WHITE);
-		separator.setBounds(175, 188, 200, 2);
+		separator.setBounds(145, 188, 230, 2);
 		panelLogin.add(separator);
 
 		lblSenha = new JLabel("Senha:");
-		lblSenha.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblSenha.setBounds(175, 257, 54, 14);
+		lblSenha.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/iconSenha.png")));
+		lblSenha.setHorizontalAlignment(SwingConstants.LEFT);
+		lblSenha.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 14));
+		lblSenha.setBounds(145, 250, 92, 28);
 		panelLogin.add(lblSenha);
 
 		pwdUsu = new JPasswordField();
 		pwdUsu.setBackground(Color.YELLOW);
-		pwdUsu.setBounds(227, 250, 148, 28);
+		pwdUsu.setBounds(235, 251, 148, 28);
 		pwdUsu.setBorder(null);
 		panelLogin.add(pwdUsu);
 		pwdUsu.addFocusListener(this);
@@ -159,14 +162,15 @@ public class Entrada extends JFrame implements FocusListener, MouseListener {
 		separator_1.setToolTipText("");
 		separator_1.setForeground(Color.WHITE);
 		separator_1.setBackground(new Color(0, 0, 205));
-		separator_1.setBounds(175, 278, 200, 2);
+		separator_1.setBounds(145, 278, 230, 2);
 		panelLogin.add(separator_1);
 
-		btnX = new JButton("X");
-		btnX.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 12));
-		btnX.setForeground(Color.WHITE);
-		btnX.setBounds(492, 11, 48, 23);
-		btnX.setBackground(Color.RED);
+		btnX = new JButton();
+		btnX.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/btnX.png")));
+		btnX.setOpaque(false);
+		btnX.setBorderPainted(false);
+		btnX.setContentAreaFilled(false);
+		btnX.setBounds(516, 5, 28, 28);
 		panelLogin.add(btnX);
 		btnX.addActionListener(new ActionListener() {
 			@Override
@@ -224,7 +228,7 @@ public class Entrada extends JFrame implements FocusListener, MouseListener {
 		lblASenhaDeve.setBounds(175, 282, 200, 14);
 		panelLogin.add(lblASenhaDeve);
 		lblASenhaDeve.setVisible(false);
-
+		
 		label = new JLabel("");
 		label.setHorizontalAlignment(SwingConstants.CENTER);
 		label.setIcon(new ImageIcon(Entrada.class.getResource("/com/sert/img/entrada.png")));

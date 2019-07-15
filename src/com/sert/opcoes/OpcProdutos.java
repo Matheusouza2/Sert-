@@ -1,18 +1,18 @@
 package com.sert.opcoes;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 import com.sert.controler.PermissoesStatic;
 import com.sert.telas.CadMercadoria;
 import com.sert.telas.ListarMercadorias;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
  * @author Matheus Souza
@@ -25,9 +25,10 @@ public class OpcProdutos extends JDialog {
 	private JPanel contentPane;
 	
 	private JButton btnCadastrarNovaMercadoria ;
-	private JButton btnNovoExtratoMerc;
+	private JButton btnExtratoMerc;
 	private JButton btnListaDeMerc;
 	private JButton btnX;
+	private JLabel lblBack;
 	
 	public OpcProdutos() {
 		setFocusableWindowState(true);
@@ -38,17 +39,32 @@ public class OpcProdutos extends JDialog {
 		setUndecorated(true);
 		setLocationRelativeTo(null);
 		setModal(true);
+		
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(0, 0, 128));
-		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
+		contentPane.setOpaque(false);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
+		btnX = new JButton();
+		btnX.setIcon(new ImageIcon(OpcProdutos.class.getResource("/com/sert/img/btnX.png")));
+		btnX.setBorderPainted(false);
+		btnX.setOpaque(false);
+		btnX.setContentAreaFilled(false);
+		btnX.setBounds(239, 2, 30, 30);
+		contentPane.add(btnX);
+		btnX.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
 						
-		btnCadastrarNovaMercadoria = new JButton("nova mercadoria");
-		btnCadastrarNovaMercadoria.setBackground(new Color(255, 255, 0));
-		btnCadastrarNovaMercadoria.setForeground(new Color(0, 0, 0));
-		btnCadastrarNovaMercadoria.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnCadastrarNovaMercadoria.setBounds(10, 107, 248, 21);
+		btnCadastrarNovaMercadoria = new JButton();
+		btnCadastrarNovaMercadoria.setIcon(new ImageIcon(OpcProdutos.class.getResource("/com/sert/img/btnNovoProduto.png")));
+		btnCadastrarNovaMercadoria.setBorderPainted(false);
+		btnCadastrarNovaMercadoria.setOpaque(false);
+		btnCadastrarNovaMercadoria.setContentAreaFilled(false);
+		btnCadastrarNovaMercadoria.setBounds(34, 96, 200, 36);
 		getContentPane().add(btnCadastrarNovaMercadoria);
 		btnCadastrarNovaMercadoria.addActionListener(new ActionListener() {
 			@Override
@@ -57,36 +73,31 @@ public class OpcProdutos extends JDialog {
 			}
 		});
 		
-		btnNovoExtratoMerc = new JButton("extrato mercadoria");
-		btnNovoExtratoMerc.setBackground(new Color(255, 255, 0));
-		btnNovoExtratoMerc.setForeground(new Color(0, 0, 0));
-		btnNovoExtratoMerc.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnNovoExtratoMerc.setBounds(10, 171, 248, 21);
-		getContentPane().add(btnNovoExtratoMerc);
-		
-		btnListaDeMerc = new JButton("listar mercadorias");
+		btnListaDeMerc = new JButton();
+		btnListaDeMerc.setBorderPainted(false);
+		btnListaDeMerc.setOpaque(false);
+		btnListaDeMerc.setContentAreaFilled(false);
+		btnListaDeMerc.setIcon(new ImageIcon(OpcProdutos.class.getResource("/com/sert/img/btnListarMercadorias.png")));
+		btnListaDeMerc.setBounds(34, 143, 200, 36);
+		getContentPane().add(btnListaDeMerc);
 		btnListaDeMerc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				new ListarMercadorias().setVisible(true);
 			}
 		});
-		btnListaDeMerc.setBackground(new Color(255, 255, 0));
-		btnListaDeMerc.setForeground(new Color(0, 0, 0));
-		btnListaDeMerc.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnListaDeMerc.setBounds(10, 139, 248, 21);
-		getContentPane().add(btnListaDeMerc);
 		
-		btnX = new JButton("X");
-		btnX.setBackground(Color.RED);
-		btnX.setForeground(Color.WHITE);
-		btnX.setBounds(212, 11, 46, 23);
-		contentPane.add(btnX);
-		btnX.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
+		btnExtratoMerc = new JButton();
+		btnExtratoMerc.setIcon(new ImageIcon(OpcProdutos.class.getResource("/com/sert/img/btnExtratoProduto.png")));
+		btnExtratoMerc.setBorderPainted(false);
+		btnExtratoMerc.setOpaque(false);
+		btnExtratoMerc.setContentAreaFilled(false);
+		btnExtratoMerc.setBounds(34, 190, 200, 36);
+		getContentPane().add(btnExtratoMerc);
+		
+		lblBack = new JLabel("");
+		lblBack.setIcon(new ImageIcon(OpcProdutos.class.getResource("/com/sert/img/backOpc.png")));
+		lblBack.setBounds(0, 0, 269, 300);
+		contentPane.add(lblBack);
 		
 		getPermissoes();
 	}

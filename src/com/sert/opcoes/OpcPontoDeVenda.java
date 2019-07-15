@@ -1,4 +1,4 @@
-package com.sert.telas;
+package com.sert.opcoes;
 
 import java.awt.BorderLayout;
 import javax.swing.JDialog;
@@ -11,6 +11,10 @@ import javax.swing.border.LineBorder;
 import com.sert.controler.ControlerMercadoria;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.PermissoesStatic;
+import com.sert.telas.AjusteEstoque;
+import com.sert.telas.DataPicker;
+import com.sert.telas.ListarMercadorias;
+import com.sert.telas.PesqMercVenda;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,7 +27,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class PontoDeVendaFuncoes extends JDialog {
+public class OpcPontoDeVenda extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
@@ -37,7 +41,7 @@ public class PontoDeVendaFuncoes extends JDialog {
 	private JLabel label;
 	private JLabel lblAguarde;
 
-	public PontoDeVendaFuncoes() {
+	public OpcPontoDeVenda() {
 		setBounds(100, 100, 325, 300);
 		setUndecorated(true);
 		setModal(true);
@@ -49,7 +53,7 @@ public class PontoDeVendaFuncoes extends JDialog {
 		contentPanel.setLayout(null);
 
 		btnX = new JButton("");
-		btnX.setIcon(new ImageIcon(PontoDeVendaFuncoes.class.getResource("/com/sert/img/btnX.png")));
+		btnX.setIcon(new ImageIcon(OpcPontoDeVenda.class.getResource("/com/sert/img/btnX.png")));
 		btnX.setBackground(new Color(0, 0, 128));
 		btnX.setBorder(null);
 		btnX.setFocusPainted(false);
@@ -65,7 +69,7 @@ public class PontoDeVendaFuncoes extends JDialog {
 
 		panelAguarde = new JPanel();
 		panelAguarde.setBounds(51, 56, 223, 187);
-		contentPanel.add(panelAguarde);
+		// contentPanel.add(panelAguarde);
 		panelAguarde.setVisible(false);
 		panelAguarde.setLayout(null);
 
@@ -88,13 +92,12 @@ public class PontoDeVendaFuncoes extends JDialog {
 		panel.setLayout(null);
 
 		btnAtualizarCadastros = new JButton("");
-		btnAtualizarCadastros.setHorizontalAlignment(SwingConstants.LEFT);
 		btnAtualizarCadastros
-				.setIcon(new ImageIcon(PontoDeVendaFuncoes.class.getResource("/com/sert/img/btnAtualizarCad.png")));
-		btnAtualizarCadastros.setBounds(82, 26, 140, 48);
-		btnAtualizarCadastros.setBorder(null);
-		btnAtualizarCadastros.setBackground(new Color(240, 240, 240));
-		btnAtualizarCadastros.setFocusPainted(false);
+				.setIcon(new ImageIcon(OpcPontoDeVenda.class.getResource("/com/sert/img/btnAtualizarCad.png")));
+		btnAtualizarCadastros.setBounds(52, 60, 200, 36);
+		btnAtualizarCadastros.setBorderPainted(false);
+		btnAtualizarCadastros.setOpaque(false);
+		btnAtualizarCadastros.setContentAreaFilled(false);
 		panel.add(btnAtualizarCadastros);
 		btnAtualizarCadastros.addActionListener(new ActionListener() {
 			@Override
@@ -124,13 +127,12 @@ public class PontoDeVendaFuncoes extends JDialog {
 		});
 
 		btnRelatorioDeCaixa = new JButton("");
-		btnRelatorioDeCaixa.setHorizontalAlignment(SwingConstants.LEFT);
 		btnRelatorioDeCaixa
-				.setIcon(new ImageIcon(PontoDeVendaFuncoes.class.getResource("/com/sert/img/btnRelatorioCaixa.png")));
-		btnRelatorioDeCaixa.setBounds(82, 100, 140, 48);
-		btnRelatorioDeCaixa.setBorder(null);
-		btnRelatorioDeCaixa.setFocusPainted(false);
-		btnRelatorioDeCaixa.setBackground(new Color(240, 240, 240));
+				.setIcon(new ImageIcon(OpcPontoDeVenda.class.getResource("/com/sert/img/btnRelatorioCaixa.png")));
+		btnRelatorioDeCaixa.setBounds(52, 107, 200, 36);
+		btnRelatorioDeCaixa.setBorderPainted(false);
+		btnRelatorioDeCaixa.setOpaque(false);
+		btnRelatorioDeCaixa.setContentAreaFilled(false);
 		btnRelatorioDeCaixa.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -140,13 +142,12 @@ public class PontoDeVendaFuncoes extends JDialog {
 		panel.add(btnRelatorioDeCaixa);
 
 		btnListarMercadorias = new JButton("");
-		btnListarMercadorias.setHorizontalAlignment(SwingConstants.LEFT);
-		btnListarMercadorias.setIcon(
-				new ImageIcon(PontoDeVendaFuncoes.class.getResource("/com/sert/img/btnListarMercadorias.png")));
-		btnListarMercadorias.setBounds(82, 174, 140, 48);
-		btnListarMercadorias.setBorder(null);
-		btnListarMercadorias.setBackground(new Color(240, 240, 240));
-		btnListarMercadorias.setFocusPainted(false);
+		btnListarMercadorias
+				.setIcon(new ImageIcon(OpcPontoDeVenda.class.getResource("/com/sert/img/btnListarMercadorias.png")));
+		btnListarMercadorias.setBounds(52, 154, 200, 36);
+		btnListarMercadorias.setBorderPainted(false);
+		btnListarMercadorias.setOpaque(false);
+		btnListarMercadorias.setContentAreaFilled(false);
 		panel.add(btnListarMercadorias);
 		btnListarMercadorias.addActionListener(new ActionListener() {
 			@Override
@@ -155,17 +156,17 @@ public class PontoDeVendaFuncoes extends JDialog {
 			}
 		});
 
-		lblTitulo = new JLabel("funcoes caixa");
-		lblTitulo.setFont(new Font("Gtek Technology", Font.PLAIN, 12));
+		lblTitulo = new JLabel("Funções caixa");
+		lblTitulo.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 18));
 		lblTitulo.setForeground(Color.WHITE);
 		lblTitulo.setBackground(new Color(255, 255, 255));
 		lblTitulo.setHorizontalAlignment(SwingConstants.CENTER);
 		lblTitulo.setBounds(46, 1, 233, 30);
 		contentPanel.add(lblTitulo);
-		
+
 		permissoes();
 	}
-	
+
 	private void permissoes() {
 		if (!PermissoesStatic.permissoesFunc.isDashCaixa()) {
 			btnRelatorioDeCaixa.setEnabled(false);

@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.sert.dao.NFeDao;
 import com.sert.entidades.NFeEntrada;
+import com.sert.exceptions.NotaJaCadastradaException;
 
 public class ControlerNfe {
 
@@ -15,7 +16,7 @@ public class ControlerNfe {
 		dao = new NFeDao();
 	}
 
-	public void cadastrarNfe(NFeEntrada entrada) throws SQLException {
+	public void cadastrarNfe(NFeEntrada entrada) throws SQLException, ClassNotFoundException, IOException {
 		dao.cadastrar(entrada);
 	}
 
@@ -41,5 +42,11 @@ public class ControlerNfe {
 
 	public List<NFeEntrada> nfePorPeriodo(String dtInicial, String dtFinal) throws SQLException {
 		return dao.nfePeriodo(dtInicial, dtFinal);
+	}
+
+	public boolean consultarChaveNfe(String chave) throws SQLException, NotaJaCadastradaException {
+		boolean retorno = dao.consultarChaveNfe(chave);	
+		if(retorno) throw new NotaJaCadastradaException();
+		return retorno;
 	}
 }

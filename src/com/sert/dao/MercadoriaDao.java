@@ -31,7 +31,7 @@ public class MercadoriaDao {
 		prepare.setFloat(6, mercadoria.getPrecoCompra());
 		prepare.setInt(7, mercadoria.getUsuCad());
 		prepare.setFloat(8, mercadoria.getEstoque());
-		prepare.setLong(9, mercadoria.getId());
+		prepare.setLong(9, confereId());
 		prepare.execute();
 		prepare.close();
 
@@ -144,6 +144,5 @@ public class MercadoriaDao {
 		preparedStatement.setFloat(2, precoVenda);
 		preparedStatement.setLong(3, codBarras);
 		preparedStatement.executeUpdate();
-
 	}
 }

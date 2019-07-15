@@ -58,7 +58,7 @@ public class RelatorioEstoque extends JDialog {
 	private float valTotalVolume;
 	private JLabel lblPrecoVenda;
 	private JLabel lblPreoVenda;
-	private float totalVenda;
+	private float totalVenda = 0;
 
 	public RelatorioEstoque() {
 		setBounds(100, 100, 1020, 700);

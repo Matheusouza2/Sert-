@@ -80,21 +80,21 @@ public class Banner extends JFrame {
 		contentPane.add(lblNewLabel);
 
 		contentPane.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-	        
+
 		JProgressBar progressBar = new JProgressBar();
 		progressBar.setForeground(new Color(0, 0, 128));
 		progressBar.setIndeterminate(true);
 		progressBar.setBorder(null);
-		progressBar.setBackground(Color.WHITE);
+
+		progressBar.setBackground(new Color(240, 240, 240));
 		progressBar.setBounds(0, 323, 670, 7);
 		contentPane.add(progressBar);
 		new SwingWorker<Object, Object>() {
 			@Override
 			protected Object doInBackground() throws Exception {
 				lblProgressBar.setText("Sincronizando com o servidor...");
-				if(!LiberacaoData.isDataOk()) {
+				if (!LiberacaoData.isDataOk()) {
 					JOptionPane.showMessageDialog(null, "Verifique a data e a hora do seu computador");
-					dispose();
 				}
 				lblProgressBar.setText("Testando conexão do banco de dados...");
 				ConexaoDao.testarCon();

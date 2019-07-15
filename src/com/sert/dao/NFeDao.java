@@ -21,15 +21,16 @@ public class NFeDao {
 		con = (Connection) ConexaoDao.getInstacia().getConector();
 	}
 
-	public void cadastrar(NFeEntrada nFeEntrada) throws SQLException {
-		String sql = "INSERT INTO nfe_compra(chave, numero, fornecedor, val_nota, data_entrada) VALUES (?, ?, ?, ?, ?)";
+	public void cadastrar(NFeEntrada nFeEntrada) throws SQLException, ClassNotFoundException, IOException {
+		String sql = "INSERT INTO nfe_compra(chave, numero, fornecedor, id, val_nota, data_entrada) VALUES (?, ?, ?, ?, ?, ?)";
 		String sql2 = "INSERT INTO nfe_merc(id_nfe, id_merc, preco_compra, quant_compra) VALUES (?, ?, ?, ?)";
 		PreparedStatement prepare = con.prepareStatement(sql);
 		prepare.setString(1, nFeEntrada.getChave());
 		prepare.setInt(2, nFeEntrada.getNumNota());
 		prepare.setInt(3, nFeEntrada.getFornecedor().getId());
-		prepare.setFloat(4, nFeEntrada.getValNota());
-		prepare.setTimestamp(5, Timestamp.valueOf(nFeEntrada.getDataEntrada()));
+		prepare.setInt(4, nFeEntrada.getId());
+		prepare.setFloat(5, nFeEntrada.getValNota());
+		prepare.setTimestamp(6, Timestamp.valueOf(nFeEntrada.getDataEntrada()));
 		prepare.execute();
 
 		prepare = con.prepareStatement(sql2);
@@ -40,6 +41,11 @@ public class NFeDao {
 			prepare.setFloat(4, nFeEntrada.getMercadorias().get(i).getQuantCompra());
 			prepare.execute();
 		}
+		prepare.close();
+
+		String seq = "ALTER SEQUENCE nfe_compra_id_seq RESTART WITH " + nFeEntrada.getId();
+		prepare = con.prepareStatement(seq);
+		prepare.execute();
 		prepare.close();
 	}
 
@@ -68,13 +74,14 @@ public class NFeDao {
 		String sql = "SELECT nf.chave, nf.numero, nf.fornecedor, nf.id, f.nome AS nome_forn, f.cnpj, f.ie, f.rua, f.numero_end, f.cidade, f.uf, nfm.preco_compra, nfm.quant_compra, cdm.cod_barras, cdm.nome_mercadoria FROM nfe_compra nf INNER JOIN fornecedor f ON nf.fornecedor = f.id INNER JOIN nfe_merc nfm ON nf.id = nfm.id_nfe INNER JOIN cad_mercadorias cdm ON nfm.id_merc = cdm.cod_fornecedor WHERE chave='"
 				+ chave + "'";
 		PreparedStatement prepare = con.prepareStatement(sql);
-		NFeEntrada nFeEntrada = new NFeEntrada();
+		NFeEntrada nFeEntrada = null;
 		Fornecedor fornecedor = new Fornecedor();
 		MercadoriaNFe mercadoria;
 		List<MercadoriaNFe> mercadorias = new ArrayList<MercadoriaNFe>();
 		ResultSet result = prepare.executeQuery();
 
 		while (result.next()) {
+			nFeEntrada = new NFeEntrada();
 			nFeEntrada.setChave(result.getString("chave").trim());
 			nFeEntrada.setNumNota(result.getInt("numero"));
 			fornecedor.setRazSocial(result.getString("nome_forn").trim());
@@ -112,7 +119,7 @@ public class NFeDao {
 
 	public List<NFeEntrada> nfePeriodo(String dtInicial, String dtFinal) throws SQLException {
 		String sql = "SELECT nf.id, nf.numero, nf.val_nota, to_char(nf.data_entrada, 'dd/MM/yyyy') data_entrada, f.nome AS nome_forn FROM nfe_compra nf INNER JOIN fornecedor f ON nf.fornecedor = f.id WHERE data_entrada BETWEEN '"
-				+ dtInicial + "' AND '" + dtFinal + "' ORDER BY nf.id ASC;";
+				+ dtInicial + " 00:00:00' AND '" + dtFinal + " 23:59:59' ORDER BY nf.id ASC;";
 
 		List<NFeEntrada> nfeEntrada = new ArrayList<>();
 		Fornecedor fornecedor;
@@ -134,5 +141,17 @@ public class NFeDao {
 		}
 
 		return nfeEntrada;
+	}
+
+	public boolean consultarChaveNfe(String cod) throws SQLException {
+		boolean cadastrado = false;
+		String sql = "SELECT * FROM nfe_compra WHERE chave=?;";
+		PreparedStatement prepare = con.prepareStatement(sql);
+		prepare.setString(1, cod);
+		ResultSet result = prepare.executeQuery();
+		if (result.next()) {
+			cadastrado = true;
+		}
+		return cadastrado;
 	}
 }

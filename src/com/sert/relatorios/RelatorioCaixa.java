@@ -78,9 +78,9 @@ public class RelatorioCaixa extends JDialog {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
-		
+
 		listen();
-		
+
 		btnX = new JButton("X");
 		btnX.setBounds(788, 0, 46, 23);
 		contentPanel.add(btnX);
@@ -144,7 +144,7 @@ public class RelatorioCaixa extends JDialog {
 		panel.setLayout(null);
 
 		lblQuantVenda = new JLabel("Quantidade de Movimentações:");
-		lblQuantVenda.setBounds(0, 0, 164, 14);
+		lblQuantVenda.setBounds(0, 0, 192, 14);
 		panel.add(lblQuantVenda);
 
 		lblDinheiro = new JLabel("");
@@ -152,7 +152,7 @@ public class RelatorioCaixa extends JDialog {
 		panel.add(lblDinheiro);
 
 		lblTotalVenda = new JLabel("");
-		lblTotalVenda.setBounds(167, 0, 58, 14);
+		lblTotalVenda.setBounds(202, 0, 58, 14);
 		panel.add(lblTotalVenda);
 
 		lblCartao = new JLabel("");
@@ -182,11 +182,11 @@ public class RelatorioCaixa extends JDialog {
 		lblLucro = new JLabel();
 		lblLucro.setBounds(142, 100, 172, 32);
 		panel.add(lblLucro);
-		
+
 		lblSangria = new JLabel("Sangria:");
 		lblSangria.setBounds(288, 25, 90, 14);
 		panel.add(lblSangria);
-		
+
 		lblValSangria = new JLabel("");
 		lblValSangria.setBounds(388, 25, 90, 14);
 		panel.add(lblValSangria);
@@ -194,11 +194,11 @@ public class RelatorioCaixa extends JDialog {
 		lblTotalDeCaixa = new JLabel("Total de caixa:");
 		lblTotalDeCaixa.setBounds(288, 62, 90, 14);
 		panel.add(lblTotalDeCaixa);
-		
+
 		lblTotalCaixa = new JLabel("");
 		lblTotalCaixa.setBounds(388, 62, 105, 14);
 		panel.add(lblTotalCaixa);
-		
+
 		modelo.addColumn("Data");
 		modelo.addColumn("Historico");
 		modelo.addColumn("Operação");
@@ -222,9 +222,10 @@ public class RelatorioCaixa extends JDialog {
 				if (preencheTable.get(i).isRetirada()) {
 					operacao = "-";
 					retiradas += preencheTable.get(i).getValorDinheiro();
-				}else {
-					totalAmbos +=  preencheTable.get(i).getValorDinheiro() +  preencheTable.get(i).getValorCartao() - retiradas;
-					totalDinheiro += preencheTable.get(i).getValorDinheiro() - retiradas;
+				} else {
+					operacao = "+";
+					totalAmbos += preencheTable.get(i).getValorDinheiro() + preencheTable.get(i).getValorCartao();
+					totalDinheiro += preencheTable.get(i).getValorDinheiro();
 					totalCartao += preencheTable.get(i).getValorCartao();
 					totalCompra += preencheTable.get(i).getValorCompra();
 				}
@@ -233,10 +234,9 @@ public class RelatorioCaixa extends JDialog {
 						"R$ " + String.format("%.2f", preencheTable.get(i).getValorDinheiro()),
 						"R$ " + String.format("%.2f", preencheTable.get(i).getValorCartao()),
 						"R$ " + String.format("%.2f",
-								preencheTable.get(i).getValorDinheiro() + preencheTable.get(i).getValorCartao()) });				
+								preencheTable.get(i).getValorDinheiro() + preencheTable.get(i).getValorCartao()) });
 			}
-			
-			
+
 			lblDinheiro.setText("R$ " + String.format("%.2f", totalDinheiro));
 			lblTotalVenda.setText(String.valueOf(tabMerc.getRowCount()));
 			lblCartao.setText("R$ " + String.format("%.2f", totalCartao));
@@ -246,8 +246,7 @@ public class RelatorioCaixa extends JDialog {
 			lblLucro.setText("<html>R$ " + String.format("%.2f", lucroDinheiro) + "<br>"
 					+ String.format("%.2f", lucroPorcento) + " %</html>");
 			lblValSangria.setText("R$ " + String.format("%.2f", retiradas));
-			lblTotalCaixa.setText("R$ " + String.format("%.2f", (totalDinheiro+totalCartao) - retiradas));
-			
+			lblTotalCaixa.setText("R$ " + String.format("%.2f", (totalDinheiro + totalCartao) - retiradas));
 
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Driver de bando de dados não encontrado", "Erro",

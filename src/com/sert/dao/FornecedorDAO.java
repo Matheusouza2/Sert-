@@ -34,7 +34,7 @@ public class FornecedorDAO {
 		preparedStatement.setLong(11, fornecedor.getCepForn());
 		preparedStatement.setLong(12, fornecedor.getFoneForn());
 		preparedStatement.setLong(13, fornecedor.getCelularForn());
-
+		System.out.println(preparedStatement);
 		preparedStatement.execute();
 
 		preparedStatement = con.prepareStatement(seq);

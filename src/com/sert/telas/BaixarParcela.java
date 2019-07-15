@@ -17,8 +17,11 @@ import com.sert.controler.Log;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.JDocumentFormatedField;
 import com.sert.editableFields.JNumberFormatField;
+import com.sert.entidades.Cliente;
 import com.sert.entidades.DuplicataCliente;
 import com.sert.entidades.Usuario;
+import com.sert.entidades.Venda;
+import com.sert.impressao.PrintableComprovanteDuplicata;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -298,10 +301,16 @@ public class BaixarParcela extends JDialog {
 	private void baixarConta() {
 		DuplicataCliente duplicataBaixa = new DuplicataCliente();
 		Usuario usu = new Usuario();
+		Cliente cliente = new Cliente();
+		Venda venda = new Venda();
+		venda.setId(Integer.parseInt(txtIdVenda.getText()));
+		cliente.setNome(txtCliente.getText());
 		usu.setId(UsuLogado.getId());
 		duplicataBaixa.setId(Integer.parseInt(txtId.getText()));
 		duplicataBaixa.setDataBaixa(JDateField.getDateHoraStatic());
+		duplicataBaixa.setVenda(venda);
 		duplicataBaixa.setUsuBaixa(usu);
+		duplicataBaixa.setCliente(cliente);
 		duplicataBaixa.setValor(Float.parseFloat(txtValorParcela.getText().replace(",", ".")));
 		duplicataBaixa.setSituacao("Baixado");
 
@@ -314,6 +323,7 @@ public class BaixarParcela extends JDialog {
 			if (valorBaixa == valorReal) {
 				controler.baixarDuplicata(duplicataBaixa);
 				JOptionPane.showMessageDialog(null, "Baixa realizada com sucesso!");
+				new PrintableComprovanteDuplicata(duplicataBaixa);
 			} else if (valorBaixa < valorReal) {
 				int opcao = JOptionPane.showConfirmDialog(null,
 						"O valor pago é menor que a parcela!\n Deseja criar uma pendência do valor restante para 30 dias ?",
@@ -395,7 +405,7 @@ public class BaixarParcela extends JDialog {
 		}
 
 		if (duplicata.getValorBaixa() < duplicata.getValor()) {
-			if(duplicata.getValorBaixa() != 0) {
+			if (duplicata.getValorBaixa() != 0) {
 				lblAviso.setText(
 						"<html>O valor baixado e o valor da parcela não são iguais, isso significa que uma pendência foi gerada dessa duplicata</html>");
 			}

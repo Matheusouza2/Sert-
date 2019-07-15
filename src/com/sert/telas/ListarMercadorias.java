@@ -69,7 +69,7 @@ public class ListarMercadorias extends JDialog {
 	private static FilterList<Mercadoria> textFilteredIssues;
 	private JSeparator separator_1;
 	private JButton btnAtualizar;
-	private static JPanel panelAguarde;
+	private JPanel panelAguarde;
 	private JLabel label;
 	private JLabel lblAguarde;
 	private TextComponentMatcherEditor<Mercadoria> textMatcherEditor;
@@ -115,9 +115,9 @@ public class ListarMercadorias extends JDialog {
 		panelAguarde.add(label);
 
 		lblAguarde = new JLabel("Aguarde...");
-		lblAguarde.setFont(new Font("Tahoma", Font.BOLD, 13));
+		lblAguarde.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 22));
 		lblAguarde.setHorizontalAlignment(SwingConstants.CENTER);
-		lblAguarde.setBounds(0, 162, 223, 25);
+		lblAguarde.setBounds(0, 153, 223, 34);
 		panelAguarde.add(lblAguarde);
 
 		panelBtn = new JPanel();
@@ -186,6 +186,7 @@ public class ListarMercadorias extends JDialog {
 						if (resposta == JOptionPane.YES_OPTION) {
 							int idExcluir = (int) tabMerc.getValueAt(tabMerc.getSelectedRow(), 0);
 							mercadorias.remove(tabMerc.getSelectedRow());
+							btnAtualizar.doClick();
 							new ControlerMercadoria().excluirMercadoria(idExcluir);
 						}
 					} else {
@@ -264,7 +265,7 @@ public class ListarMercadorias extends JDialog {
 		getPermissoes();
 	}
 
-	public static void repagina() {
+	public  void repagina() {
 		panelAguarde.setVisible(true);
 		new SwingWorker<Object, Object>() {
 			@Override
@@ -272,11 +273,13 @@ public class ListarMercadorias extends JDialog {
 				new ControlerVenda().atualizarCadastros();
 				for(int i = 0; i < mercadorias.size(); i++) {
 					mercadorias.remove(0);
+					if(mercadorias.size() == 0) {
+						break;
+					}
 				}
 				for (Mercadoria merc : preencheTable) {
 					mercadorias.add(merc);
 				}
-				tabMerc.revalidate();
 				return null;
 			}
 
@@ -284,6 +287,8 @@ public class ListarMercadorias extends JDialog {
 				panelAguarde.setVisible(false);
 				JOptionPane.showMessageDialog(null, "Atualização realizada com sucesso", "Sucesso",
 						JOptionPane.INFORMATION_MESSAGE);
+				new ListarMercadorias().setVisible(true);
+				dispose();
 			};
 
 		}.execute();

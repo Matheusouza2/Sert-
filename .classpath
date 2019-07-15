@@ -25,5 +25,7 @@
 	<classpathentry kind="lib" path="lib/jasperreports-functions-5.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/jasperreports-javaflow-5.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/joda-time-2.10.2.jar"/>
+	<classpathentry kind="lib" path="lib/swingx-1.6.1.jar"/>
+	<classpathentry kind="lib" path="swingx-1.6.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -419,8 +419,13 @@ public class PontoDeVendaFecharVenda extends JDialog {
 				vendaFinal.setDesconto(desconto);
 
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-				new ControlerVenda().finalizarVenda(vendaFinal);
+				if(!PontoDeVenda.origemConsig) {
+					new ControlerVenda().finalizarVenda(vendaFinal);
+				}else {
+					new ControlerVenda().finalizarVenda(vendaFinal);
+					AcompanharConsignacao.faturarConsignacao();
+				}
+				
 
 				contentPanel.setCursor(Cursor.getDefaultCursor());
 				

@@ -43,6 +43,10 @@ public class PrintableVenda {
 			// se existir
 			FileWriter arquivoTxt = new FileWriter(arquivo, true);
 			PrintWriter linhasTxt = new PrintWriter(arquivoTxt);
+			
+			if(venda.getCliente() == null) {
+				venda.setCliente("Consumidor");
+			}
 
 			// Pegar informações da Empresa
 			Empresa empresa = new ControlerEmpresa().listEmpresa().get(0);
@@ -69,6 +73,8 @@ public class PrintableVenda {
 			linhasTxt.println();
 			linhasTxt.println("------------------------------------------------");
 			linhasTxt.println("Total                             R$ " + String.format("%.2f", venda.getValTotal()));
+			linhasTxt.println("Valor Pago                        R$ " + String.format("%.2f", venda.getValDInheiro()));
+			linhasTxt.println("Troco                             R$ " + String.format("%.2f", venda.getValDInheiro() - venda.getValTotal()));
 			linhasTxt.println("------------------------------------------------");
 			linhasTxt.println("Cliente: " + venda.getCliente());
 			linhasTxt.println("Vendedor: " + venda.getVendedor());

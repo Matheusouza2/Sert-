@@ -55,13 +55,14 @@ public class Inicio extends JDialog {
 	private JButton btnTrocaUsu;
 	private JButton btnFerramentas;
 
-	private JLabel lblSert;
+	private JLabel lblLogo;
 	private JLabel lblBemVindoa;
 	private JLabel lblBanner;
 	private JLabel lblDataHora;
 	private JLabel lblLegenda;
 	private JButton btnFuncionario;
 	private JButton btnOrcamento;
+	private JLabel lblBackground;
 
 	public Inicio() {
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -81,13 +82,14 @@ public class Inicio extends JDialog {
 		listen();
 
 		panelButtons = new JPanel();
-		panelButtons.setBackground(new Color(0, 85, 254));
+		panelButtons.setOpaque(false);
 		panelButtons.setBounds(10, 11, 1344, 113);
 		contentPane.add(panelButtons);
 		panelButtons.setLayout(null);
 
 		btnClientes = new JButton();
-		btnClientes.setBackground(new Color(0, 85, 254));
+		btnClientes.setOpaque(false);
+		btnClientes.setContentAreaFilled(false);
 		btnClientes.setBorderPainted(false);
 		btnClientes.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnCliente.png")));
 		btnClientes.setBounds(7, 11, 89, 91);
@@ -99,17 +101,45 @@ public class Inicio extends JDialog {
 			}
 		});
 
+		btnFuncionario = new JButton();
+		btnFuncionario.setBounds(106, 11, 89, 91);
+		btnFuncionario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new ListarUsu().setVisible(true);
+			}
+		});
+		btnFuncionario.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFuncionarios.png")));
+		btnFuncionario.setOpaque(false);
+		btnFuncionario.setContentAreaFilled(false);
+		btnFuncionario.setBorderPainted(false);
+		panelButtons.add(btnFuncionario);
+
 		btnProdutos = new JButton();
+		btnProdutos.setOpaque(false);
+		btnProdutos.setContentAreaFilled(false);
+		btnProdutos.setBorderPainted(false);
 		btnProdutos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				new OpcProdutos().setVisible(true);
 			}
 		});
-		btnProdutos.setBackground(new Color(0, 85, 254));
-		btnProdutos.setBorderPainted(false);
 		btnProdutos.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/produtosBtn.png")));
 		btnProdutos.setBounds(205, 11, 89, 91);
 		panelButtons.add(btnProdutos);
+
+		btnOrcamento = new JButton();
+		btnOrcamento.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnOrcamento.png")));
+		btnOrcamento.setOpaque(false);
+		btnOrcamento.setContentAreaFilled(false);
+		btnOrcamento.setBorderPainted(false);
+		btnOrcamento.setBounds(304, 11, 89, 91);
+		panelButtons.add(btnOrcamento);
+		btnOrcamento.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new TelaOrcamento().setVisible(true);
+			}
+		});
 
 		btnFiscal = new JButton();
 		btnFiscal.addActionListener(new ActionListener() {
@@ -117,7 +147,8 @@ public class Inicio extends JDialog {
 				new OpcFiscal().setVisible(true);
 			}
 		});
-		btnFiscal.setBackground(new Color(255, 204, 0));
+		btnFiscal.setOpaque(false);
+		btnFiscal.setContentAreaFilled(false);
 		btnFiscal.setBorderPainted(false);
 		btnFiscal.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/fiscalBtn.png")));
 		btnFiscal.setBounds(403, 11, 89, 91);
@@ -129,7 +160,9 @@ public class Inicio extends JDialog {
 				new PontoDeVenda().setVisible(true);
 			}
 		});
-		btnVendas.setBackground(new Color(255, 102, 0));
+
+		btnVendas.setOpaque(false);
+		btnVendas.setContentAreaFilled(false);
 		btnVendas.setBorderPainted(false);
 		btnVendas.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/vendasBtn.png")));
 		btnVendas.setBounds(502, 11, 89, 91);
@@ -142,14 +175,30 @@ public class Inicio extends JDialog {
 
 			}
 		});
-		btnDashboard.setBackground(new Color(51, 255, 0));
+		btnDashboard.setOpaque(false);
+		btnDashboard.setContentAreaFilled(false);
 		btnDashboard.setBorderPainted(false);
 		btnDashboard.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/dashboardBtn.png")));
 		btnDashboard.setBounds(601, 11, 89, 91);
 		panelButtons.add(btnDashboard);
 
+		btnFerramentas = new JButton();
+		btnFerramentas.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFerramentas.png")));
+		btnFerramentas.setBorderPainted(false);
+		btnFerramentas.setOpaque(false);
+		btnFerramentas.setContentAreaFilled(false);
+		btnFerramentas.setBounds(700, 11, 89, 91);
+		panelButtons.add(btnFerramentas);
+		btnFerramentas.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new OpcFerramentas().setVisible(true);
+			}
+		});
+
 		btnSair = new JButton();
-		btnSair.setBackground(new Color(255, 0, 0));
+		btnSair.setOpaque(false);
+		btnSair.setContentAreaFilled(false);
 		btnSair.setBorderPainted(false);
 		btnSair.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/sairBtn.png")));
 		btnSair.setBounds(799, 11, 89, 91);
@@ -162,7 +211,7 @@ public class Inicio extends JDialog {
 		});
 
 		lblDataHora = new JLabel();
-		lblDataHora.setForeground(new Color(255, 255, 255));
+		lblDataHora.setForeground(Color.BLACK);
 		lblDataHora.setBounds(1153, 11, 181, 14);
 		new Thread() {
 			public void run() {
@@ -180,61 +229,29 @@ public class Inicio extends JDialog {
 		}.start();
 		panelButtons.add(lblDataHora);
 
-		btnFerramentas = new JButton();
-		btnFerramentas.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFerramentas.png")));
-		btnFerramentas.setBorderPainted(false);
-		btnFerramentas.setBackground(new Color(175, 238, 238));
-		btnFerramentas.setBounds(700, 11, 89, 91);
-		panelButtons.add(btnFerramentas);
-		btnFerramentas.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new OpcFerramentas().setVisible(true);
-			}
-		});
-
-		btnFuncionario = new JButton();
-		btnFuncionario.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				new ListarUsu().setVisible(true);
-			}
-		});
-		btnFuncionario.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnFuncionariosNew.png")));
-		btnFuncionario.setBorderPainted(false);
-		btnFuncionario.setBackground(new Color(0, 85, 254));
-		btnFuncionario.setBounds(106, 11, 89, 91);
-		panelButtons.add(btnFuncionario);
-
-		btnOrcamento = new JButton();
-		btnOrcamento.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnOrcamento.png")));
-		btnOrcamento.setBorderPainted(false);
-		btnOrcamento.setBackground(new Color(160, 82, 45));
-		btnOrcamento.setBounds(304, 11, 89, 91);
-		panelButtons.add(btnOrcamento);
-		btnOrcamento.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new TelaOrcamento().setVisible(true);
-			}
-		});
+		lblBackground = new JLabel("");
+		lblBackground.setHorizontalAlignment(SwingConstants.CENTER);
+		lblBackground.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/backBtnPanel.png")));
+		lblBackground.setBounds(0, 0, 1344, 113);
+		panelButtons.add(lblBackground);
 
 		panelUsados = new JPanel();
 		panelUsados.setBounds(10, 135, 1344, 622);
 		contentPane.add(panelUsados);
 		panelUsados.setLayout(null);
 
-		lblSert = new JLabel("sertsoft");
-		lblSert.setForeground(new Color(240, 240, 240));
-		lblSert.setFont(new Font("Gtek Technology", Font.PLAIN, 20));
-		lblSert.setHorizontalAlignment(SwingConstants.CENTER);
-		lblSert.setBounds(0, 533, 154, 57);
-		panelUsados.add(lblSert);
+		lblLogo = new JLabel("");
+		lblLogo.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/Logo.png")));
+		lblLogo.setHorizontalAlignment(SwingConstants.CENTER);
+		lblLogo.setBounds(10, 554, 163, 30);
+		panelUsados.add(lblLogo);
 
 		btnTrocaUsu = new JButton();
-		btnTrocaUsu.setBackground(new Color(0, 219, 241));
+		btnTrocaUsu.setOpaque(false);
+		btnTrocaUsu.setContentAreaFilled(false);
 		btnTrocaUsu.setBorderPainted(false);
 		btnTrocaUsu.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/btnTrocaUsuario.png")));
-		btnTrocaUsu.setBounds(1081, 530, 231, 81);
+		btnTrocaUsu.setBounds(1081, 530, 123, 87);
 		panelUsados.add(btnTrocaUsu);
 		btnTrocaUsu.addActionListener(new ActionListener() {
 			@Override
@@ -260,6 +277,13 @@ public class Inicio extends JDialog {
 		lblBanner.setIcon(new ImageIcon("C:\\Sert+\\img\\BannerInicio.png"));
 		lblBanner.setBounds(0, 0, 1344, 590);
 		panelUsados.add(lblBanner);
+
+		JLabel lblContato = new JLabel("Contato: (87) 9 8875-4442");
+		lblContato.setForeground(new Color(0, 0, 128));
+		lblContato.setFont(new Font("Tahoma", Font.BOLD, 10));
+		lblContato.setHorizontalAlignment(SwingConstants.CENTER);
+		lblContato.setBounds(20, 584, 163, 27);
+		panelUsados.add(lblContato);
 
 		JLabel lblNewLabel = new JLabel("");
 		lblNewLabel.setIcon(new ImageIcon(Inicio.class.getResource("/com/sert/img/backEntrada.png")));

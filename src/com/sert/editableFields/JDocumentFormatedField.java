@@ -8,7 +8,7 @@ import javax.swing.text.MaskFormatter;
 
 public class JDocumentFormatedField {
 
-	public JTextField getCep(){
+	public JTextField getCep() {
 		MaskFormatter format_textField3;
 		JTextField tfcep = null;
 		try {
@@ -19,8 +19,8 @@ public class JDocumentFormatedField {
 		}
 		return tfcep;
 	}
-	
-	public JTextField getTel(){
+
+	public JTextField getTel() {
 		MaskFormatter format_textField3;
 		JTextField tfcep = null;
 		try {
@@ -31,8 +31,8 @@ public class JDocumentFormatedField {
 		}
 		return tfcep;
 	}
-	
-	public JTextField getCpf(){
+
+	public JTextField getCpf() {
 		JTextField tfcpf = null;
 		MaskFormatter format_textField3;
 		try {
@@ -41,12 +41,11 @@ public class JDocumentFormatedField {
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 		return tfcpf;
 	}
-	
-	public JTextField getCnpj(){
+
+	public JTextField getCnpj() {
 		JTextField tfcnpj = null;
 		MaskFormatter format_textField3;
 		try {
@@ -54,11 +53,11 @@ public class JDocumentFormatedField {
 			tfcnpj = new JFormattedTextField(format_textField3);
 		} catch (ParseException e) {
 			e.printStackTrace();
-		}		
+		}
 		return tfcnpj;
 	}
-	
-	public JTextField getData(){
+
+	public JTextField getData() {
 		JTextField tfData = null;
 		MaskFormatter format_textField3;
 		try {
@@ -66,7 +65,7 @@ public class JDocumentFormatedField {
 			tfData = new JFormattedTextField(format_textField3);
 		} catch (ParseException e) {
 			e.printStackTrace();
-		}		
+		}
 		return tfData;
 	}
 }

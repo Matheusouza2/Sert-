@@ -9,28 +9,32 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 import com.sert.controler.PermissoesStatic;
 import com.sert.telas.CadCliente;
 import com.sert.telas.ContasAReceber;
 import com.sert.telas.ListarCliente;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
+ * 
  * @author Matheus Souza
  * @version 1.0.5
  * 
- * */
+ */
 public class OpcClientes extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	
-	private JButton btnCadastrarNovoCliente ;
+
+	private JButton btnCadastrarNovoCliente;
 	private JButton btnListaDeClientes;
 	private JButton btnX;
 	private JButton btnDebitoClientes;
-	
+	private JLabel lblBackground;
+
 	public OpcClientes() {
 		setFocusableWindowState(true);
 		setResizable(false);
@@ -41,54 +45,16 @@ public class OpcClientes extends JDialog {
 		setLocationRelativeTo(null);
 		setModal(true);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(0, 0, 128));
-		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPane);
+		contentPane.setOpaque(false);
 		contentPane.setLayout(null);
-						
-		btnCadastrarNovoCliente = new JButton("novo cliente");
-		btnCadastrarNovoCliente.setBackground(new Color(255, 255, 0));
-		btnCadastrarNovoCliente.setForeground(new Color(0, 0, 0));
-		btnCadastrarNovoCliente.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnCadastrarNovoCliente.setBounds(10, 107, 248, 21);
-		getContentPane().add(btnCadastrarNovoCliente);
-		btnCadastrarNovoCliente.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new CadCliente(0, 0).setVisible(true);				
-			}
-		});
-				
-		btnListaDeClientes = new JButton("listar clientes");
-		btnListaDeClientes.setBackground(new Color(255, 255, 0));
-		btnListaDeClientes.setForeground(new Color(0, 0, 0));
-		btnListaDeClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnListaDeClientes.setBounds(10, 139, 248, 21);
-		getContentPane().add(btnListaDeClientes);
-		btnListaDeClientes.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new ListarCliente(0).setVisible(true);
-			}
-		});
-						
-		btnDebitoClientes = new JButton("contas a receber");
-		btnDebitoClientes.setBackground(new Color(255, 255, 0));
-		btnDebitoClientes.setForeground(new Color(0, 0, 0));
-		btnDebitoClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnDebitoClientes.setBounds(10, 171, 248, 21);
-		getContentPane().add(btnDebitoClientes);
-		btnDebitoClientes.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				new ContasAReceber().setVisible(true);				
-			}
-		});
-				
-		btnX = new JButton("X");
-		btnX.setBackground(Color.RED);
-		btnX.setForeground(Color.WHITE);
-		btnX.setBounds(212, 11, 46, 23);
+
+		btnX = new JButton("");
+		btnX.setIcon(new ImageIcon(OpcClientes.class.getResource("/com/sert/img/btnX.png")));
+		btnX.setOpaque(false);
+		btnX.setContentAreaFilled(false);
+		btnX.setBorderPainted(false);
+		btnX.setBounds(239, 2, 30, 30);
 		contentPane.add(btnX);
 		btnX.addActionListener(new ActionListener() {
 			@Override
@@ -96,14 +62,65 @@ public class OpcClientes extends JDialog {
 				dispose();
 			}
 		});
+
+		btnCadastrarNovoCliente = new JButton();
+		btnCadastrarNovoCliente
+				.setIcon(new ImageIcon(OpcClientes.class.getResource("/com/sert/img/btnNovoCliente.png")));
+		btnCadastrarNovoCliente.setBounds(34, 84, 200, 36);
+		btnCadastrarNovoCliente.setOpaque(false);
+		btnCadastrarNovoCliente.setBorderPainted(false);
+		btnCadastrarNovoCliente.setContentAreaFilled(false);
+		getContentPane().add(btnCadastrarNovoCliente);
+		btnCadastrarNovoCliente.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new CadCliente(0, 0).setVisible(true);
+			}
+		});
+
+		btnListaDeClientes = new JButton();
+		btnListaDeClientes.setIcon(new ImageIcon(OpcClientes.class.getResource("/com/sert/img/btnListarClientes.png")));
+		btnListaDeClientes.setOpaque(false);
+		btnListaDeClientes.setBorderPainted(false);
+		btnListaDeClientes.setContentAreaFilled(false);
+		btnListaDeClientes.setBounds(34, 131, 200, 36);
+		getContentPane().add(btnListaDeClientes);
+		btnListaDeClientes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ListarCliente(0).setVisible(true);
+			}
+		});
+
+		btnDebitoClientes = new JButton("");
+		btnDebitoClientes.setIcon(new ImageIcon(OpcClientes.class.getResource("/com/sert/img/btnContasAReceber.png")));
+		btnDebitoClientes.setBackground(new Color(255, 255, 0));
+		btnDebitoClientes.setOpaque(false);
+		btnDebitoClientes.setBorderPainted(false);
+		btnDebitoClientes.setContentAreaFilled(false);
+		btnDebitoClientes.setForeground(new Color(0, 0, 0));
+		btnDebitoClientes.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
+		btnDebitoClientes.setBounds(34, 178, 200, 36);
+		getContentPane().add(btnDebitoClientes);
+		btnDebitoClientes.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new ContasAReceber().setVisible(true);
+			}
+		});
+
+		lblBackground = new JLabel("");
+		lblBackground.setIcon(new ImageIcon(OpcClientes.class.getResource("/com/sert/img/backOpc.png")));
+		lblBackground.setBounds(0, 0, 268, 300);
+		contentPane.add(lblBackground);
 		getPermissoes();
 	}
-	
+
 	private void getPermissoes() {
-		if(!PermissoesStatic.permissoesFunc.isCadCliente()) {
+		if (!PermissoesStatic.permissoesFunc.isCadCliente()) {
 			btnCadastrarNovoCliente.setEnabled(false);
 		}
-		if(!PermissoesStatic.permissoesFunc.isListCliente()) {
+		if (!PermissoesStatic.permissoesFunc.isListCliente()) {
 			btnListaDeClientes.setEnabled(false);
 		}
 	}

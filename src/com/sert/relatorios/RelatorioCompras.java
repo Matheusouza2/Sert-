@@ -35,6 +35,7 @@ public class RelatorioCompras extends JDialog {
 	private JLabel lblPeriodo;
 	private JTable table;
 	private DefaultTableModel tableModel;
+	private JLabel lblValTotal;
 
 	public RelatorioCompras(String dataInicial, String dataFinal) {
 		setBounds(100, 100, 1020, 700);
@@ -117,15 +118,25 @@ public class RelatorioCompras extends JDialog {
 		lblTotal.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblTotal.setBounds(10, 11, 46, 13);
 		panel_footer.add(lblTotal);
+		
+		lblValTotal = new JLabel("");
+		lblValTotal.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblValTotal.setBounds(839, 11, 140, 14);
+		panel_footer.add(lblValTotal);
 
 		try {
 			ControlerNfe controlerNfe = new ControlerNfe();
+			float valTotal = 0;
 			List<NFeEntrada> nfeList = controlerNfe.nfePorPeriodo(dataInicial, dataFinal);
 			for (int i = 0; i < nfeList.size(); i++) {
 				tableModel.addRow(new Object[] { nfeList.get(i).getId(), nfeList.get(i).getNumNota(),
 						nfeList.get(i).getFornecedor().getRazSocial(), nfeList.get(i).getDataEntrada(),
 						String.format("R$ %.2f", nfeList.get(i).getValNota())});
+				valTotal += nfeList.get(i).getValNota();
 			}
+			
+			lblValTotal.setText(String.format("R$ %.2f", valTotal));
+			
 		} catch (ClassNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

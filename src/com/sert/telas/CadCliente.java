@@ -135,6 +135,10 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 	private JSeparator separatorBairro;
 	private JSeparator separatorCidade;
 	private JSeparator separatorContato;
+	private JButton btnSomatorio;
+	private JLabel lblBack;
+	private JLabel lblBackBtn;
+	private JLabel lblBackForm;
 
 	// Quando a opçao for 0 será chamado o cadastro, quando a opção for 1 será
 	// chamado o editar
@@ -142,11 +146,11 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 834, 618);
 		setUndecorated(true);
+		setBackground(new Color(1.0f, 1.0f, 1.0f, 0f));
 		setLocationRelativeTo(null);
 		setModal(true);
 		contentPane = new JPanel();
-		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
-		contentPane.setBackground(new Color(0, 0, 128));
+		contentPane.setOpaque(false);
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
@@ -155,11 +159,13 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		this.opcao = opcao;
 		CadCliente.idEdit = idEdit;
 
-		btnX = new JButton("X");
-		btnX.setBounds(788, 0, 46, 23);
+		btnX = new JButton();
+		btnX.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/btnX.png")));
+		btnX.setBounds(790, 2, 30, 30);
+		btnX.setContentAreaFilled(false);
+		btnX.setOpaque(false);
+		btnX.setBorderPainted(false);
 		contentPane.add(btnX);
-		btnX.setForeground(Color.WHITE);
-		btnX.setBackground(Color.RED);
 		btnX.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -180,25 +186,34 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		}
 
 		panelBtn = new JPanel();
-		panelBtn.setBackground(new Color(255, 255, 0));
+		panelBtn.setOpaque(false);
 		panelBtn.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
 		panelBtn.setBounds(10, 34, 814, 113);
 		contentPane.add(panelBtn);
 		panelBtn.setLayout(null);
 
 		btnSalvar = new JButton();
-		btnSalvar.setBackground(new Color(0, 255, 0));
+		btnSalvar.setBorderPainted(false);
+		btnSalvar.setOpaque(false);
+		btnSalvar.setContentAreaFilled(false);
 		btnSalvar.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/BtnSalvar.png")));
 		btnSalvar.setBounds(10, 11, 89, 91);
 		panelBtn.add(btnSalvar);
 
 		btnGerarCpf = new JButton();
 		btnGerarCpf.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/btnGerarCpf.png")));
-		btnGerarCpf.setBackground(Color.PINK);
+		btnGerarCpf.setBorderPainted(false);
+		btnGerarCpf.setOpaque(false);
+		btnGerarCpf.setContentAreaFilled(false);
 		btnGerarCpf.setBounds(109, 11, 89, 91);
 		btnGerarCpf
 				.setToolTipText("Quando não tiver o CFP real do cliente clique aqui que o sistema gerará um para você");
 		panelBtn.add(btnGerarCpf);
+
+		lblBackBtn = new JLabel("");
+		lblBackBtn.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/backBtnPanelInterno.png")));
+		lblBackBtn.setBounds(0, 0, 814, 113);
+		panelBtn.add(lblBackBtn);
 		btnGerarCpf.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -223,7 +238,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtCpf = new JDocumentFormatedField().getCpf();
 		txtCpf.setBounds(406, 14, 115, 20);
 		txtCpf.setBorder(null);
-		txtCpf.setBackground(new Color(240, 240, 240));
+		txtCpf.setOpaque(false);
 		txtCpf.setColumns(10);
 		txtCpf.addFocusListener(this);
 
@@ -232,7 +247,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		contentPane.add(tabbedPane);
 
 		panelForm = new JPanel();
-		panelForm.setBorder(new LineBorder(new Color(41, 171, 226), 2, true));
+		panelForm.setBackground(new Color(1.0f, 1.0f, 1.0f, 0f));
 		panelForm.setLayout(null);
 
 		tabbedPane.addTab("Cadastro", null, panelForm, null);
@@ -241,75 +256,79 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		}
 
 		lblCodigoCliente = new JLabel("Codigo Cliente:");
-		lblCodigoCliente.setForeground(new Color(128, 128, 128));
+		lblCodigoCliente.setForeground(new Color(0, 0, 128));
 		lblCodigoCliente.setBounds(10, 14, 97, 14);
 		panelForm.add(lblCodigoCliente);
 
 		txtCodCliente = new JTextField();
 		txtCodCliente.setEnabled(false);
 		txtCodCliente.setBorder(null);
-		txtCodCliente.setBackground(new Color(240, 240, 240));
+		txtCodCliente.setOpaque(false);
 		txtCodCliente.setBounds(105, 11, 58, 20);
 		panelForm.add(txtCodCliente);
 		txtCodCliente.setColumns(10);
 		txtCodCliente.setText(String.valueOf(id));
-		
-				separatorId = new JSeparator();
-				separatorId.setBackground(new Color(0, 0, 128));
-				separatorId.setBounds(10, 32, 153, 2);
-				panelForm.add(separatorId);
-		
-				rdbtnCpf = new JRadioButton("CPF");
-				rdbtnCpf.setBounds(209, 11, 58, 23);
-				rdbtnCpf.setSelected(true);
-				panelForm.add(rdbtnCpf);
-				bg.add(rdbtnCpf);
-				
-						rdbtnCpf.addActionListener(this);
-		
-				rdbtnCnpj = new JRadioButton("CNPJ");
-				rdbtnCnpj.setBounds(269, 11, 58, 23);
-				panelForm.add(rdbtnCnpj);
-				
-						bg.add(rdbtnCnpj);
-						
-								rdbtnCnpj.addActionListener(this);
+
+		separatorId = new JSeparator();
+		separatorId.setBackground(new Color(0, 0, 128));
+		separatorId.setBounds(10, 32, 153, 2);
+		panelForm.add(separatorId);
+
+		rdbtnCpf = new JRadioButton("CPF");
+		rdbtnCpf.setOpaque(false);
+		rdbtnCpf.setBounds(209, 11, 58, 23);
+		rdbtnCpf.setSelected(true);
+		panelForm.add(rdbtnCpf);
+		bg.add(rdbtnCpf);
+
+		rdbtnCpf.addActionListener(this);
+
+		rdbtnCnpj = new JRadioButton("CNPJ");
+		rdbtnCnpj.setOpaque(false);
+		rdbtnCnpj.setBounds(269, 11, 58, 23);
+		panelForm.add(rdbtnCnpj);
+
+		bg.add(rdbtnCnpj);
+
+		rdbtnCnpj.addActionListener(this);
 
 		lblCpf = new JLabel("CPF:");
-		lblCpf.setForeground(new Color(128, 128, 128));
+		lblCpf.setOpaque(false);
+		lblCpf.setBorder(null);
+		lblCpf.setForeground(new Color(0, 0, 128));
 		lblCpf.setBounds(369, 17, 46, 14);
 		panelForm.add(lblCpf);
 		panelForm.add(txtCpf);
-		
-				separatorCpf = new JSeparator();
-				separatorCpf.setBackground(new Color(0, 0, 128));
-				separatorCpf.setBounds(369, 35, 139, 2);
-				panelForm.add(separatorCpf);
+
+		separatorCpf = new JSeparator();
+		separatorCpf.setBackground(new Color(0, 0, 128));
+		separatorCpf.setBounds(369, 35, 139, 2);
+		panelForm.add(separatorCpf);
 
 		lblRg = new JLabel("RG:");
-		lblRg.setForeground(new Color(128, 128, 128));
+		lblRg.setForeground(new Color(0, 0, 128));
 		lblRg.setBounds(573, 17, 38, 14);
 		panelForm.add(lblRg);
 
 		txtRg = new JTextField();
 		txtRg.setBounds(600, 14, 104, 20);
 		txtRg.setBorder(null);
-		txtRg.setBackground(new Color(240, 240, 240));
+		txtRg.setOpaque(false);
 		panelForm.add(txtRg);
 		txtRg.setColumns(10);
-		
-				JSeparator separatorRg = new JSeparator();
-				separatorRg.setBackground(new Color(0, 0, 128));
-				separatorRg.setBounds(573, 35, 139, 2);
-				panelForm.add(separatorRg);
+
+		JSeparator separatorRg = new JSeparator();
+		separatorRg.setBackground(new Color(0, 0, 128));
+		separatorRg.setBounds(573, 35, 139, 2);
+		panelForm.add(separatorRg);
 
 		lblNome = new JLabel("Nome:");
-		lblNome.setForeground(new Color(128, 128, 128));
+		lblNome.setForeground(new Color(0, 0, 128));
 		lblNome.setBounds(10, 62, 38, 14);
 		panelForm.add(lblNome);
 
 		txtNome = new JTextField();
-		txtNome.setBackground(new Color(240, 240, 240));
+		txtNome.setOpaque(false);
 		txtNome.setBorder(null);
 		txtNome.setBounds(58, 59, 458, 20);
 		panelForm.add(txtNome);
@@ -321,7 +340,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		panelForm.add(separatorNome);
 
 		lblCep = new JLabel("CEP:");
-		lblCep.setForeground(new Color(128, 128, 128));
+		lblCep.setForeground(new Color(0, 0, 128));
 		lblCep.setBounds(549, 62, 30, 14);
 		panelForm.add(lblCep);
 
@@ -329,34 +348,34 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtCep.setBounds(589, 59, 115, 20);
 		panelForm.add(txtCep);
 		txtCep.setBorder(null);
-		txtCep.setBackground(new Color(240, 240, 240));
+		txtCep.setOpaque(false);
 		txtCep.setColumns(10);
 		txtCep.addFocusListener(this);
-		
-				JSeparator separatorCep = new JSeparator();
-				separatorCep.setBackground(new Color(0, 0, 128));
-				separatorCep.setBounds(549, 80, 129, 2);
-				panelForm.add(separatorCep);
+
+		JSeparator separatorCep = new JSeparator();
+		separatorCep.setBackground(new Color(0, 0, 128));
+		separatorCep.setBounds(549, 80, 129, 2);
+		panelForm.add(separatorCep);
 
 		lblEndereco = new JLabel("Endereço:");
-		lblEndereco.setForeground(new Color(128, 128, 128));
+		lblEndereco.setForeground(new Color(0, 0, 128));
 		lblEndereco.setBounds(10, 115, 58, 14);
 		panelForm.add(lblEndereco);
 
 		txtEndereco = new JTextField();
 		txtEndereco.setBounds(78, 112, 434, 20);
 		txtEndereco.setBorder(null);
-		txtEndereco.setBackground(new Color(240, 240, 240));
+		txtEndereco.setOpaque(false);
 		panelForm.add(txtEndereco);
 		txtEndereco.setColumns(10);
-		
-				separatorEndereco = new JSeparator();
-				separatorEndereco.setBackground(new Color(0, 0, 128));
-				separatorEndereco.setBounds(10, 132, 502, 2);
-				panelForm.add(separatorEndereco);
+
+		separatorEndereco = new JSeparator();
+		separatorEndereco.setBackground(new Color(0, 0, 128));
+		separatorEndereco.setBounds(10, 132, 502, 2);
+		panelForm.add(separatorEndereco);
 
 		lblNumero = new JLabel("Numero:");
-		lblNumero.setForeground(new Color(128, 128, 128));
+		lblNumero.setForeground(new Color(0, 0, 128));
 		lblNumero.setBounds(549, 115, 58, 14);
 		panelForm.add(lblNumero);
 
@@ -364,50 +383,50 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		txtNumero.setBounds(600, 112, 83, 20);
 		panelForm.add(txtNumero);
 		txtNumero.setBorder(null);
-		txtNumero.setBackground(new Color(240, 240, 240));
+		txtNumero.setOpaque(false);
 		txtNumero.setColumns(10);
-		
-				separatorNumero = new JSeparator();
-				separatorNumero.setBackground(new Color(0, 0, 128));
-				separatorNumero.setBounds(549, 132, 139, 2);
-				panelForm.add(separatorNumero);
+
+		separatorNumero = new JSeparator();
+		separatorNumero.setBackground(new Color(0, 0, 128));
+		separatorNumero.setBounds(549, 132, 139, 2);
+		panelForm.add(separatorNumero);
 
 		lblBairro = new JLabel("Bairro:");
-		lblBairro.setForeground(new Color(128, 128, 128));
+		lblBairro.setForeground(new Color(0, 0, 128));
 		lblBairro.setBounds(10, 157, 38, 14);
 		panelForm.add(lblBairro);
 
 		txtBairro = new JTextField();
 		txtBairro.setBounds(58, 154, 223, 20);
 		txtBairro.setBorder(null);
-		txtBairro.setBackground(new Color(240, 240, 240));
+		txtBairro.setOpaque(false);
 		panelForm.add(txtBairro);
 		txtBairro.setColumns(10);
-		
-				separatorBairro = new JSeparator();
-				separatorBairro.setBackground(new Color(0, 0, 128));
-				separatorBairro.setBounds(10, 175, 272, 2);
-				panelForm.add(separatorBairro);
+
+		separatorBairro = new JSeparator();
+		separatorBairro.setBackground(new Color(0, 0, 128));
+		separatorBairro.setBounds(10, 175, 272, 2);
+		panelForm.add(separatorBairro);
 
 		lblCidade = new JLabel("Cidade:");
-		lblCidade.setForeground(new Color(128, 128, 128));
+		lblCidade.setForeground(new Color(0, 0, 128));
 		lblCidade.setBounds(304, 157, 46, 14);
 		panelForm.add(lblCidade);
 
 		txtCidade = new JTextField();
 		txtCidade.setBounds(360, 154, 115, 20);
 		txtCidade.setBorder(null);
-		txtCidade.setBackground(new Color(240, 240, 240));
+		txtCidade.setOpaque(false);
 		panelForm.add(txtCidade);
 		txtCidade.setColumns(10);
-		
-				separatorCidade = new JSeparator();
-				separatorCidade.setBackground(new Color(0, 0, 128));
-				separatorCidade.setBounds(304, 175, 171, 2);
-				panelForm.add(separatorCidade);
+
+		separatorCidade = new JSeparator();
+		separatorCidade.setBackground(new Color(0, 0, 128));
+		separatorCidade.setBounds(304, 175, 171, 2);
+		panelForm.add(separatorCidade);
 
 		lblEstado = new JLabel("Estado:");
-		lblEstado.setForeground(new Color(128, 128, 128));
+		lblEstado.setForeground(new Color(0, 0, 128));
 		lblEstado.setBounds(520, 157, 46, 14);
 		panelForm.add(lblEstado);
 
@@ -419,41 +438,52 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		panelForm.add(txtEstado);
 
 		lblContato = new JLabel("Contato:");
-		lblContato.setForeground(new Color(128, 128, 128));
+		lblContato.setForeground(new Color(0, 0, 128));
 		lblContato.setBounds(10, 198, 61, 14);
 		panelForm.add(lblContato);
 
-		//txtContato = new JDocumentFormatedField().getTel();
-		txtContato = new JTextField();
+		txtContato = new JDocumentFormatedField().getTel();
 		txtContato.setBounds(58, 195, 115, 20);
 		txtContato.setBorder(null);
-		txtContato.setBackground(new Color(240, 240, 240));
+		txtContato.setOpaque(false);
 		panelForm.add(txtContato);
 		txtContato.setColumns(10);
-		
+
 		separatorContato = new JSeparator();
 		separatorContato.setBackground(new Color(0, 0, 128));
 		separatorContato.setBounds(10, 215, 163, 2);
 		panelForm.add(separatorContato);
 
 		lblUsuario = new JLabel("Usuario:" + UsuLogado.getNome());
-		lblUsuario.setForeground(new Color(128, 128, 128));
+		lblUsuario.setForeground(new Color(0, 0, 128));
 		lblUsuario.setBounds(322, 297, 198, 14);
 		panelForm.add(lblUsuario);
 
 		lblDataDeInclusao = new JLabel("Data de inclusão: " + JDateField.getDate());
-		lblDataDeInclusao.setForeground(new Color(128, 128, 128));
+		lblDataDeInclusao.setForeground(new Color(0, 0, 128));
 		lblDataDeInclusao.setBounds(589, 297, 215, 14);
 		panelForm.add(lblDataDeInclusao);
 
 		lblObservacoes = new JLabel("Observações:");
-		lblObservacoes.setForeground(new Color(128, 128, 128));
+		lblObservacoes.setForeground(new Color(0, 0, 128));
 		lblObservacoes.setBounds(10, 297, 95, 14);
 		panelForm.add(lblObservacoes);
 
 		txtAreaObs = new JTextArea();
+		txtAreaObs.setBorder(null);
+		txtAreaObs.setOpaque(false);
 		txtAreaObs.setBounds(10, 322, 794, 88);
 		panelForm.add(txtAreaObs);
+
+		lblBackForm = new JLabel("");
+		lblBackForm.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/backForm.png")));
+		lblBackForm.setBounds(0, 0, 809, 421);
+		panelForm.add(lblBackForm);
+
+		lblBack = new JLabel("");
+		lblBack.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/backPanel.png")));
+		lblBack.setBounds(0, 0, 834, 618);
+		contentPane.add(lblBack);
 
 		txtNome.addFocusListener(this);
 
@@ -585,16 +615,28 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		btnBaixarDuplicata = new JButton();
 		btnBaixarDuplicata.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/btnBaixarConta.png")));
 		btnBaixarDuplicata.setToolTipText("Selecione uma duplicata para dar baixa");
-		btnBaixarDuplicata.setBackground(new Color(173, 255, 47));
+		btnBaixarDuplicata.setBorderPainted(false);
+		btnBaixarDuplicata.setOpaque(false);
+		btnBaixarDuplicata.setContentAreaFilled(false);
 		btnBaixarDuplicata.setBounds(208, 11, 89, 91);
 		panelBtn.add(btnBaixarDuplicata);
 		btnBaixarDuplicata.addActionListener(this);
 
 		btnVerDuplicata = new JButton();
-		btnVerDuplicata.setIcon(new ImageIcon(ContasAReceber.class.getResource("/com/sert/img/btnVerDuplicata.png")));
-		btnVerDuplicata.setBackground(new Color(255, 99, 71));
+		btnVerDuplicata.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/btnVerDuplicata.png")));
+		btnVerDuplicata.setOpaque(false);
+		btnVerDuplicata.setBorderPainted(false);
+		btnVerDuplicata.setContentAreaFilled(false);
 		btnVerDuplicata.setBounds(307, 11, 89, 91);
 		panelBtn.add(btnVerDuplicata);
+
+		btnSomatorio = new JButton();
+		btnSomatorio.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/btnSomatorio.png")));
+		btnSomatorio.setOpaque(false);
+		btnSomatorio.setBorderPainted(false);
+		btnSomatorio.setContentAreaFilled(false);
+		btnSomatorio.setBounds(406, 11, 89, 91);
+		panelBtn.add(btnSomatorio);
 		btnVerDuplicata.addActionListener(this);
 
 		panelDebito = new JPanel();
@@ -684,6 +726,10 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 			Log.gravaLog("| CONTAS A RECEBER |" + e1.getMessage());
 		}
 
+		lblBackForm = new JLabel("");
+		lblBackForm.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/backForm.png")));
+		lblBackForm.setBounds(0, 0, 809, 421);
+		panelDebito.add(lblBackForm);
 	}
 
 	public static void atualizarLista(String filtro) {
@@ -800,19 +846,25 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 			}
 		} else if (e.getSource() == rdbtnCpf) {
 			panelForm.remove(txtCpf);
+			panelForm.revalidate();
 			lblCpf.setText("CPF: ");
 			txtCpf = new JDocumentFormatedField().getCpf();
 			txtCpf.setBounds(406, 14, 115, 20);
+			txtCpf.setBorder(null);
 			txtCpf.setColumns(10);
+			txtCpf.addFocusListener(this);
 			panelForm.add(txtCpf);
 			lblRg.setText("RG: ");
 			txtCpf.addFocusListener(this);
 		} else if (e.getSource() == rdbtnCnpj) {
 			panelForm.remove(txtCpf);
+			panelForm.revalidate();
 			lblCpf.setText("CNPJ: ");
 			txtCpf = new JDocumentFormatedField().getCnpj();
 			txtCpf.setBounds(406, 14, 115, 20);
+			txtCpf.setBorder(null);
 			txtCpf.setColumns(10);
+			txtCpf.addFocusListener(this);
 			panelForm.add(txtCpf);
 			lblRg.setText("IE: ");
 			txtCpf.addFocusListener(this);

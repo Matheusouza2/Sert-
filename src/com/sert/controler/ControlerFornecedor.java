@@ -18,7 +18,7 @@ public class ControlerFornecedor {
 
 	public void cadadastrar(Fornecedor fornecedor) throws SQLException, FornecedorJaCadastradoException {
 		fornecedor.setId(getIdForn());
-		if (pesqFornecedor(fornecedor.getCnpjForn()).getCnpjForn() == null)
+		if (pesqFornecedor(fornecedor.getCnpjForn()) == null)
 			dao.cadastrar(fornecedor);
 		else
 			throw new FornecedorJaCadastradoException();
