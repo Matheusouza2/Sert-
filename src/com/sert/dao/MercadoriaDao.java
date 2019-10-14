@@ -145,4 +145,33 @@ public class MercadoriaDao {
 		preparedStatement.setLong(3, codBarras);
 		preparedStatement.executeUpdate();
 	}
+
+	public List<Mercadoria> extratoMerc(int codMerc) throws SQLException{
+		List<Mercadoria> mercadorias = new ArrayList<>();
+		Mercadoria merc;
+		
+		String nfeEntrada = "SELECT quant_compra FROM nfe_merc WHERE id_merc = ";
+		PreparedStatement prepared = con.prepareStatement(nfeEntrada);
+		prepared.setInt(1, codMerc);
+		ResultSet resultSet = prepared.executeQuery();
+		
+		while(resultSet.next()) {
+			merc = new Mercadoria();
+			merc.setEstoque(resultSet.getFloat("quant_compra"));
+			mercadorias.add(merc);
+		}
+		
+		String nfeEntrada = "SELECT quant_compra FROM nfe_merc WHERE id_merc = ";
+		PreparedStatement prepared = con.prepareStatement(nfeEntrada);
+		prepared.setInt(1, codMerc);
+		ResultSet resultSet = prepared.executeQuery();
+		
+		while(resultSet.next()) {
+			merc = new Mercadoria();
+			merc.setEstoque(resultSet.getFloat("quant_compra"));
+			mercadorias.add(merc);
+		}
+		
+		return mercadorias;
+	}
 }

@@ -152,7 +152,7 @@ public class CadMercadoria extends JDialog implements ActionListener, FocusListe
 			txtCodMercadoria.setForeground(new Color(128, 128, 128));
 			txtCodMercadoria.setEnabled(false);
 			txtCodMercadoria.setBorder(null);
-			txtCodMercadoria.setBackground(new Color(240,240,240));
+			txtCodMercadoria.setBackground(new Color(240, 240, 240));
 			txtCodMercadoria.setBounds(134, 11, 58, 20);
 			txtCodMercadoria.setText(String.valueOf(idGerador));
 			panelForm.add(txtCodMercadoria);
@@ -223,7 +223,8 @@ public class CadMercadoria extends JDialog implements ActionListener, FocusListe
 		cbUnd = new JComboBox<String>();
 		cbUnd.setBackground(new Color(240, 240, 240));
 		cbUnd.setForeground(new Color(128, 128, 128));
-		cbUnd.setModel(new DefaultComboBoxModel<String>(new String[] { "", "CJ", "CX", "FD", "KG", "UN", "RS", "PC" }));
+		cbUnd.setModel(
+				new DefaultComboBoxModel<String>(new String[] { "", "CJ", "CX", "FD", "KG", "MT", "UN", "RS", "PC" }));
 		cbUnd.setBounds(661, 61, 88, 20);
 		panelForm.add(cbUnd);
 
@@ -361,7 +362,7 @@ public class CadMercadoria extends JDialog implements ActionListener, FocusListe
 		try {
 			controlerMercadoria = new ControlerMercadoria();
 			if (operacao == 0) {
-				long codBarras = txtCodBarras.getText().equals("")? 0:Long.parseLong(txtCodBarras.getText());
+				long codBarras = txtCodBarras.getText().equals("") ? 0 : Long.parseLong(txtCodBarras.getText());
 				if (codBarras == 0 || txtDescricaoMerc.getText().equals("")) {
 					JOptionPane.showMessageDialog(null,
 							"Os campos 'Cod. de Barras' e 'Descrição' não podem estar em branco \n O campo 'Cod. de barras não pode ter valor igual a 0'",

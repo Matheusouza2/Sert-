@@ -247,7 +247,7 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		contentPane.add(tabbedPane);
 
 		panelForm = new JPanel();
-		panelForm.setBackground(new Color(1.0f, 1.0f, 1.0f, 0f));
+		panelForm.setBackground(new Color(230, 230, 250));
 		panelForm.setLayout(null);
 
 		tabbedPane.addTab("Cadastro", null, panelForm, null);
@@ -470,15 +470,15 @@ public class CadCliente extends JDialog implements ActionListener, FocusListener
 		panelForm.add(lblObservacoes);
 
 		txtAreaObs = new JTextArea();
-		txtAreaObs.setBorder(null);
+		txtAreaObs.setBorder(new LineBorder(new Color(0, 0, 128), 1, true));
 		txtAreaObs.setOpaque(false);
 		txtAreaObs.setBounds(10, 322, 794, 88);
 		panelForm.add(txtAreaObs);
 
-		lblBackForm = new JLabel("");
-		lblBackForm.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/backForm.png")));
-		lblBackForm.setBounds(0, 0, 809, 421);
-		panelForm.add(lblBackForm);
+//		lblBackForm = new JLabel("");
+//		lblBackForm.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/backForm.png")));
+//		lblBackForm.setBounds(0, 0, 809, 421);
+//		panelForm.add(lblBackForm);
 
 		lblBack = new JLabel("");
 		lblBack.setIcon(new ImageIcon(CadCliente.class.getResource("/com/sert/img/backPanel.png")));

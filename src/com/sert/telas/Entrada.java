@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 
 import com.sert.controler.ControlerUsuario;
 import com.sert.controler.Log;
+import com.sert.controler.PropriedadesControler;
 import com.sert.controler.Seguranca;
 import com.sert.controler.UsuLogado;
 import com.sert.editableFields.Autocomplete;
@@ -200,6 +201,14 @@ public class Entrada extends JFrame implements FocusListener, MouseListener {
 		lblVersao.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		lblVersao.setBounds(190, 375, 170, 14);
 		panelLogin.add(lblVersao);
+		PropriedadesControler prop;
+		try {
+			prop = new PropriedadesControler();
+			prop.setVersion(110);
+			prop.setSystemVersion();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		lblExclamacao = new JLabel("");
 		lblExclamacao.setHorizontalAlignment(SwingConstants.CENTER);

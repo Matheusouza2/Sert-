@@ -9,11 +9,13 @@ import com.sert.controler.ControlerDuplicata;
 import com.sert.controler.ControlerVenda;
 import com.sert.controler.JDateField;
 import com.sert.controler.PermissoesStatic;
+import com.sert.controler.PropriedadesControler;
 import com.sert.controler.UsuLogado;
 import com.sert.dao.ConexaoDao;
 import com.sert.entidades.DuplicataCliente;
 import com.sert.exceptions.NenhumaMercadoriaCadastradaException;
-import com.sert.valida.LiberacaoData;
+import com.sert.server.LiberacaoData;
+import com.sert.server.VerifyUpdate;
 
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -89,21 +91,34 @@ public class Banner extends JFrame {
 		progressBar.setBackground(new Color(240, 240, 240));
 		progressBar.setBounds(0, 323, 670, 7);
 		contentPane.add(progressBar);
+		
 		new SwingWorker<Object, Object>() {
 			@Override
 			protected Object doInBackground() throws Exception {
-				lblProgressBar.setText("Sincronizando com o servidor...");
-				if (!LiberacaoData.isDataOk()) {
-					JOptionPane.showMessageDialog(null, "Verifique a data e a hora do seu computador");
-				}
 				lblProgressBar.setText("Testando conexão do banco de dados...");
 				ConexaoDao.testarCon();
 				lblProgressBar.setText("Carregando Permissões...");
 				PermissoesStatic.preenchePermissoes(UsuLogado.getId());
+				lblProgressBar.setText("Sincronizando com o servidor...");
+				if (!LiberacaoData.isDataOk()) {
+					JOptionPane.showMessageDialog(null, "Verifique a data e a hora do seu computador");
+					dispose();
+				}
 				lblProgressBar.setText("Carregando mercadorias...");
 				preencherListas();
 				lblProgressBar.setText("Carregando clientes...");
 				verContasAReceber();
+				lblProgressBar.setText("Verificando atualizações...");
+				if(VerifyUpdate.up(new PropriedadesControler().getVersion())) {
+					String[] comandoComParametros = new String[] { "cmd.exe", "/C", "start", "cmd.exe",  
+					        "/C",  
+					        "java",  
+					        "-jar",  
+					        "C:/Program Files/Sert+/update/SertUpdate.jar"
+					    };  
+					    Runtime.getRuntime().exec(comandoComParametros);  
+					System.exit(0);
+				}
 				return null;
 			}
 

@@ -1,4 +1,4 @@
-package com.sert.valida;
+package com.sert.server;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -16,7 +16,7 @@ public class LiberacaoData {
 
 		URL url;
 		try {
-			url = new URL("https://sertsoft.000webhostapp.com/date.php");
+			url = new URL("https://sertsoft.000webhostapp.com/license.php?date");
 			Scanner in = new Scanner(url.openStream());
 
 			String dataServ = in.next();
@@ -25,16 +25,18 @@ public class LiberacaoData {
 			Date data = new Date();
 			SimpleDateFormat formatadorDate = new SimpleDateFormat("yyyy-MM-dd");
 			String dataLoc = formatadorDate.format(data);
-			
+
 			if (dataLoc.equals(dataServ)) {
 				dataOk = true;
 			}
 		} catch (MalformedURLException e) {
 			JOptionPane.showMessageDialog(null,
 					"Não conseguimos sincronizar com nossos servidores, entre em contato com o suporte!");
+			dataOk = true;
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null,
 					"Não conseguimos sincronizar com nossos servidores, entre em contato com o suporte!");
+			dataOk = true;
 		}
 	}
 

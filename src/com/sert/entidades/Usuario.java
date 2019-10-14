@@ -47,7 +47,7 @@ public class Usuario {
 	}
 
 	public void setNome(String nome) {
-		nome = (nome.equals(null))? "":nome;
+		nome = (nome == null)? "":nome;
 		this.nome = nome;
 	}
 

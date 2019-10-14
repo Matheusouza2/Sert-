@@ -70,7 +70,6 @@ public class BaixarParcela extends JDialog {
 	private int idParcela;
 	private float valorReal;
 	private ControlerDuplicata controler;
-	private JCheckBox chckbxAlterarValorDa;
 	private JLabel lblUsuarioBaixa;
 	private JTextField txtUsuario;
 	private JLabel lblDataDaBaixa;
@@ -225,13 +224,11 @@ public class BaixarParcela extends JDialog {
 		panel.add(lblValorDaParcela);
 
 		txtVencimento = new JTextField();
-		txtVencimento.setEditable(false);
 		txtVencimento.setBounds(90, 205, 107, 20);
 		panel.add(txtVencimento);
 		txtVencimento.setColumns(10);
 
 		txtValorParcela = new JNumberFormatField(new DecimalFormat("0.00"));
-		txtValorParcela.setEditable(false);
 		txtValorParcela.setBounds(348, 205, 86, 20);
 		panel.add(txtValorParcela);
 		txtValorParcela.setColumns(10);
@@ -244,21 +241,6 @@ public class BaixarParcela extends JDialog {
 		txtValorBaixa.setBounds(111, 269, 86, 20);
 		panel.add(txtValorBaixa);
 		txtValorBaixa.setColumns(10);
-
-		chckbxAlterarValorDa = new JCheckBox("Alterar valor da parcela");
-		chckbxAlterarValorDa.setBounds(440, 204, 170, 23);
-		panel.add(chckbxAlterarValorDa);
-
-		chckbxAlterarValorDa.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if (chckbxAlterarValorDa.isSelected()) {
-					txtValorParcela.setEditable(true);
-				} else {
-					txtValorParcela.setEditable(false);
-				}
-			}
-		});
 
 		preencheCampos();
 		if (vizualizacao) {
@@ -359,7 +341,6 @@ public class BaixarParcela extends JDialog {
 	public void vizualizarDuplicata() {
 		btnConfirmarBaixa.setEnabled(false);
 		txtValorBaixa.setVisible(false);
-		chckbxAlterarValorDa.setVisible(false);
 		lblValorABaixar.setVisible(false);
 		lblTitle.setText("vizulaizar parcela");
 

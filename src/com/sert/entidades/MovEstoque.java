@@ -4,7 +4,7 @@ import java.util.List;
 
 public class MovEstoque {
 	private int id;
-	private String tipo;
+	private boolean tipo;
 	private Usuario usuario;
 	private List<Mercadoria> mercadorias;
 	private String data;
@@ -12,7 +12,7 @@ public class MovEstoque {
 	public MovEstoque() {
 	}
 
-	public MovEstoque(int id, String tipo, Usuario usuario, List<Mercadoria> mercadorias, String data) {
+	public MovEstoque(int id, boolean tipo, Usuario usuario, List<Mercadoria> mercadorias, String data) {
 		super();
 		this.id = id;
 		this.tipo = tipo;
@@ -29,11 +29,11 @@ public class MovEstoque {
 		this.id = id;
 	}
 
-	public String getTipo() {
+	public boolean getTipo() {
 		return tipo;
 	}
 
-	public void setTipo(String tipo) {
+	public void setTipo(boolean tipo) {
 		this.tipo = tipo;
 	}
 

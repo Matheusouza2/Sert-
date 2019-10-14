@@ -81,6 +81,10 @@ public class ControlerMercadoria {
 	}
 
 	public void entradaMercadoria(Mercadoria mercadoria, long codFornecedor) throws SQLException {
+		Mercadoria merc = consultaMercadoriaCad(mercadoria.getCodBarras());
+		float estoque = merc.getEstoque() + mercadoria.getEstoque();
+
+		mercadoria.setEstoque(estoque);
 		mercadoriaDao.entradaNotaEstoque(mercadoria, codFornecedor);
 	}
 
@@ -91,5 +95,9 @@ public class ControlerMercadoria {
 
 	public void saidaMercadoria(Mercadoria mercadoria) throws SQLException {
 		mercadoriaDao.entradaNotaEstoque(mercadoria, 0);
+	}
+
+	public void extratoMerc(int codMerc) throws SQLException {
+		mercadoriaDao.extratoMerc(codMerc);		
 	}
 }

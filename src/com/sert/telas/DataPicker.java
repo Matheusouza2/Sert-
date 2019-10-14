@@ -6,7 +6,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
-import javax.swing.border.LineBorder;
 
 import com.sert.controler.JDateField;
 import com.sert.editableFields.JDocumentFormatedField;
@@ -27,6 +26,7 @@ import javax.swing.SwingConstants;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.ImageIcon;
 
 public class DataPicker extends JDialog {
 
@@ -40,6 +40,7 @@ public class DataPicker extends JDialog {
 	private JButton btnX;
 	public static int CAIXA = 0;
 	public static int COMPRAS = 1;
+	private JLabel lblBack;
 
 	public DataPicker(int tela) {
 		setFocusableWindowState(true);
@@ -52,10 +53,6 @@ public class DataPicker extends JDialog {
 		setModal(true);
 
 		listen();
-
-		contentPanel.setForeground(Color.YELLOW);
-		contentPanel.setBackground(new Color(0, 0, 128));
-		contentPanel.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPanel);
 		contentPanel.setLayout(null);
 
@@ -109,11 +106,18 @@ public class DataPicker extends JDialog {
 			}
 		});
 
-		btnX = new JButton("X");
-		btnX.setForeground(Color.WHITE);
-		btnX.setBackground(Color.RED);
-		btnX.setBounds(212, 11, 46, 23);
+		btnX = new JButton("");
+		btnX.setIcon(new ImageIcon(DataPicker.class.getResource("/com/sert/img/btnX.png")));
+		btnX.setContentAreaFilled(false);
+		btnX.setBorderPainted(false);
+		btnX.setOpaque(false);
+		btnX.setBounds(234, 2, 30, 30);
 		contentPanel.add(btnX);
+		
+		lblBack = new JLabel("");
+		lblBack.setIcon(new ImageIcon(DataPicker.class.getResource("/com/sert/img/backOpc.png")));
+		lblBack.setBounds(0, 0, 268, 300);
+		contentPanel.add(lblBack);
 		btnX.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

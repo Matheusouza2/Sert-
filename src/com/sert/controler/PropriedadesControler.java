@@ -4,40 +4,50 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+
 public class PropriedadesControler {
- 
+
 	private String login;
-    private String port;
-    private String host;
-    private String password;
-     
-    private Properties prop;
-	
-    public PropriedadesControler() throws IOException {
-    	prop = getProp();
-        login = prop.getProperty("prop.server.login");
-        host = prop.getProperty("prop.server.host");
-        port = prop.getProperty("prop.server.port");
-        password = prop.getProperty("prop.server.password");
+	private String port;
+	private String host;
+	private String password;
+	private int version;
+
+	private Properties prop;
+
+	public PropriedadesControler() throws IOException {
+		prop = getProp();
+		login = prop.getProperty("prop.server.login");
+		host = prop.getProperty("prop.server.host");
+		port = prop.getProperty("prop.server.port");
+		password = prop.getProperty("prop.server.password");
+		version = Integer.parseInt(prop.getProperty("prop.update.version"));
 	}
-    
-    public static Properties getProp() throws IOException {
-        Properties props = new Properties();
-        FileInputStream file = new FileInputStream("C:/Program Files/Sert+/Config/config.properties");
-        props.load(file);
-        return props;
- 
-    }
-    
-    public void setProp() throws IOException {
-    	prop = getProp();
-    	FileOutputStream arquivoOut = new FileOutputStream("C:/Program Files/Sert+/Config/config.properties");
-    	prop.setProperty("prop.server.login", login);
-        prop.setProperty("prop.server.host", host);
-        prop.setProperty("prop.server.port", port);
-        prop.setProperty("prop.server.password", password);
-        prop.store(arquivoOut, null);
-    }
+
+	public static Properties getProp() throws IOException {
+		Properties props = new Properties();
+		FileInputStream file = new FileInputStream("C:/Program Files/Sert+/Config/config.properties");
+		props.load(file);
+		return props;
+
+	}
+
+	public void setProp() throws IOException {
+		prop = getProp();
+		FileOutputStream arquivoOut = new FileOutputStream("C:/Program Files/Sert+/Config/config.properties");
+		prop.setProperty("prop.server.login", login);
+		prop.setProperty("prop.server.host", host);
+		prop.setProperty("prop.server.port", port);
+		prop.setProperty("prop.server.password", password);
+		prop.store(arquivoOut, null);
+	}
+
+	public void setSystemVersion() throws IOException {
+		prop = getProp();
+		FileOutputStream arquivoOut = new FileOutputStream("C:/Program Files/Sert+/Config/config.properties");
+		prop.setProperty("prop.update.version", String.valueOf(version));
+		prop.store(arquivoOut, null);
+	}
 
 	public String getLogin() {
 		return login;
@@ -69,5 +79,13 @@ public class PropriedadesControler {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
+	public int getVersion() {
+		return version;
 	}
 }

@@ -88,7 +88,7 @@ public class ImportXml extends JDialog implements CellEditorListener {
 	private final JPanel contentPanel = new JPanel();
 	private JPanel panelBtn;
 	private JPanel panelForm;
-
+	private File caminho;
 	private JLabel lblCadastroDeNotas;
 	private JLabel lblCaminhoDoXml;
 	private JLabel lblNumNota;
@@ -221,14 +221,16 @@ public class ImportXml extends JDialog implements CellEditorListener {
 		btnSalvar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
 				contentPanel.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				panelAguarde.setVisible(true);
+				
+				recuperaNota();
+				confirmarCadastro();
+				
 				new SwingWorker<Object, Object>() {
 					@Override
 					public Object doInBackground() throws Exception {
-						recuperaNota();
-						confirmarCadastro();
+						
 						return null;
 					}
 
@@ -530,7 +532,6 @@ public class ImportXml extends JDialog implements CellEditorListener {
 
 	public void buscarXml(LookAndFeel lfAnterior) {
 		try {
-			File caminho;
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			escolherXml = new JFileChooser();
 			escolherXml.setFileFilter(new FileFilter() {
@@ -659,12 +660,20 @@ public class ImportXml extends JDialog implements CellEditorListener {
 
 			for (int i = 0; i < table.getRowCount(); i++) {
 				mercadoriaImport = new Mercadoria();
-				mercadoriaImport.setId(Integer.parseInt(table.getValueAt(i, 0).toString()));
+				String id = table.getValueAt(i, 0).toString(); 
+				if(id.length() > 5) {
+					do{
+						id = id.substring (0, id.length() - 1);
+					}while (id.length() > 5);
+					
+				}
+				
+				mercadoriaImport.setId(Integer.parseInt(id));
 				mercadoriaImport.setMercadoria(table.getValueAt(i, 1).toString());
-				if (table.getValueAt(i, 7).equals(" ") || table.getValueAt(i, 7).equals("")) {
+				if (table.getValueAt(i, 6).equals("N")) {
 					mercadoriaImport.setCodBarras(Long.parseLong("98500000" + mercadoriaImport.getId()));
 				} else {
-					mercadoriaImport.setCodBarras((long) table.getValueAt(i, 7));
+					mercadoriaImport.setCodBarras(Long.parseLong(table.getValueAt(i, 7).toString()));
 				}
 				mercadoriaImport.setDataCadastro(JDateField.getDate());
 				mercadoriaImport.setUnd(nfeXml.getMercadorias().get(i).getUnd());
@@ -704,6 +713,7 @@ public class ImportXml extends JDialog implements CellEditorListener {
 				auxEstoque = mercadoriaGravar.get(i).getEstoque();
 				if (opcaoEntrada == 1) {
 					mercadoriaGravar.get(i).setEstoque(0);
+					mercadoriaGravar.get(i).setPrecoVenda(0);
 				}
 
 				Mercadoria mercadoria;
@@ -749,8 +759,8 @@ public class ImportXml extends JDialog implements CellEditorListener {
 			JOptionPane.showMessageDialog(null, "Nota fiscal cadastrada com sucesso !", "Sucesso",
 					JOptionPane.INFORMATION_MESSAGE);
 
-			// File xml = new File(caminho.toString());
-			// xml.delete();
+			File xml = new File(caminho.toString());
+			xml.delete();
 
 		} catch (ClassNotFoundException e1) {
 			JOptionPane.showMessageDialog(null, "Erro interno do sistema, contate o suporte", "Erro",
@@ -794,29 +804,8 @@ public class ImportXml extends JDialog implements CellEditorListener {
 	}
 
 	private TableCellEditor createEditor(String dados[]) {
-		JComboBox<String> combo = new JComboBox<String>(dados) {
-			private static final long serialVersionUID = 1L;
+		JComboBox<String> combo = new JComboBox<String>(dados);
 
-			protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
-				boolean retValue = super.processKeyBinding(ks, e, condition, pressed);
-
-				if (!retValue && isStartingCellEdit() && editor != null) {
-					// this is where the magic happens
-					// not quite right; sets the value, but doesn't advance the
-					// cursor position for AC
-					editor.setItem(String.valueOf(ks.getKeyChar()));
-				}
-
-				return retValue;
-			}
-
-			private boolean isStartingCellEdit() {
-				JTable table = (JTable) SwingUtilities.getAncestorOfClass(JTable.class, this);
-
-				return table != null && table.isFocusOwner()
-						&& !Boolean.FALSE.equals((Boolean) table.getClientProperty("JTable.autoStartsEdit"));
-			}
-		};
 		AutoCompleteDecorator.decorate(combo);
 
 		return new ComboBoxCellEditor(combo);

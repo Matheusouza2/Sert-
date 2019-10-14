@@ -93,6 +93,12 @@ public class OpcProdutos extends JDialog {
 		btnExtratoMerc.setContentAreaFilled(false);
 		btnExtratoMerc.setBounds(34, 190, 200, 36);
 		getContentPane().add(btnExtratoMerc);
+		btnExtratoMerc.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new OpcExtratoMerc().setVisible(true);				
+			}
+		});
 		
 		lblBack = new JLabel("");
 		lblBack.setIcon(new ImageIcon(OpcProdutos.class.getResource("/com/sert/img/backOpc.png")));

@@ -10,15 +10,14 @@ import com.sert.controler.PropriedadesControler;
 public class ConexaoDao {
 	private static Connection con = null;
 	private static ConexaoDao self = null;
-	
+
 	protected Connection getConector() throws SQLException, ClassNotFoundException, IOException {
 		PropriedadesControler controler = new PropriedadesControler();
 		if (con == null) {
 			Class.forName("org.postgresql.Driver");
-			con = DriverManager.getConnection(
-					"jdbc:postgresql://localhost:" + controler.getPort()
-							+ "/sertbd?autoReconnect=true&useSSL=false",
-					controler.getLogin(), controler.getPassword());
+			//" + controler.getHost() + "
+			con = DriverManager.getConnection("jdbc:postgresql://"+ controler.getHost() +":" + controler.getPort()
+					+ "/sertbd?autoReconnect=true&useSSL=false", controler.getLogin(), controler.getPassword());
 		}
 		return con;
 	}

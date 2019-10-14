@@ -1,4 +1,4 @@
-package com.sert.valida;
+package com.sert.server;
 
 import java.io.IOException;
 import java.net.URL;

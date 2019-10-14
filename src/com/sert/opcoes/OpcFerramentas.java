@@ -13,25 +13,31 @@ import javax.swing.border.LineBorder;
 
 import com.sert.telas.BackupSistema;
 import com.sert.telas.ContaCedula;
+import com.sert.telas.GerenciaPrecoView;
 import com.sert.telas.MovimentoCaixa;
 import com.sert.telas.TrocaEstorno;
+import javax.swing.ImageIcon;
+
 /**
  * Desenvolvido e mantido por SertSoft -- Uma empresa do gupo M&K
+ * 
  * @author Matheus Souza
  * @version 1.0.0
  * 
- * */
+ */
 public class OpcFerramentas extends JDialog {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	
-	private JButton btnCadastrarUsu ;
+
+	private JButton btnCadastrarUsu;
 	private JButton btnMovCaixa;
 	private JButton btnContaCedula;
 	private JButton btnX;
 	private JButton btnBackup;
-	
+	private JButton btnGerencPreco;
+	private JButton btnEstorno;
+
 	public OpcFerramentas() {
 		setFocusableWindowState(true);
 		setResizable(false);
@@ -47,20 +53,20 @@ public class OpcFerramentas extends JDialog {
 		contentPane.setBorder(new LineBorder(new Color(255, 255, 0), 2, true));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-						
+
 		btnCadastrarUsu = new JButton("cadastrar usuario");
 		btnCadastrarUsu.setBackground(new Color(255, 255, 0));
 		btnCadastrarUsu.setForeground(new Color(0, 0, 0));
 		btnCadastrarUsu.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnCadastrarUsu.setBounds(10, 107, 248, 21);
+		btnCadastrarUsu.setBounds(10, 68, 248, 21);
 		getContentPane().add(btnCadastrarUsu);
 		btnCadastrarUsu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-								
+
 			}
 		});
-		
+
 		btnMovCaixa = new JButton("movimentar caixa");
 		btnMovCaixa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -70,9 +76,9 @@ public class OpcFerramentas extends JDialog {
 		btnMovCaixa.setBackground(new Color(255, 255, 0));
 		btnMovCaixa.setForeground(new Color(0, 0, 0));
 		btnMovCaixa.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnMovCaixa.setBounds(10, 171, 248, 21);
+		btnMovCaixa.setBounds(10, 132, 248, 21);
 		getContentPane().add(btnMovCaixa);
-		
+
 		btnContaCedula = new JButton("conta cedula");
 		btnContaCedula.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -82,9 +88,9 @@ public class OpcFerramentas extends JDialog {
 		btnContaCedula.setBackground(new Color(255, 255, 0));
 		btnContaCedula.setForeground(new Color(0, 0, 0));
 		btnContaCedula.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
-		btnContaCedula.setBounds(10, 139, 248, 21);
+		btnContaCedula.setBounds(10, 100, 248, 21);
 		getContentPane().add(btnContaCedula);
-		
+
 		btnX = new JButton("X");
 		btnX.setBackground(Color.RED);
 		btnX.setForeground(Color.WHITE);
@@ -96,12 +102,12 @@ public class OpcFerramentas extends JDialog {
 				dispose();
 			}
 		});
-		
+
 		btnBackup = new JButton("fazer backup");
 		btnBackup.setForeground(Color.BLACK);
 		btnBackup.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
 		btnBackup.setBackground(Color.YELLOW);
-		btnBackup.setBounds(10, 203, 248, 21);
+		btnBackup.setBounds(10, 164, 248, 21);
 		btnBackup.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -109,19 +115,35 @@ public class OpcFerramentas extends JDialog {
 			}
 		});
 		contentPane.add(btnBackup);
-		
-		JButton btnEstorno = new JButton("troca e estorno");
+
+		btnEstorno = new JButton("troca e estorno");
 		btnEstorno.setForeground(Color.BLACK);
 		btnEstorno.setFont(new Font("Gtek Technology", Font.PLAIN, 14));
 		btnEstorno.setBackground(Color.YELLOW);
-		btnEstorno.setBounds(10, 235, 248, 21);
+		btnEstorno.setBounds(10, 196, 248, 21);
 		contentPane.add(btnEstorno);
 		btnEstorno.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				new TrocaEstorno().setVisible(true);				
+				new TrocaEstorno().setVisible(true);
 			}
 		});
-		
+
+		btnGerencPreco = new JButton("");
+		btnGerencPreco.setIcon(new ImageIcon(OpcFerramentas.class.getResource("/com/sert/img/btnGerenciarPreco.png")));
+		btnGerencPreco.setOpaque(false);
+		btnGerencPreco.setForeground(Color.BLACK);
+		btnGerencPreco.setFont(new Font("Dialog", Font.PLAIN, 14));
+		btnGerencPreco.setContentAreaFilled(false);
+		btnGerencPreco.setBorderPainted(false);
+		btnGerencPreco.setBackground(Color.YELLOW);
+		btnGerencPreco.setBounds(34, 238, 200, 36);
+		contentPane.add(btnGerencPreco);
+		btnGerencPreco.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new GerenciaPrecoView().setVisible(true);
+			}
+		});
 	}
 }

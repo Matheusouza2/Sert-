@@ -23,14 +23,27 @@ public class MovEstoqueDao {
 	}
 
 	public void movimentar(MovEstoque estoque) throws SQLException {
-		String sql = "INSERT INTO mov_estoque(id, tipo, funcionario, data_mov) VALUES (?, ?, ?, ?, ?, ?);";
+		String sql = "INSERT INTO mov_estoque(id, tipo, funcionario, data)	VALUES (?, ?, ?, ?);";
 
 		PreparedStatement preparedStatement = con.prepareStatement(sql);
 
 		preparedStatement.setInt(1, estoque.getId());
-		preparedStatement.setString(2, estoque.getTipo());
+		preparedStatement.setBoolean(2, estoque.getTipo());
 		preparedStatement.setInt(3, estoque.getUsuario().getId());
 		preparedStatement.setTimestamp(4, Timestamp.valueOf(estoque.getData()));
+		preparedStatement.execute();
+		preparedStatement.close();
+		
+		String sqlMerc = "INSERT INTO mov_estoque_merc(id_mov, merc, quant, preco_venda) VALUES (?, ?, ?, ?);";
+		preparedStatement = con.prepareStatement(sqlMerc);
+		for(int i = 0; i < estoque.getMercadorias().size(); i++) {
+			preparedStatement.setInt(1, estoque.getId());
+			preparedStatement.setInt(2, estoque.getMercadorias().get(i).getId());
+			preparedStatement.setFloat(3, estoque.getMercadorias().get(i).getEstoque());
+			preparedStatement.setFloat(4, estoque.getMercadorias().get(i).getPrecoVenda());
+			preparedStatement.execute();
+		}
+		preparedStatement.close();
 	}
 
 	public List<MovEstoque> listarMov() throws SQLException {
@@ -44,7 +57,7 @@ public class MovEstoqueDao {
 			movEstoque = new MovEstoque();
 			usuario = new Usuario();
 			movEstoque.setId(result.getInt("id"));
-			movEstoque.setTipo(result.getString("tipo"));
+			movEstoque.setTipo(result.getBoolean("tipo"));
 			usuario.setNome(result.getString("usu_nome").trim());
 			movEstoque.setUsuario(usuario);
 			movEstoque.setData(result.getString("data_mov"));

@@ -330,8 +330,8 @@ public class AjusteEstoque extends JDialog {
 							}
 						}
 					} else {
-						cbMercRef.setSelectedItem("");
-						cbMercDesc.setSelectedItem("");
+						cbMercRef.setSelectedItem(null);
+						cbMercDesc.setSelectedItem(null);
 						JOptionPane.showMessageDialog(null, "Mercadoria não encontrada", "AVISO",
 								JOptionPane.WARNING_MESSAGE);
 					}
